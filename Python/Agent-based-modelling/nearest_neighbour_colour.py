@@ -72,6 +72,7 @@ class ColourChangingModel(mesa.Model):
 if __name__ == '__main__':
 
     fig = plt.figure()
+    ax = fig.subplots(1)
     camera = Camera(fig)
 
     num_colours = 10
@@ -84,7 +85,8 @@ if __name__ == '__main__':
             agent, x, y = cell
             agent_colour[x][y] = agent.colour
         
-        plt.imshow(agent_colour, interpolation="none", vmin=0, vmax=num_colours)
+        ax.imshow(agent_colour, interpolation="none", vmin=0, vmax=num_colours)
+        ax.text(1, 2, f"Time step {i}", color="white")
         camera.snap()
 
         model.step()

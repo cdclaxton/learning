@@ -1,0 +1,5 @@
+celluloid
+matplotlib
+mesa
+numpy
+scipy

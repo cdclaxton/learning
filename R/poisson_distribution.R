@@ -33,5 +33,5 @@ samples <- coda.samples(model,
 plot(samples)
 mean_lam <- mean(as.matrix(samples)[, "lam"])
 
-print(paste0("Actual value of lambda: ", lam), quote = FALSE)
-print(paste0("Esimtated value of lambda: ", mean_lam), quote = FALSE)
+cat(paste0("Actual value of lambda: ", lam, "\n"))
+cat(paste0("Esimtated value of lambda: ", mean_lam, "\n"))

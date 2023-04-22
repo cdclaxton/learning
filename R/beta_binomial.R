@@ -35,4 +35,4 @@ plot(samp)
 # Maximum likelihood value of theta
 m <- as.matrix(samp)
 mean_theta <- mean(m[, "theta"])
-print(paste("Mean of theta:", mean_theta), quote = FALSE)
+cat(paste("Mean of theta:", mean_theta, "\n"))

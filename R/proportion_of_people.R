@@ -2,7 +2,7 @@
 # Each person can be assigned to one of a small number of groups.
 #
 # A Dirichlet distribution could be used as the prior, but it might be
-# different to parameterise in a meaningful way.
+# difficult to parameterise in a meaningful way.
 
 library(rjags)
 

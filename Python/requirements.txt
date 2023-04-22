@@ -2,4 +2,5 @@ celluloid
 matplotlib
 mesa
 numpy
+pygame
 scipy

@@ -39,8 +39,9 @@ def stage_changepoints(num_stages, tau_max):
     # Return a sorted list of changepoints in time order
     changepoints = sorted(changepoints)
 
-    assert len(changepoints) == num_stages - 1
+    assert len(changepoints) == num_changepoints
     assert len(set(changepoints)) == len(changepoints), f"Changepoints {changepoints} aren't unique"
+    assert max(changepoints) < tau_max
 
     return changepoints
 
@@ -48,27 +49,29 @@ def stage_changepoints(num_stages, tau_max):
 def gen_events_for_stage(t_min, t_max, p_event):
     """Generate events for the stage with time t_min <= t < t_max."""
 
+    assert t_min >= 0
     assert t_min <= t_max, f"Invalid times {t_min}, {t_max}"
     assert abs(sum(p_event) - 1.0) < 1e-6, f"Probability doesn't sum to 1"
 
     if t_min == t_max:
         return np.array([]), np.array([], dtype=int)
 
-    # Number of events in the stage
-    prop = np.random.uniform(0, 0.3)
+    # Number of events in the stage to generate
+    prop = np.random.uniform(0, 0.8)
     tau = t_max - t_min
     num_events = max(math.floor(prop*tau), 1)
 
     # Times of the events 
     event_times = sorted(random.sample(range(t_min, t_max), num_events))
     assert len(event_times) == num_events
+    assert len(set(event_times)) == num_events, f"Event times aren't unique: {event_times}"
 
     # Types of events
     event_types = [int(np.where(np.random.multinomial(1, p_event) == 1)[0][0]) for _ in range(num_events)]
     assert len(event_types) == num_events, f"Got {len(event_types)}, expected {num_events}"
 
+    # Return a tuple of event times and event types
     assert len(event_times) == len(event_types)
-
     return event_times, event_types
     
 
@@ -96,6 +99,7 @@ def generate_obs(p_s, cpt, tau_max):
         event_times = np.array([])
         event_types = np.array([], dtype=int)
 
+        # Walk through each stage
         for s in range(num_stages):
             if s == 0:
                 t_min = 0
@@ -107,7 +111,9 @@ def generate_obs(p_s, cpt, tau_max):
                 t_min = changepoints[s-1]
                 t_max = changepoints[s]
 
+            assert s < cpt.shape[0], f"Insufficient rows in CPT for stage {s}"
             event_times_s, event_types_s = gen_events_for_stage(t_min, t_max, cpt[s])
+
             num_events = len(event_times_s)
             print(f"Generated {num_events} events for stage {s} / {num_stages - 1}")
 
@@ -122,7 +128,7 @@ def generate_obs(p_s, cpt, tau_max):
 
 
 def indicator(event_time, stage, changepoints, tau_max):
-    """Indicator function returns 1 if event time is between changepoints."""
+    """Indicator function returns 1 if event time is between changepoints, otherwise 0."""
 
     if len(changepoints) == 0:
         return 1.0
@@ -146,19 +152,20 @@ def indicator(event_time, stage, changepoints, tau_max):
 def test_indicator():
     """Unit tests for indicator()."""
 
-    # One stage
+    # One stage (no changepoints)
     assert indicator(0, 0, [], 20) == 1.0
     assert indicator(19, 0, [], 20) == 1.0
 
-    # Two stages
+    # Two stages (1 changepoint)
     assert indicator(0, 0, [10], 20) == 1.0
     assert indicator(9, 0, [10], 20) == 1.0
     assert indicator(10, 0, [10], 20) == 0.0
     assert indicator(0, 1, [10], 20) == 0.0
     assert indicator(9, 1, [10], 20) == 0.0
     assert indicator(10, 1, [10], 20) == 1.0
+    assert indicator(19, 1, [10], 20) == 1.0
 
-    # Three stages
+    # Three stages (2 changepoints)
     assert indicator(0, 0, [10, 15], 20) == 1.0
     assert indicator(0, 1, [10, 15], 20) == 0.0
     assert indicator(0, 2, [10, 15], 20) == 0.0
@@ -168,6 +175,7 @@ def test_indicator():
     assert indicator(15, 0, [10, 15], 20) == 0.0
     assert indicator(15, 1, [10, 15], 20) == 0.0
     assert indicator(15, 2, [10, 15], 20) == 1.0
+    assert indicator(19, 2, [10, 15], 20) == 1.0
 
 
 def log_likelihood(event_times, event_types, changepoints, cpt, tau_max):
@@ -181,14 +189,42 @@ def log_likelihood(event_times, event_types, changepoints, cpt, tau_max):
             assert s < cpt.shape[0], f"Stage {s} out of range for CPT"
             assert event_types[k] < cpt.shape[1], f"Event type {event_types[k]} out of range for CPT"
 
+            # Add on a small number in case the probability from the CPT is 0
             p = cpt[s, event_types[k]] + 1e-16
-            total += indicator(event_times[k], s, changepoints, tau_max) * \
-                math.log(p)
+            total += indicator(event_times[k], s, changepoints, tau_max) * math.log(p)
 
     return total
 
 
+def test_log_likelihood():
+    """Unit tests for log_likelihood()."""
+
+    cpt = np.array([
+        [0.2, 0.5, 0.3],
+        [0.7, 0.1, 0.2],
+        [0.3, 0.2, 0.5]
+    ])
+
+    # event_times, event_types, changepoints, tau_max, expected log likelihood
+    test_cases = [
+        [ [0], [0], [5, 9], 10, math.log(0.2) ], # stage 0
+        [ [6], [0], [5, 9], 10, math.log(0.7) ], # stage 1
+        [ [9], [0], [5, 9], 10, math.log(0.3) ], # stage 2
+        [ [0, 4], [0, 0], [5, 9], 10, math.log(0.2) + math.log(0.2) ], # 2 x stage 0
+        [ [0, 4], [0, 1], [5, 9], 10, math.log(0.2) + math.log(0.5) ], # 2 x stage 0
+        [ [5, 4], [0, 1], [5, 9], 10, math.log(0.7) + math.log(0.5) ], # stage 1, 0
+        [ [4, 5, 9], [0, 1, 2], [5, 9], 10, math.log(0.2) + math.log(0.1) + math.log(0.5) ], # stage 0, 1, 2
+    ]
+    
+    for t in test_cases:
+        event_times, event_types, changepoints, tau_max, expected = t
+        actual = log_likelihood(event_times, event_types, changepoints, cpt, tau_max)
+        assert abs(actual - expected) < 1e-6, f"actual: {actual}, expected: {expected}"
+
+
 def valid_changepoints(seq):
+    """Does the sequence represent valid changepoints?"""
+
     if len(seq) == 1:
         return True
     
@@ -200,6 +236,8 @@ def valid_changepoints(seq):
 
 
 def test_valid_changepoints():
+    """Test valid_changepoints()."""
+
     assert valid_changepoints([0])
     assert not valid_changepoints([0, 0])
     assert valid_changepoints([0, 1])
@@ -213,12 +251,15 @@ def test_valid_changepoints():
 
 
 def all_changepoints(num_changepoints, tau_max):
-    """Construct a matrix of all possible changepoint positions."""
+    """Construct a list of all possible (valid) changepoint positions."""
 
     assert num_changepoints >= 0
-    assert tau_max > 0
+    assert tau_max >= 0
 
     if num_changepoints == 0:
+        return []
+    
+    if tau_max == 0:
         return []
 
     changepoints = []
@@ -245,46 +286,105 @@ def test_all_changepoints():
 def run_inference(event_times, event_types, p_s, cpt, tau_max):
     """Run inference."""
 
+    assert len(event_times) == len(event_types)
+
     joint_probs = []
 
-    for num_stages in range(1, len(p_s)+1):
-        print(f"Running inference with {num_stages} stage(s)")
+    # Maximum number of changepoints
+    num_changepoints = len(p_s) - 1
 
-        num_changepoints = num_stages - 1
-        changepoints = all_changepoints(num_changepoints, tau_max)
-        print(f"  {len(changepoints)} changepoint positions")        
+    # Walk through each possible configuration of changepoints
+    for changepoints in all_changepoints(num_changepoints, tau_max):
 
-        if num_changepoints == 0:
-            ll = log_likelihood(event_times, event_types, [], cpt, tau_max)
-            prior_s = p_s[num_stages - 1]
+        # Walk through the number of stages in the model
+        for s in range(num_changepoints + 1):
+            select_changepoints = changepoints[:s]
+
+            ll = log_likelihood(event_times, event_types, select_changepoints, cpt, tau_max)
+            prior_s = p_s[s]
             prior_tau = 1.0
             joint = math.exp(ll) * prior_s * prior_tau
-            joint_probs.append((num_stages, [], joint))
-            continue
-
-        for c in changepoints:
-            ll = log_likelihood(event_times, event_types, c, cpt, tau_max)
-
-            prior_s = p_s[num_stages - 1]
-            prior_tau = 1.0
-            joint = math.exp(ll) * prior_s * prior_tau
-
-            joint_probs.append((num_stages, c, joint))
+            joint_probs.append((s+1, changepoints, joint))
 
     return joint_probs
 
 
+def p_num_stages(joint_probs, L):
+    """Probability of the number of stages from the joint."""
+
+    total_for_num_stages = np.repeat(0.0, L)
+    total = 0.0
+
+    for j in joint_probs:
+        num_stages, _, joint = j
+        total_for_num_stages[num_stages - 1] += joint
+        total += joint
+    
+    return total_for_num_stages / total
+
+
+def trim_events(event_times, event_types, t):
+    """Retain events up to a given time."""
+
+    assert len(event_times) == len(event_types)
+    assert t >= 0
+
+    event_times_in_range = np.array([])
+    event_types_in_range = np.array([], dtype=int)
+
+    for i in range(len(event_times)):
+        if event_times[i] < t:
+            event_times_in_range = np.append(event_times_in_range, event_times[i])
+            event_types_in_range = np.append(event_types_in_range, event_types[i])
+
+    return event_times_in_range, event_types_in_range
+
+
+def test_trim_events():
+    # event_times, event_types, t (cut-off), exp_times, exp_types 
+    test_cases = [
+        [np.array([0, 3]), np.array([1, 2]), 0, np.array([]), np.array([])],
+        [np.array([0, 3]), np.array([1, 2]), 1, np.array([0]), np.array([1])],
+        [np.array([0, 3]), np.array([1, 2]), 4, np.array([0, 3]), np.array([1, 2])]
+    ]
+
+    for t in test_cases:
+        actual_times, actual_types = trim_events(t[0], t[1], t[2])
+        assert np.allclose(actual_times, t[3])
+        assert np.allclose(actual_types, t[4])
+
+
+def prob_num_stages_over_time(event_times, event_types, p_s, cpt, tau_max):
+    """Calculate the probability of the number of stages over time."""
+
+    # Matrix to hold the probability of the number of stages
+    m = np.zeros((len(p_s), tau_max))
+
+    for t in range(tau_max):
+
+        # Only retain the events up to time t
+        event_times_in_range, event_types_in_range = trim_events(event_times, event_types, t)
+
+        joint_probs = run_inference(event_times_in_range, event_types_in_range, p_s, cpt, t)
+        m[:,t] = p_num_stages(joint_probs, len(p_s))
+
+    return m
+
+
 if __name__ == '__main__':
 
-    # Run test harness
+    # Run unit tests
     test_indicator()
+    test_log_likelihood()
     test_valid_changepoints()
     test_all_changepoints()
+    test_trim_events()
 
     # Number of time steps
-    tau_max = 20
+    tau_max = 40
 
     # Distribution of the number of stages
+    #               1    2    3
     p_s = np.array([0.6, 0.3, 0.1])
 
     # CPT defining the probability of a given event type given the stage
@@ -310,11 +410,28 @@ if __name__ == '__main__':
     joint_probs = run_inference(event_times, event_types, p_s, cpt, tau_max)
     print(f"Number of joint probabilities: {len(joint_probs)}")
 
+    # Calculate the probability of the number of stages over time
+    m = prob_num_stages_over_time(event_times, event_types, p_s, cpt, tau_max)
+
     # Plot the ground truth vs. the inferred state
+    fig = plt.figure()
+
+    plt.subplot(1, 2, 1)
     plt.plot(event_times, event_types, 'x')
-    plt.xlim(0, tau_max + 1)
+    plt.xlim(0, tau_max)
     for c in gt_changepoints:
         plt.axvline(x=c, color='r', ls=':')
     plt.xlabel('Time index')
     plt.ylabel('Event type')
+    
+    plt.subplot(1, 2, 2)
+    for num_cps in range(m.shape[0]):
+        plt.plot(m[num_cps, :], label=f"{num_cps + 1} stages")
+    for c in gt_changepoints:
+        plt.axvline(x=c, color='r', ls=':')
+    for e in event_times:
+        plt.axvline(x=e, color='k', ls='--', alpha=0.2)       
+    plt.xlabel('Time index')
+    plt.legend()
+
     plt.show()

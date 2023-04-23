@@ -388,6 +388,7 @@ if __name__ == '__main__':
     p_s = np.array([0.6, 0.3, 0.1])
 
     # Distribution of the number of stages when generating synthetic data
+    #                   1    2    3
     p_s_gen = np.array([0.2, 0.6, 0.2])
 
     # CPT defining the probability of a given event type given the stage

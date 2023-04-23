@@ -387,6 +387,9 @@ if __name__ == '__main__':
     #               1    2    3
     p_s = np.array([0.6, 0.3, 0.1])
 
+    # Distribution of the number of stages when generating synthetic data
+    p_s_gen = np.array([0.2, 0.6, 0.2])
+
     # CPT defining the probability of a given event type given the stage
     cpt = np.array([ 
         [0.1, 0.1, 0.7, 0.1, 0.0], 
@@ -401,7 +404,7 @@ if __name__ == '__main__':
     # ])
 
     # Generate the ground truth stage and observed events
-    gt_stages, event_times, event_types, gt_changepoints = generate_obs(p_s, cpt, tau_max)
+    gt_stages, event_times, event_types, gt_changepoints = generate_obs(p_s_gen, cpt, tau_max)
     print(f"Ground truth stages: {gt_stages}")
     print(f"Event times: {event_times}")
     print(f"Event types: {event_types}")
@@ -433,6 +436,7 @@ if __name__ == '__main__':
     for e in event_times:
         plt.axvline(x=e, color='k', ls='--', alpha=0.2)       
     plt.xlabel('Time index')
+    plt.ylabel('Probability of stage')
     plt.legend()
 
     plt.show()

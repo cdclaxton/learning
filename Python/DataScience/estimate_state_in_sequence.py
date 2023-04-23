@@ -389,15 +389,16 @@ if __name__ == '__main__':
 
     # CPT defining the probability of a given event type given the stage
     cpt = np.array([ 
-        [0.1, 0.2, 0.5, 0.2, 0.0], 
-        [0.1, 0.4, 0.3, 0.1, 0.1], 
-        [0.0, 0.2, 0.1, 0.6, 0.1]])
+        [0.1, 0.1, 0.7, 0.1, 0.0], 
+        [0.1, 0.7, 0.1, 0.1, 0.0], 
+        [0.0, 0.1, 0.1, 0.7, 0.1]])
 
-    cpt = np.array([
-        [1, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0],
-        [0, 0, 1, 0, 0]
-    ])
+    # CPT with perfect information about a given stage.
+    # cpt = np.array([
+    #     [1, 0, 0, 0, 0],
+    #     [0, 1, 0, 0, 0],
+    #     [0, 0, 1, 0, 0]
+    # ])
 
     # Generate the ground truth stage and observed events
     gt_stages, event_times, event_types, gt_changepoints = generate_obs(p_s, cpt, tau_max)

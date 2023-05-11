@@ -21,8 +21,11 @@
 import itertools
 import math
 import matplotlib.pyplot as plt
+from matplotlib import cm
 import numpy as np
 import random
+import scipy.optimize as optimize
+import matplotlib.pyplot as plt
 
 
 def stage_changepoints(num_stages, tau_max):
@@ -73,20 +76,32 @@ def gen_events_for_stage(t_min, t_max, p_event):
     # Return a tuple of event times and event types
     assert len(event_times) == len(event_types)
     return event_times, event_types
-    
+
+
+def check_cpt_is_valid(cpt):
+    """Check that the CPT is valid, i.e. rows sum to 1."""
+
+    # Difference between the sum of the rows and 1.0
+    return max(np.sum(cpt, axis=1) - 1.0) < 1e-6
+
+
+def check_probs_sum_to_1(p):
+    return abs(sum(p) - 1.0) < 1e-6
+
 
 def generate_obs(p_s, cpt, tau_max):
     """Generate synthetic observations."""
 
     assert abs(sum(p_s) - 1.0 < 1e-6), f"Probability doesn't sum to 1"
     assert tau_max > 0
+    assert check_cpt_is_valid(cpt), f"Row(s) don't sum to 1: {cpt}"
 
     # Sample to get the number of stages
     num_stages = np.where(np.random.multinomial(1, p_s) == 1)[0][0] + 1
     print(f"Number of stages: {num_stages}")
 
     if num_stages == 1:
-        event_times, event_types = gen_events_for_stage(0, tau_max, cpt[0])
+        event_times, event_types = gen_events_for_stage(0, tau_max, cpt[0,:])
         gt_stages = np.repeat(0, len(event_times))
         changepoints = []
     else:
@@ -112,7 +127,7 @@ def generate_obs(p_s, cpt, tau_max):
                 t_max = changepoints[s]
 
             assert s < cpt.shape[0], f"Insufficient rows in CPT for stage {s}"
-            event_times_s, event_types_s = gen_events_for_stage(t_min, t_max, cpt[s])
+            event_times_s, event_types_s = gen_events_for_stage(t_min, t_max, cpt[s,:])
 
             num_events = len(event_times_s)
             print(f"Generated {num_events} events for stage {s} / {num_stages - 1}")
@@ -371,7 +386,140 @@ def prob_num_stages_over_time(event_times, event_types, p_s, cpt, tau_max):
     return m
 
 
+def calc_cpt_event_given_stage(cpt_s_given_e, p_s):
+    """Calculate the matrix of p(e|s) from p(s|e) and p(s)."""
+
+    assert check_cpt_is_valid(cpt_s_given_e)
+    assert check_probs_sum_to_1(p_s)
+
+    cpt_s_given_e_t = cpt_s_given_e.transpose()
+
+    # Number of different types of events
+    N = cpt_s_given_e.shape[0]
+
+    # Number of different stages
+    M = cpt_s_given_e.shape[1]
+
+    # Function to calculate the error given a candidate p(e)
+    # Error term is really np.dot(y,y), but better results were found by scaling
+    def f(e):
+        y = np.dot(cpt_s_given_e_t, e) - p_s
+        return 100 * np.dot(y, y)**2
+
+    # Constraints
+    cons = ({
+        'type': 'eq',
+        'fun': lambda x: x.sum() - 1  # p(e) must sum to 1
+    })
+
+    # Bounds (each 0 <= p(e_i) <= 1)
+    bnds = [(0, 1) for _ in range(N)]
+
+    # Perform optimisation to find p(e)
+    res = optimize.minimize(f, 
+                            np.ones(N)/N,  # initial
+                            method='SLSQP', 
+                            constraints=cons, 
+                            bounds=bnds,
+                            tol=1e-30,
+                            options={
+                                'disp': False,
+                                'maxiter': 10000,
+                                'ftol': 1e-30,
+                                'eps': 1e-10
+                            })
+    print(res)
+    p_e_best = res['x']
+
+    # Calculate p(s) given p(s|e) and the estimated p(e)
+    p_s_est = np.zeros(M)
+    
+
+    # Calculate the CPT p(e|s)
+    cpt_e_given_s = np.zeros((M, N))
+    for s in range(M):
+        for e in range(N):
+            cpt_e_given_s[s, e] = cpt_s_given_e[e, s] * p_e_best[e] / p_s[s]
+
+    print(cpt_e_given_s)
+
+    # Check each row of the CPT sums to 1
+    assert check_cpt_is_valid(cpt_e_given_s), \
+        f"CPT isn't valid: {cpt_e_given_s}, row sum: {np.sum(cpt_e_given_s, axis=1)}"
+
+    return cpt_e_given_s, p_e_best
+
+
+def test_calc_cpt_event_given_stage():
+    """Unit tests for calc_cpt_event_given_stage()."""
+
+    # CPT of p(s|e) with 3 events and 2 stages
+    p_s_given_e = np.array([
+        [0.1, 0.9],
+        [0.8, 0.2],
+        [0.6, 0.4]
+    ])
+
+    # p(s)
+    p_s = np.array([0.64, 0.36])
+
+    # p(e|s), p(e)
+    p_e_given_s, p_e = calc_cpt_event_given_stage(p_s_given_e, p_s)
+
+    p_e_given_s_expected = np.array([
+        [0.1*0.2/0.64, 0.8*0.7/0.64, 0.6*0.1/0.64],
+        [0.9*0.2/0.36, 0.2*0.7/0.36, 0.4*0.1/0.36]
+    ])
+
+    delta = p_e_given_s_expected - p_e_given_s
+    err = np.sum(delta**2)
+    assert err < 1e-6, f"Squared error: {err}, delta: {delta}"
+
+
+def demo_of_optimisation_problem():
+    """Plot the surface of the error for different values of p(e)."""
+
+    # CPT of p(s|e) with 3 events and 2 stages
+    cpt_s_given_e = np.array([
+        [0.1, 0.9],
+        [0.8, 0.2],
+        [0.6, 0.4]
+    ])
+
+    p_s = np.array([0.64, 0.36])
+
+    cpt_s_given_e_t = cpt_s_given_e.transpose()
+
+    def f(e):
+        y = np.dot(cpt_s_given_e_t, e) - p_s
+        return np.dot(y, y)
+
+    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+
+    # Make data
+    X = np.arange(0, 1, 0.1)
+    Y = np.arange(0, 1, 0.1)
+    X, Y = np.meshgrid(X, Y)
+    
+    Z = np.zeros(X.shape)
+    for x in range(X.shape[1]):
+        for y in range(X.shape[0]):
+            Z[x,y] = f(np.array([x, y, 1-(x+y)]))
+
+    # Plot the surface
+    surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                        linewidth=0, antialiased=False)
+
+    # Add a color bar
+    fig.colorbar(surf, shrink=0.5, aspect=5)
+
+    plt.show()
+
+
 if __name__ == '__main__':
+
+    # Show the surface on which optimisation is performed
+    # demo_of_optimisation_problem()
 
     # Run unit tests
     test_indicator()
@@ -379,44 +527,62 @@ if __name__ == '__main__':
     test_valid_changepoints()
     test_all_changepoints()
     test_trim_events()
+    #test_calc_cpt_event_given_stage()  # TODO reinstate
 
     # Number of time steps
     tau_max = 40
 
-    # Distribution of the number of stages
-    #               1    2    3
-    p_s = np.array([0.6, 0.3, 0.1])
+    # Test case to demonstrate
+    test_case = 0
 
-    # Distribution of the number of stages when generating synthetic data
-    #                   1    2    3
-    p_s_gen = np.array([0.2, 0.6, 0.2])
+    if test_case == 0:
 
-    # CPT defining the probability of a given event type given the stage
-    cpt = np.array([ 
-        [0.1, 0.1, 0.7, 0.1, 0.0], 
-        [0.1, 0.7, 0.1, 0.1, 0.0], 
-        [0.0, 0.1, 0.1, 0.7, 0.1]])
+        # Distribution of the number of stages
+        #               1    2    3
+        p_s = np.array([0.6, 0.3, 0.1])
 
-    # CPT with perfect information about a given stage.
-    # cpt = np.array([
-    #     [1, 0, 0, 0, 0],
-    #     [0, 1, 0, 0, 0],
-    #     [0, 0, 1, 0, 0]
-    # ])
+        # Distribution of the number of stages when generating synthetic data
+        #                   1    2    3
+        p_s_gen = np.array([0.2, 0.2, 0.6])
+
+        # CPT defining the probability of a given event type given the stage
+        # Each row is an event and each column is a stage and so the rows must sum
+        # to 1
+        #    1    2    3  <-- stage
+        cpt_stage_given_event = np.array([ 
+            [0.2, 0.1, 0.7], 
+            [0.3, 0.7, 0.0], 
+            [0.7, 0.1, 0.2],
+            [0.1, 0.4, 0.5],
+            [0.3, 0.3, 0.4]
+        ])
+
+        # Use optimisation to find p(e|s)
+        cpt_e_given_s, p_e = calc_cpt_event_given_stage(cpt_stage_given_event, p_s)
+
+    elif test_case == 1:
+
+        # Example case: Two stages, 4 events
+        cpt_e_given_s = np.array([
+            [0.2, 0.3, 0.4, 0.1],
+            [0.1, 0.7, 0.1, 0.1]
+        ])
+        p_s = np.array([0.8, 0.2])
+        p_s_gen = np.array([0.2, 0.8])
 
     # Generate the ground truth stage and observed events
-    gt_stages, event_times, event_types, gt_changepoints = generate_obs(p_s_gen, cpt, tau_max)
+    gt_stages, event_times, event_types, gt_changepoints = generate_obs(p_s_gen, cpt_e_given_s, tau_max)
     print(f"Ground truth stages: {gt_stages}")
     print(f"Event times: {event_times}")
     print(f"Event types: {event_types}")
     print(f"Changepoints: {gt_changepoints}")
 
     # Run the inference
-    joint_probs = run_inference(event_times, event_types, p_s, cpt, tau_max)
+    joint_probs = run_inference(event_times, event_types, p_s, cpt_e_given_s, tau_max)
     print(f"Number of joint probabilities: {len(joint_probs)}")
 
     # Calculate the probability of the number of stages over time
-    m = prob_num_stages_over_time(event_times, event_types, p_s, cpt, tau_max)
+    m = prob_num_stages_over_time(event_times, event_types, p_s, cpt_e_given_s, tau_max)
 
     # Plot the ground truth vs. the inferred state
     fig = plt.figure()

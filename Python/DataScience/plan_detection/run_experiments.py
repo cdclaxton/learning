@@ -37,6 +37,22 @@ def stages_squared_error(m1, m2):
     return np.sum(diff**2)
 
 
+def stages_error_using_most_likely(gt, m):
+    """Error when using the most likely stage."""
+
+    assert gt.shape == m.shape
+
+    num_time_steps = gt.shape[1]
+    err = np.zeros(num_time_steps)
+
+    for i in range(num_time_steps):
+        expected = np.argmax(gt[:,i])
+        actual = np.argmax(m[:,i])
+        if actual != expected:
+            err[i] = 1.0
+
+    return np.sum(err)
+
 
 if __name__ == '__main__':
 
@@ -66,8 +82,9 @@ if __name__ == '__main__':
     assert m.shape == (num_stages, tau_max)
 
     # Calculate the error between the ground truth and the stages
-    err1 = stages_squared_error(gt_stage_matrix, m)
-    print(err1)
+    err1a = stages_squared_error(gt_stage_matrix, m)
+    err1b = stages_error_using_most_likely(gt_stage_matrix, m)
+    print(f"Squared error: {err1a}, Most likely error: {err1b}")
 
     # Estimate p(e|s) from p(s|e) and p(s)
     p_e_hat = estimate_p_e(s['p_s_given_e'], s['p_s'], 0)
@@ -79,8 +96,9 @@ if __name__ == '__main__':
     assert m2.shape == (num_stages, tau_max)
 
     # Calculate the error between the ground truth and the stages using estimated p(e|s)
-    err2 = stages_squared_error(gt_stage_matrix, m2)
-    print(err2)
+    err2a = stages_squared_error(gt_stage_matrix, m2)
+    err2b = stages_error_using_most_likely(gt_stage_matrix, m2)
+    print(f"Squared error: {err2a}, Most likely error: {err2b}")
 
     # Plot the stage indices over time
     fig = plt.figure()
@@ -133,6 +151,7 @@ if __name__ == '__main__':
     plt.title('Inferred p(e|s)')
     plt.legend()
 
+    plt.tight_layout()
     plt.show()
 
     print(s['p_s'])

@@ -167,7 +167,7 @@ def indicator(event_time, stage, changepoints, tau_max):
         t_max = changepoints[0]
     elif stage == len(changepoints):
         t_min = changepoints[-1]
-        t_max = tau_max
+        t_max = tau_max+1
     else:
         t_min = changepoints[stage - 1]
         t_max = changepoints[stage]
@@ -251,8 +251,15 @@ def run_inference(event_times, event_types, p_s, cpt, tau_max):
     # Maximum number of changepoints
     num_changepoints = len(p_s) - 1
 
+    changepoints_to_process = all_changepoints(num_changepoints, tau_max)
+
+    if len(changepoints_to_process) == 0:
+        for s in range(len(p_s)):
+            joint_probs.append((s+1, [], p_s[s]))
+        return joint_probs       
+
     # Walk through each possible configuration of changepoints
-    for changepoints in all_changepoints(num_changepoints, tau_max):
+    for changepoints in changepoints_to_process:
 
         # Walk through the number of stages in the model
         for s in range(len(p_s)):

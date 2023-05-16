@@ -3,4 +3,5 @@ matplotlib
 mesa
 numpy
 pygame
+pytest
 scipy

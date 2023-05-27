@@ -106,7 +106,7 @@ func processFile(wg *sync.WaitGroup, ctx context.Context, cancelCtx context.Canc
 
 	for lineNumber := 0; lineNumber < file.NumberOfLines; lineNumber++ {
 
-		// Check to see if thejob should be prematurely ended
+		// Check to see if the job should be prematurely ended
 		select {
 		case <-ctx.Done():
 			if err := ctx.Err(); err != nil {

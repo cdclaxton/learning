@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"golang.org/x/exp/maps"
 )
@@ -63,8 +64,10 @@ func (s *SimpleData) String() string {
 type Computation interface {
 	Calculate(values []int) (int, error) // Calculate output given inptus
 	GetName() string                     // Descriptive name for the computation
+	String() string                      // String representation of the node
 }
 
+// Computation types
 const (
 	AddComputation      = "Add"
 	MultiplyComputation = "Multiply"
@@ -84,6 +87,10 @@ func (a AddValues) GetName() string {
 	return "Add"
 }
 
+func (a AddValues) String() string {
+	return fmt.Sprintf("Computation(type=%s)", a.GetName())
+}
+
 type MultiplyValues struct{}
 
 func (m MultiplyValues) Calculate(values []int) (int, error) {
@@ -98,10 +105,15 @@ func (m MultiplyValues) GetName() string {
 	return "Multiply"
 }
 
+func (m MultiplyValues) String() string {
+	return fmt.Sprintf("Computation(type=%s)", m.GetName())
+}
+
 // Extractor extracts an integer value from the Data.
 type Extractor interface {
 	Calculate(Data) (int, error)
 	Instantiate(map[string]string) error
+	String() string
 }
 
 type BaseExtractor struct {
@@ -164,6 +176,10 @@ func (e *ExtractConstant) Calculate(data Data) (int, error) {
 	return e.value, nil
 }
 
+func (e *ExtractConstant) String() string {
+	return fmt.Sprintf("Extractor(type=%s, value=%d)", e.extractorType, e.value)
+}
+
 // ExtractNumValues is a type of Extractor.
 type ExtractNumValues struct {
 	BaseExtractor
@@ -198,6 +214,11 @@ func (e *ExtractNumValues) Calculate(data Data) (int, error) {
 	return data.NumberOfValues(e.value), nil
 }
 
+func (e *ExtractNumValues) String() string {
+	return fmt.Sprintf("Extractor(type=%s, value=%s)", e.extractorType,
+		e.value)
+}
+
 type ExtractCount struct {
 	BaseExtractor
 }
@@ -224,6 +245,10 @@ func (e *ExtractCount) Calculate(data Data) (int, error) {
 	return data.Count(), nil
 }
 
+func (e *ExtractCount) String() string {
+	return fmt.Sprintf("Extractor(type=%s)", e.extractorType)
+}
+
 var (
 	ErrUnknownComputation         = errors.New("unknown type of computation")
 	ErrNilComputeNode             = errors.New("compute node is nil")
@@ -242,6 +267,19 @@ type Model struct {
 	Nodes       []ComputeNode `json:"computeNodes"`
 	Connections []Connection  `json:"connections"`
 	outputNode  *ComputeNode  // Reference the final output node
+}
+
+func (m *Model) String() string {
+	var sb strings.Builder
+	sb.WriteString("Model(nodes=[")
+	for idx, node := range m.Nodes {
+		sb.WriteString(node.String())
+		if idx < len(m.Nodes)-1 {
+			sb.WriteString(", ")
+		}
+	}
+	sb.WriteString("])")
+	return sb.String()
 }
 
 // Compute the result of the model.
@@ -378,6 +416,23 @@ func (c *ComputeNode) Calculate(data Data) (int, error) {
 	return c.computation.Calculate(values)
 }
 
+func (c *ComputeNode) String() string {
+	if c.TakesData {
+		return fmt.Sprintf("Node(name=%s, %s)", c.Name, c.extractor)
+	}
+
+	var sb strings.Builder
+	for idx, n := range c.inputs {
+		sb.WriteString(n.Name)
+		if idx < len(c.inputs)-1 {
+			sb.WriteString(", ")
+		}
+	}
+
+	return fmt.Sprintf("Node(name=%s, %s, inputs=[%s])", c.Name, c.computation,
+		sb.String())
+}
+
 // outputNode (or final node) given the connections.
 func outputNode(connections []Connection) (string, error) {
 
@@ -469,13 +524,15 @@ func LoadModel(filepath string) (*Model, error) {
 func main() {
 	fmt.Println("Graph defined computation")
 
-	filepath := "./test-data/config-1.json"
+	filepath := "./test-data/config-2.json"
 	fmt.Printf("Reading model from file %s\n", filepath)
 
 	model, err := LoadModel(filepath)
 	if err != nil {
 		log.Panic(err)
 	}
+
+	fmt.Println(model.String())
 
 	sd := NewPopulatedSimpleData("a", "a", "b")
 	result, err := model.Compute(sd)

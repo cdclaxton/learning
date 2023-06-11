@@ -1,0 +1,38 @@
+{
+    "computeNodes": [
+        {
+            "name": "a",
+            "takesData": true,
+            "computationType": "",
+            "extractionConfig": {
+                "type": "ConstantExtractor",
+                "value": "2"
+            }
+        },
+        {
+            "name": "b",
+            "takesData": true,
+            "computationType": "",
+            "extractionConfig": {
+                "type": "NumValuesExtractor",
+                "value": "a"
+            }
+        },
+        {
+            "name": "c",
+            "takesData": false,
+            "computationType": "Add",
+            "extractionConfig": {}
+        }
+    ],
+    "connections": [
+        {
+            "source": "a",
+            "destination": "c"
+        },
+        {
+            "source": "b",
+            "destination": "c"
+        }
+    ]
+}

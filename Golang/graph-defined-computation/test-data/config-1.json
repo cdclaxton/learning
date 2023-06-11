@@ -1,0 +1,25 @@
+{
+    "computeNodes": [
+        {
+            "name": "a",
+            "takesData": true,
+            "computationType": "",
+            "extractionConfig": {
+                "type": "ConstantExtractor",
+                "value": "2"
+            }
+        },
+        {
+            "name": "b",
+            "takesData": false,
+            "computationType": "Add",
+            "extractionConfig": {}
+        }
+    ],
+    "connections": [
+        {
+            "source": "a",
+            "destination": "b"
+        }
+    ]
+}

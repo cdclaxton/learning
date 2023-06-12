@@ -62,9 +62,9 @@ func (s *SimpleData) String() string {
 
 // Computation defines a mapping from input values to an output value.
 type Computation interface {
-	Calculate(values []int) (int, error) // Calculate output given inputs
-	GetName() string                     // Descriptive name for the computation
-	String() string                      // String representation of the node
+	Calculate([]int) (int, error) // Calculate output given inputs
+	GetName() string              // Descriptive name for the computation
+	String() string               // String representation of the node
 }
 
 // Computation types

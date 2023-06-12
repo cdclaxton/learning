@@ -292,7 +292,7 @@ class BipartiteStoreApproach2:
     # Entity ID: (entity label) --> key = e#<entity ID>, value = entity label
     # Document ID: (document label) --> key = d#<document ID>, value = document label
     # Entity-document link --> key = edl#<entity ID>#<document ID>, value = None
-    # Document-entity link --> key = del#<document ID>#<entity ID>, value = None    
+    # Document-entity link --> key = del#<document ID>#<entity ID>, value = None
 
     def __init__(self):
         self.store = KeyValueStore()

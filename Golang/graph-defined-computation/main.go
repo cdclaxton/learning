@@ -373,12 +373,7 @@ func (c *ComputeNode) InstantiateExtractor() error {
 		return ErrUnknownExtractor
 	}
 
-	err := c.extractor.Instantiate(c.ExtractionConfig)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return c.extractor.Instantiate(c.ExtractionConfig)
 }
 
 // getInputValues to the compute node.

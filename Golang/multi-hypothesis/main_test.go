@@ -490,13 +490,13 @@ func TestValidateHypotheses(t *testing.T) {
 func TestMixtureModel(t *testing.T) {
 	testCases := []struct {
 		description   string
-		dists         []MixtureModelInput
+		dists         []MixtureModelComponent
 		expected      DiscreteDistribution
 		expectedError error
 	}{
 		{
 			description: "one input",
-			dists: []MixtureModelInput{
+			dists: []MixtureModelComponent{
 				{
 					Probability:  1.0,
 					Distribution: DiscreteDistribution{0: 1.0},
@@ -507,7 +507,7 @@ func TestMixtureModel(t *testing.T) {
 		},
 		{
 			description: "two inputs, priors don't sum to 1",
-			dists: []MixtureModelInput{
+			dists: []MixtureModelComponent{
 				{
 					Probability:  0.6,
 					Distribution: DiscreteDistribution{0: 1.0},
@@ -522,7 +522,7 @@ func TestMixtureModel(t *testing.T) {
 		},
 		{
 			description: "two inputs, all mass on one value",
-			dists: []MixtureModelInput{
+			dists: []MixtureModelComponent{
 				{
 					Probability:  0.3,
 					Distribution: DiscreteDistribution{2: 1.0},
@@ -540,7 +540,7 @@ func TestMixtureModel(t *testing.T) {
 		},
 		{
 			description: "two inputs",
-			dists: []MixtureModelInput{
+			dists: []MixtureModelComponent{
 				{
 					Probability:  0.3,
 					Distribution: DiscreteDistribution{2: 0.8, 3: 0.2},

@@ -57,6 +57,7 @@ func (d DiscreteDistribution) Validate() error {
 	return nil
 }
 
+// Equals returns true if two discrete distributions are within tolerance.
 func (d DiscreteDistribution) Equals(d2 DiscreteDistribution) bool {
 	if len(d) != len(d2) {
 		return false
@@ -76,6 +77,7 @@ func (d DiscreteDistribution) Equals(d2 DiscreteDistribution) bool {
 	return true
 }
 
+// probabilityValid returns true if the value is a valid probability.
 func probabilityValid(p float64) error {
 	if p < 0.0 || p > 1.0 {
 		return ErrInvalidProbability
@@ -92,7 +94,7 @@ type Hypothesis struct {
 	Distribution     DiscreteDistribution
 }
 
-// variables used in the hypothesis (in order).
+// variables used in the hypothesis.
 func (h Hypothesis) variables() []string {
 	return maps.Keys(h.SituationConfig)
 }
@@ -196,6 +198,8 @@ func (h *Hypotheses) Validate() error {
 	return nil
 }
 
+// probabilitiesInDelta returns true if the expected and actual probabilities
+// are within a given tolerance (delta).
 func probabilitiesInDelta(expected []float64, actual []float64, delta float64) bool {
 	if len(expected) != len(actual) {
 		return false
@@ -255,9 +259,9 @@ func (h *Hypotheses) Evaluate(variableToProbability map[string]float64) (Discret
 	}
 
 	// Gather the distributions and their probabilities for the mixture model
-	dists := make([]MixtureModelInput, len(h.Hypotheses))
+	dists := make([]MixtureModelComponent, len(h.Hypotheses))
 	for idx := range h.Hypotheses {
-		dists[idx] = MixtureModelInput{
+		dists[idx] = MixtureModelComponent{
 			Probability:  probs[idx],
 			Distribution: h.Hypotheses[idx].Distribution,
 		}
@@ -267,16 +271,18 @@ func (h *Hypotheses) Evaluate(variableToProbability map[string]float64) (Discret
 	return mixtureModel(dists)
 }
 
-type MixtureModelInput struct {
+// MixtureModelComponent represents a component of a mixture model.
+type MixtureModelComponent struct {
 	Probability  float64
 	Distribution DiscreteDistribution
 }
 
-func (m MixtureModelInput) String() string {
-	return fmt.Sprintf("MixtureModelInput(p=%f, dist=%v)", m.Probability, m.Distribution)
+func (m MixtureModelComponent) String() string {
+	return fmt.Sprintf("MixtureModelComponent(p=%f, dist=%v)", m.Probability, m.Distribution)
 }
 
-func mixtureModel(dists []MixtureModelInput) (DiscreteDistribution, error) {
+// mixtureModel given the list of components.
+func mixtureModel(dists []MixtureModelComponent) (DiscreteDistribution, error) {
 
 	result := DiscreteDistribution{}
 	probsTotal := 0.0

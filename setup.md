@@ -51,3 +51,19 @@ sudo apt-get install python3-tk
 # Install libraries
 pip install -r ~/Technical/Python/requirements.txt
 ```
+
+## Golang
+
+```bash
+# Remove old version
+sudo rm -rf /usr/local/go
+
+# Download and install a new version
+cd ~
+wget https://go.dev/dl/go1.20.7.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.20.7.linux-amd64.tar.gz
+go version
+
+# Ebitengine development
+sudo apt install libc6-dev libglu1-mesa-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev libasound2-dev pkg-config
+```

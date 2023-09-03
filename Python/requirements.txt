@@ -6,3 +6,4 @@ numpy
 pygame
 pytest
 scipy
+statsmodels

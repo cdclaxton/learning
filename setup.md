@@ -4,6 +4,9 @@
 # Update the OS
 sudo apt-get update
 sudo apt-get upgrade
+
+# Setup VS Code
+# Download the .deb amd64 file from https://code.visualstudio.com/download
 ```
 
 ## R
@@ -46,10 +49,10 @@ install.packages('languageserver', dependencies=TRUE, repos='http://cran.rstudio
 
 ```bash
 # Install a version of Python with a GUI
-sudo apt-get install python3-tk
+sudo apt-get install python3-tk python3-pip
 
 # Install libraries
-pip install -r ~/Technical/Python/requirements.txt
+pip install -r ./Python/requirements.txt
 ```
 
 ## Golang
@@ -60,8 +63,15 @@ sudo rm -rf /usr/local/go
 
 # Download and install a new version
 cd ~
-wget https://go.dev/dl/go1.20.7.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.20.7.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
+
+# Add the path by editing .profile
+# vim $HOME/.profile
+# Add the following line to the end
+# export PATH=$PATH:/usr/local/go/bin
+
+# Check Golang is installed
 go version
 
 # Ebitengine development

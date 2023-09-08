@@ -1,44 +1,43 @@
 import json
-
 import flask
 import networkx as nx
 
 # Create a graph of the form:
 #
 # A ---\
-#      |---> D ---\
+#      |---> C ---\
 # B ---/          |---> E
 #                 |
-# C --------------/
+# D --------------/
 
 # Define the list of nodes
 nodes = ["A", "B", "C", "D", "E"]
 edges = [
     ("A", "C"),
     ("B", "C"),
-    ("D", "E"),
     ("C", "E"),
+    ("D", "E"),
 ]
 
-# Make a NetworkX graph from the edge list
-G = nx.Graph()
+# Create a representation for writing to JSON
+output_edges = [
+    {
+        "source": nodes.index(source),
+        "target": nodes.index(destination)
+    } for source, destination in edges]
 
-for edge in edges:
-    source, destination = edge
-    source_idx = nodes.index(source)
-    destination_idx = nodes.index(destination)
+output_nodes = [
+    {
+        "name": node,
+        "id": idx,
+    } for idx, node in enumerate(nodes)]
 
-    G.add_edge(source_idx, destination_idx)
-
-# Add labels
-for node in G:
-    G.nodes[node]["name"] = nodes[node]
-
-print(f"Number of nodes = {G.number_of_nodes()}")
-print(f"Number of edges = {G.number_of_edges()}")
+d = {
+    "nodes": output_nodes,
+    "links": output_edges,
+}
 
 # Write graph as JSON
-d = nx.json_graph.node_link_data(G)
 json.dump(d, open("force/graph.json", "w"))
 print("Wrote node-edge JSON data to force/graph.json")
 

@@ -1,0 +1,8 @@
+.link {
+    stroke: #535353;
+}
+
+.node text {
+    pointer-events: none;
+    font: 10px sans-serif;
+}

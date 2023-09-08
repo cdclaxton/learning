@@ -1,0 +1,1 @@
+{"directed": false, "multigraph": false, "graph": {}, "nodes": [{"name": "A", "id": 0}, {"name": "C", "id": 2}, {"name": "B", "id": 1}, {"name": "D", "id": 3}, {"name": "E", "id": 4}], "links": [{"source": 0, "target": 2}, {"source": 2, "target": 1}, {"source": 2, "target": 4}, {"source": 3, "target": 4}]}

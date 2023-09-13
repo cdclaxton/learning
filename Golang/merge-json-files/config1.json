@@ -1,0 +1,9 @@
+{
+    "queue": {
+        "length": 200,
+        "port": 5051
+    },
+    "processor": {
+        "threads": 4
+    }
+}

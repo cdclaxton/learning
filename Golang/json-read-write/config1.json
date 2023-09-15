@@ -1,0 +1,19 @@
+{
+    "name": "Bob Smith",
+    "age": 32,
+    "weight": 78.2,
+    "addresses": [
+        {
+            "number": 10,
+            "road": "High Street",
+            "city": "Birmingham",
+            "postcode": "B12"
+        },
+        {
+            "number": 6,
+            "road": "The Sidings",
+            "city": "Bristol",
+            "postcode": "BS3"
+        }
+    ]
+}

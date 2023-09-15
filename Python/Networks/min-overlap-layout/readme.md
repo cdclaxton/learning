@@ -9,7 +9,8 @@ Two algorithms have been implemented:
 * Randomly switch two nodes in the sequence and accept the new sequence if the
 number of overlapping edges reduces.
 
-* Using simulated annealing to randomly accept worse solutions.
+* Using simulated annealing to always accept better solutions, but to randomly 
+accept worse solutions depending on the temperature.
 
 An example is shown below.
 

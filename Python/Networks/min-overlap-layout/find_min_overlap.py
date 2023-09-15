@@ -1,14 +1,17 @@
 import random
+import math
 import matplotlib.pyplot as plt
 
 
 def connection_lookup(num_nodes, adjacency_list):
+    """Create a dict of the connections from a node to its neighbours."""
     assert num_nodes >= 0
     assert type(adjacency_list) == list
 
     # Initialise the lookup
     lookup = {i: [] for i in range(num_nodes)}
 
+    # Add each edge to the lookup
     for src, dst in adjacency_list:
         lookup[src].append(dst)
         lookup[dst].append(src)
@@ -20,6 +23,7 @@ def connection_lookup(num_nodes, adjacency_list):
 
 
 def test_connection_lookup():
+    """Unit tests for connection_lookup()."""
     assert connection_lookup(2, []) == {0: [], 1: []}
     assert connection_lookup(2, [(0, 1)]) == {0: [1], 1: [0]}
     assert connection_lookup(3, [(0, 1)]) == {0: [1], 1: [0], 2: []}
@@ -139,7 +143,7 @@ def randomly_switch_nodes(node_sequence):
 
 
 def optimise(node_sequence, adjacency_list):
-    """Optimise the sequence of nodes."""
+    """Optimise the sequence of nodes using random switching."""
 
     assert type(node_sequence) == list
     assert len(node_sequence) > 0
@@ -147,7 +151,7 @@ def optimise(node_sequence, adjacency_list):
 
     current_overlap = calc_overlap(node_sequence, adjacency_list)
 
-    for i in range(100):
+    for _ in range(100):
         potential_node_sequence = randomly_switch_nodes(node_sequence)
         potential_overlap = calc_overlap(potential_node_sequence, adjacency_list)
 
@@ -158,6 +162,39 @@ def optimise(node_sequence, adjacency_list):
             accept = False
 
         if accept:
+            node_sequence = potential_node_sequence
+            current_overlap = potential_overlap
+
+    return node_sequence
+
+
+def optimise_simulated_annealing(node_sequence, adjacency_list):
+    """Optimise the sequence of nodes using simulated annealing."""
+
+    assert type(node_sequence) == list
+    assert len(node_sequence) > 0
+    assert type(adjacency_list) == list
+
+    current_overlap = calc_overlap(node_sequence, adjacency_list)
+
+    k_max = 100
+    for k in range(k_max):
+        # Temperature
+        T = 1 - (k + 1) / k_max
+
+        potential_node_sequence = randomly_switch_nodes(node_sequence)
+        potential_overlap = calc_overlap(potential_node_sequence, adjacency_list)
+
+        # Calculate the acceptance probability
+        if potential_overlap < current_overlap:
+            prob = 1.0
+        elif potential_overlap == current_overlap:
+            prob = 0.0
+        else:
+            prob = math.exp(-(potential_overlap - current_overlap) / (T + 1e-6))
+
+        if prob > random.random():
+            print(f"SA Accepting {potential_node_sequence} -> {potential_overlap}")
             node_sequence = potential_node_sequence
             current_overlap = potential_overlap
 
@@ -192,16 +229,28 @@ def random_adjacency_list(num_nodes, num_edges):
     return edges
 
 
-def plot_original_optimised(seq_original, seq_optimised, adjacency_list):
+def plot_original_optimised(
+    seq_original, seq_optimised, seq_optimised_sa, adjacency_list
+):
+    """Plot the original and optimised sequence of nodes."""
+
     assert type(seq_original) == list
     assert type(seq_optimised) == list
+    assert type(seq_optimised_sa) == list
     assert len(seq_original) == len(seq_optimised)
     assert type(adjacency_list) == list
 
-    fig, axs = plt.subplots(2)
-    axs[0].set_title("Original")
-    axs[1].set_title("Optimised")
+    # Calculate the overlaps
+    original_overlap = calc_overlap(seq_original, adjacency_list)
+    optimised_overlap = calc_overlap(seq_optimised, adjacency_list)
+    sa_optimised_overlap = calc_overlap(seq_optimised_sa, adjacency_list)
 
+    fig, axs = plt.subplots(3)
+    axs[0].set_title(f"Original (overlap = {original_overlap})")
+    axs[1].set_title(f"Optimised (overlap = {optimised_overlap})")
+    axs[2].set_title(f"Optimised using SA (overlap = {sa_optimised_overlap})")
+
+    # Plot the original sequence
     for src, dst in adjacency_list:
         idx0 = seq_original.index(src)
         idx1 = seq_original.index(dst)
@@ -213,6 +262,7 @@ def plot_original_optimised(seq_original, seq_optimised, adjacency_list):
     labels = [str(i) for i in seq_original]
     axs[0].set_xticks(ticks, labels=labels)
 
+    # Plot the optimised sequence
     for src, dst in adjacency_list:
         idx0 = seq_optimised.index(src)
         idx1 = seq_optimised.index(dst)
@@ -224,6 +274,19 @@ def plot_original_optimised(seq_original, seq_optimised, adjacency_list):
     labels = [str(i) for i in seq_optimised]
     axs[1].set_xticks(ticks, labels=labels)
 
+    # Plot the optimised sequence using SA
+    for src, dst in adjacency_list:
+        idx0 = seq_optimised_sa.index(src)
+        idx1 = seq_optimised_sa.index(dst)
+        xs = [idx0, (idx0 + idx1) / 2, idx1]
+        ys = [0, 0.5, 0]
+        axs[2].plot(xs, ys)
+
+    ticks = [float(i) for i in range(len(seq_optimised_sa))]
+    labels = [str(i) for i in seq_optimised_sa]
+    axs[2].set_xticks(ticks, labels=labels)
+
+    plt.tight_layout()
     plt.show()
 
 
@@ -232,24 +295,27 @@ if __name__ == "__main__":
     test_connection_lookup()
     test_calc_overlap()
 
-    # Show an example
+    # Show a small example
     node_sequence = [0, 1, 3, 4, 2]
     adjacency_list = [(0, 1), (0, 3), (1, 4), (4, 2)]
     optimise(node_sequence, adjacency_list)
 
     # Generate a random dataset
-    num_nodes = 5
-    num_edges = 3
+    num_nodes = 8
+    num_edges = 6
     node_sequence = list(range(num_nodes))
     adjacency_list = random_adjacency_list(num_nodes, num_edges)
 
+    # Optimise the node sequence
     node_sequence_original = node_sequence[:]
     node_sequence_optimised = optimise(node_sequence, adjacency_list)
-
-    print(f"Original: {node_sequence_original}")
-    print(f"Optimised: {node_sequence_optimised}")
-    print(adjacency_list)
+    node_sequence_optimised_sa = optimise_simulated_annealing(
+        node_sequence, adjacency_list
+    )
 
     plot_original_optimised(
-        node_sequence_original, node_sequence_optimised, adjacency_list
+        node_sequence_original,
+        node_sequence_optimised,
+        node_sequence_optimised_sa,
+        adjacency_list,
     )

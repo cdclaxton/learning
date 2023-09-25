@@ -117,6 +117,22 @@ p(E_3 = [A,B,C,D,E] | T = [A,B,D]) &= 0.009 \leftarrow \text{2 missing tokens} \
 \end{align*}
 $$
 
+The script `03_missing_token_match.py` implements a method to find matching entities when tokens can be missing.
+
+Using the script, it was identified that the likelihood function seems to be causing too large a drop off in the probability when just a single token was missing. Futhermore, the probability when all tokens are present decreases as the number of tokens increases, even though the entity is arguably much more specific.
+
+In order to remedy this issue, the proportion of the tokens that are present was considered. This then requires a mapping from the proportion present to a probability. If all tokens are present, then a probability of 1 seems reasonable; equally, if all tokens are missing then the probability should be 0. There are in an infinite number of functions between the points $(0,0)$ amd $(1,1)$. The logistic function was chosen and is plotted in `04_logistic_function.py`.
+
+The function is given by:
+
+$$
+y = \frac{1}{1 + \exp^{k(x - x_0)}}
+$$
+
+where $x_0$ is the $x$ position at which $y = 0.5$ and $k$ is steepness of the curve. The figure below shows the function for $k = 10$ and $x_0 = 0.5$.
+
+![](./images/logistic_function.png)
+
 ## Mutations to tokens
 
 Tokens can be mutated in a number of ways:

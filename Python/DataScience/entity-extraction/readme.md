@@ -141,3 +141,22 @@ Tokens can be mutated in a number of ways:
 * Removal of character(s), e.g. 'Greens' becomes 'Green';
 * Rearrangement of characters (i.e. changing their position but where the  characters in a token remain the same) typically introducing a spelling mistake, e.g. 'Green' becomes 'Grene';
 * Mutation of a characters, e.g. 'Green' becomes 'Greed'.
+
+Bayes' theorem can be used to calculate the posterior likelihood of the $i^{th}$ entity given the text as before:
+
+$$
+p(E_i|T) = \frac{p(T|E_i) p(E_i)}{p(T)}
+$$
+
+but the likelihood function $p(T|E_i)$ needs to account for the potential mutations as opposed to just the proportion of tokens present.
+
+There are variety of ways in which string distances can be calculated as shown in the table below.
+
+| Algorithm name                            | Description                                                                               |
+|-------------------------------------------|-------------------------------------------------------------------------------------------|
+| Levenshtein distance                      | Allows deletion, insertion and substitution                                               |
+| Damerau–Levenshtein distance              | Allows insertion, deletion, substitution and the transposition of two adjacent characters |
+| Longest Common Subsequence (LCS) distance | Allows only insertion and deletion (i.e. not substitution)                                |
+| Hamming distance                          | Allows only substitution (thus strings must be of the same length)                        |
+| Jaro distance                             | Allows only transposition                                                                 |
+

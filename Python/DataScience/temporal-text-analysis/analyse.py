@@ -242,7 +242,7 @@ def plot_token_date_counts(timeseries, tokens):
     plt.close()
 
 
-def calculate_statistics(timeseries):
+def create_plots(timeseries):
     assert type(timeseries) == dict
 
     plot_hist_number_distinct_tokens(timeseries)
@@ -267,5 +267,5 @@ if __name__ == "__main__":
     timeseries = record_to_timeseries(dataset)
     logging.info(f"Dataset has {len(timeseries)} distinct tokens")
 
-    # Calculate statistics
-    calculate_statistics(timeseries)
+    # Create plots
+    create_plots(timeseries)

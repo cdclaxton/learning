@@ -2,6 +2,8 @@
 
 ## Introduction
 
+This project explores a method to detect trends in textual data. A dataset of news articles downloaded from Kaggle is analysed, with the first step being data exploration.
+
 ## How to run the code
 
 - Download the data from https://www.kaggle.com/datasets/rmisra/news-category-dataset/ in to the `./data` folder

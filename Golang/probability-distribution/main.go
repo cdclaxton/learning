@@ -88,7 +88,8 @@ func correctDistribution(dist DiscreteDistribution, maxError float64) (DiscreteD
 		distCorrected[value] = math.Abs(prob) / total
 	}
 
-	// Check the total of the normalised distribution
+	// Check the total of the normalised distribution (note that it won't be 
+	// exactly 1 due to floating point precision)
 	total = totalProbability(distCorrected)
 	if math.Abs(total - 1.0) > (maxError * float64(len(dist))) {
 		return nil, fmt.Errorf("%w: %f", ErrTotalOutsidePermittedRange, total)

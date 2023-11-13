@@ -86,6 +86,13 @@ func correctDistribution(dist DiscreteDistribution, maxError float64) (DiscreteD
 		}
 
 		distCorrected[value] = math.Abs(prob) / total
+
+		// Ensure the probability doesn't exceed 1 due to precision
+		if distCorrected[value] < 0 {
+			distCorrected[value] = 0
+		} else if distCorrected[value] > 1 {
+			distCorrected[value] = 1
+		}
 	}
 
 	// Check the total of the normalised distribution (note that it won't be 

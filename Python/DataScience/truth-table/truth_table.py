@@ -25,7 +25,7 @@ def row_to_markdown(row, is_boolean=True):
     if is_boolean:
         y = ["1" if xi == True else "0" for xi in row]
     else:
-        y = row
+        y = [f"${xi}$" for xi in row]
 
     return "| " + " | ".join(y) + " |"
 
@@ -37,7 +37,7 @@ def make_separator(n):
     assert n > 0
 
     row = ["--" for _ in range(n)]
-    return row_to_markdown(row, False)
+    return "| " + " | ".join(row) + " |"
 
 
 def markdown_table(inputs, outputs, input_names, output_names):
@@ -91,13 +91,18 @@ if __name__ == "__main__":
             "name": "Example 1",
             "input_names": ["A"],
             "fns": [lambda x: x[0], lambda x: not x[0]],
-            "output_names": ["A", "Not A"],
+            "output_names": ["T_0", "T_1"],
+            "equations": [
+                r"T_0 = A",
+                r"T_1 = \bar{A}",
+            ],
         },
         {
             "name": "Example 2",
             "input_names": ["B", "A"],
             "fns": [lambda x: x[1] and not x[0], lambda x: x[0]],
-            "output_names": ["D0", "D1"],
+            "output_names": [r"T_{low}", r"T_{high}"],
+            "equations": [r"T_{low} = A \bar{B}", r"T_{high} = B"],
         },
         {
             "name": "Example 3",
@@ -106,7 +111,8 @@ if __name__ == "__main__":
                 lambda x: (x[2] and not x[0]) or (x[1] and not x[0]),
                 lambda x: x[0],
             ],
-            "output_names": ["D0", "D1"],
+            "output_names": [r"T_{low}", r"T_{high}"],
+            "equations": [r"T_{low} = (A + B)\bar{C}", r"T_{high} = C"],
         },
         {
             "name": "Example 4",
@@ -115,7 +121,11 @@ if __name__ == "__main__":
                 lambda x: (x[3] or x[2]) and not (x[1] or x[0]),
                 lambda x: x[1] or x[0],
             ],
-            "output_names": ["D0", "D1"],
+            "output_names": [r"T_{low}", r"T_{high}"],
+            "equations": [
+                r"T_{low} = (A + B) \overline{(C + D)} = (A + B) \bar{C} \bar{D}",
+                r"T_{high} = C + D",
+            ],
         },
         {
             "name": "Example 5",
@@ -125,7 +135,12 @@ if __name__ == "__main__":
                 lambda x: x[1] and not x[0],
                 lambda x: x[0],
             ],
-            "output_names": ["D0", "D1", "D2"],
+            "output_names": [r"T_{low}", r"T_{medium}", r"T_{high}"],
+            "equations": [
+                r"T_{low} = A \overline{(B + C)} = A \bar{B} \bar{C}",
+                r"T_{medium} = B \bar{C}",
+                r"T_{high} = C",
+            ],
         },
         {
             "name": "Example 6",
@@ -135,7 +150,12 @@ if __name__ == "__main__":
                 lambda x: (x[3] or x[2]) and not (x[1] or x[0]),
                 lambda x: x[1] or x[0],
             ],
-            "output_names": ["D0", "D1", "D2"],
+            "output_names": [r"T_{low}", r"T_{medium}", r"T_{high}"],
+            "equations": [
+                r"T_{low} = (A + B) \overline{(C + D + E + F)} = (A + B) \bar{C} \bar{D} \bar{E} \bar{F}",
+                r"T_{medium} = (C + D) \overline{(E + F)} = (C + D) \bar{E} \bar{F}",
+                r"T_{high} = E + F",
+            ],
         },
         {
             "name": "Example 7",
@@ -144,7 +164,8 @@ if __name__ == "__main__":
                 lambda x: (x[2] or x[1]) and not x[0],
                 lambda x: (x[2] or x[1]) and x[0],
             ],
-            "output_names": ["D0", "D1"],
+            "output_names": [r"T_{low}", r"T_{high}"],
+            "equations": [r"T_{low} = (A + B) \bar{C}", r"T_{high} = (A + B) C"],
         },
         {
             "name": "Example 8",
@@ -153,7 +174,11 @@ if __name__ == "__main__":
                 lambda x: (x[3] or x[2]) and not (x[1] or x[0]),
                 lambda x: (x[3] or x[2]) and (x[1] or x[0]),
             ],
-            "output_names": ["D0", "D1"],
+            "output_names": [r"T_{low}", r"T_{high}"],
+            "equations": [
+                r"T_{low} = (A + B) \overline{(C + D)} = (A + B) \bar{C} \bar{D}",
+                r"T_{high} = (A + B) (C + D)",
+            ],
         },
         {
             "name": "Example 9",
@@ -164,15 +189,24 @@ if __name__ == "__main__":
                 lambda x: (x[3] or x[2]) and (x[1] or x[0]),
             ],
             "output_names": ["D0", "D1", "D2"],
+            "equations": [
+                r"T_{low} = (A + B) \overline{(C + D)} \cdot \overline{(E + F)} = (A + B) \bar{C} \bar{D} \bar{E} \bar{F}",
+                r"T_{medium} = (C + D) \overline{(E + F)} = (C + D) \bar{E} \bar{F}",
+                r"T_{high} = (C + D)(E + F)",
+            ],
         },
     ]
 
     for example in examples:
-        print(example["name"])
+        print(f"## {example['name']}")
         result = make_table(
             example["fns"], example["input_names"], example["output_names"]
         )
         for row in result:
             print(row)
+
+        print("\nEquations:")
+        for eqn in example["equations"]:
+            print(f"* ${eqn}$")
 
         print("\n")

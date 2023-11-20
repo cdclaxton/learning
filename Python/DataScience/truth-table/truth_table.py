@@ -188,7 +188,7 @@ if __name__ == "__main__":
                 lambda x: (x[3] or x[2]) and not (x[1] or x[0]),
                 lambda x: (x[3] or x[2]) and (x[1] or x[0]),
             ],
-            "output_names": ["D0", "D1", "D2"],
+            "output_names": [r"T_{low}", r"T_{medium}", r"T_{high}"],
             "equations": [
                 r"T_{low} = (A + B) \overline{(C + D)} \cdot \overline{(E + F)} = (A + B) \bar{C} \bar{D} \bar{E} \bar{F}",
                 r"T_{medium} = (C + D) \overline{(E + F)} = (C + D) \bar{E} \bar{F}",

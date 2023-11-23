@@ -52,7 +52,128 @@ $$
 
 The prior probability of each model $p(m)$ weights the likelihood of the observations given the model. Suppose that an analyst is able to provide the probability that there is one state or two states. Those two numbers would give $p(m_0)$ and $p(m_1) + p(m_2) + p(m_3)$ respectively. Models 1 to 3 require their own prior probability, but in the absence of domain knowledge, an uninformative prior in the form of a uniform distribution could be employed.
 
-This experiment is coded in Python and can be found in `two_state_experiment.py`.
+This experiment is coded in Python and can be found in `two_state_experiment.py`. The results of the changepoint model were compared to a model that randomly selects a sub-model using its prior probability.
+
+### Experiment 1: No uncertainty in the observation to state mapping
+Probability of only one state is 0.99 and the number of trials in the experiment is 1000. The CPT is:
+| $ $ | $e_0$ | $e_1$ |
+| -- | -- | -- |
+| $S_0$ | $1$ | $0$ |
+| $S_1$ | $0$ | $1$ |
+
+The confusion matrix for the changepoint model (with an accuracy of 1.00000) is:
+$$
+\begin{bmatrix} 
+0.9888 & 0.0 & 0.0 & 0.0 \\ 
+0.0 & 0.0047 & 0.0 & 0.0 \\ 
+0.0 & 0.0 & 0.0034 & 0.0 \\ 
+0.0 & 0.0 & 0.0 & 0.0031 \\ 
+\end{bmatrix}
+$$
+
+The confusion matrix for the random model (with an accuracy of 0.97940) is:
+$$
+\begin{bmatrix} 
+0.9794 & 0.0033 & 0.0034 & 0.0027 \\ 
+0.0047 & 0.0 & 0.0 & 0.0 \\ 
+0.0034 & 0.0 & 0.0 & 0.0 \\ 
+0.0031 & 0.0 & 0.0 & 0.0 \\ 
+\end{bmatrix}
+$$
+
+### Experiment 2: Probability of 0.5 for each state, no uncertainty in the observation to state mapping
+Probability of only one state is 0.5 and the number of trials in the experiment is 1000. The CPT is:
+| $ $ | $e_0$ | $e_1$ |
+| -- | -- | -- |
+| $S_0$ | $1$ | $0$ |
+| $S_1$ | $0$ | $1$ |
+
+The confusion matrix for the changepoint model (with an accuracy of 1.00000) is:
+$$
+\begin{bmatrix} 
+0.5142 & 0.0 & 0.0 & 0.0 \\ 
+0.0 & 0.1608 & 0.0 & 0.0 \\ 
+0.0 & 0.0 & 0.1617 & 0.0 \\ 
+0.0 & 0.0 & 0.0 & 0.1633 \\ 
+\end{bmatrix}
+$$
+
+The confusion matrix for the random model (with an accuracy of 0.33860) is:
+$$
+\begin{bmatrix} 
+0.257 & 0.0833 & 0.0854 & 0.0885 \\ 
+0.0773 & 0.027 & 0.0304 & 0.0261 \\ 
+0.0793 & 0.0254 & 0.0277 & 0.0293 \\ 
+0.0821 & 0.0262 & 0.0281 & 0.0269 \\ 
+\end{bmatrix}
+$$
+
+### Experiment 3: Probability of 0.5 for each state
+Probability of only one state is 0.5 and the number of trials in the experiment is 1000. The CPT is:
+| $ $ | $e_0$ | $e_1$ |
+| -- | -- | -- |
+| $S_0$ | $0.9$ | $0.1$ |
+| $S_1$ | $0.1$ | $0.9$ |
+
+The confusion matrix for the changepoint model (with an accuracy of 0.83570) is:
+$$
+\begin{bmatrix} 
+0.4513 & 0.0098 & 0.0045 & 0.0402 \\ 
+0.003 & 0.1409 & 0.0115 & 0.0022 \\ 
+0.0176 & 0.0161 & 0.1226 & 0.0147 \\ 
+0.0163 & 0.0157 & 0.0127 & 0.1209 \\ 
+\end{bmatrix}
+$$
+
+The confusion matrix for the random model (with an accuracy of 0.33640) is:
+$$
+\begin{bmatrix} 
+0.2516 & 0.0828 & 0.0861 & 0.0853 \\ 
+0.0769 & 0.0275 & 0.0273 & 0.0259 \\ 
+0.089 & 0.0269 & 0.0282 & 0.0269 \\ 
+0.0811 & 0.0273 & 0.0281 & 0.0291 \\ 
+\end{bmatrix}
+$$
+
+### Analysis
+
+Given how well an observation is a predictor of the state, an accuracy of 0.84 for Experiment 3 seems rather low. The problem is that there are technically two different models, one with just one stage and one with two stages. The more observations there are, the more places in which a changepoint can occur. The prior probability of any one changepoint configuration with two stages will decrease as the prior is essentially shared out equally. For example, if there were 100 observations, there are 99 locations for a changepoint and the prior of each possible changepoint location is divided by 99.
+
+### Monte Carlo experiments
+
+An experiment was performed with 10,000 trials with a random value of the probability of a single state (with values drawn from a uniform distribution in the range $[0,1]$) and a random CPT.
+
+The confusion matrix for the changepoint model (with an accuracy of 0.64390) is:
+$$
+\begin{bmatrix} 
+0.4521 & 0.0165 & 0.0123 & 0.0154 \\ 
+0.0568 & 0.0757 & 0.0178 & 0.0178 \\ 
+0.052 & 0.0361 & 0.0545 & 0.0252 \\ 
+0.0641 & 0.0244 & 0.0177 & 0.0616 \\ 
+\end{bmatrix}
+$$
+
+The confusion matrix for the max likelihood model (with an accuracy of 0.61110) is:
+$$
+\begin{bmatrix} 
+0.3719 & 0.0418 & 0.0316 & 0.051 \\ 
+0.0223 & 0.094 & 0.022 & 0.0298 \\ 
+0.0237 & 0.046 & 0.063 & 0.0351 \\ 
+0.0279 & 0.0343 & 0.0234 & 0.0822 \\ 
+\end{bmatrix}
+$$
+
+The confusion matrix for the random model (with an accuracy of 0.44580) is:
+$$
+\begin{bmatrix} 
+0.3326 & 0.0538 & 0.0588 & 0.0511 \\ 
+0.0579 & 0.0386 & 0.036 & 0.0356 \\ 
+0.0561 & 0.0379 & 0.0382 & 0.0356 \\ 
+0.0573 & 0.036 & 0.0381 & 0.0364 \\ 
+\end{bmatrix}
+$$
+
+The approach where all models are considered has the highest accuracy at 64 percent.
 
 ## Multiple changepoint detection algorithm approach
 
@@ -82,3 +203,4 @@ $$
 $$
 
 Now suppose there are two states denoted $S_0$ and $S_1$. The time index at which the state transition occurs is denoted $\tau_0$. The likelihood of the observations
+

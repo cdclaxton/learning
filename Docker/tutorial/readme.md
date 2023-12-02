@@ -62,4 +62,23 @@ curl http://localhost:5000 -X POST -d "This doesn't contain an account."
 curl http://localhost:5000 -X POST -d "Accounts: 01-02-03 12345678 and 89-90-91 09876543."
 ```
 
-## 
+## Dockerise the application
+
+### Start Docker
+
+Start Docker (on a Mac):
+
+```bash
+open -a Docker
+```
+
+Check the containers that are running:
+
+```bash
+docker container ls
+```
+
+### Simple base Python container
+
+Python Docker images can be found here: https://hub.docker.com/_/python
+

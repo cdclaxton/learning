@@ -72,6 +72,12 @@ Start Docker (on a Mac):
 open -a Docker
 ```
 
+List the Docker images:
+
+```bash
+docker image ls
+```
+
 Check the containers that are running:
 
 ```bash

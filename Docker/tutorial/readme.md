@@ -405,3 +405,7 @@ docker container ls
 # Stop the container
 docker container stop <hash>
 ```
+
+## Conclusion
+
+In this tutorial, an entity extractor has been written as a standalone function using a regular expression. The function was wrapped up in a web-server that ran locally and accepted text sent to it using the HTTP POST method. Finally, a Docker image was built from scratch and run that listens to web requests and returns extracted entities.

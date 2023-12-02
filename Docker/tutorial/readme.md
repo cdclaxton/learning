@@ -180,6 +180,23 @@ docker build -f Dockerfile_04 -t entity-extractor .
 and run the image:
 
 ```bash
-docker run entity-extractor
+docker run -p 5000:5000 entity-extractor
 ```
 
+The logs from the Flask HTTP server should be visible.
+
+In a new Terminal window run:
+
+```bash
+curl http://0.0.0.0:5000 -X POST -d "Accounts: 01-02-03 12345678 and 89-90-91 09876543."
+```
+
+To stop the Docker container:
+
+```bash
+# Get the container's name
+docker container ls
+
+# Stop the container
+docker container stop <hash>
+```

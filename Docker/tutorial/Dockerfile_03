@@ -1,0 +1,15 @@
+FROM python:3.9.18-alpine3.18
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy the Python source files
+COPY *.py .
+
+# Run the unit tests
+RUN pytest
+
+# Run the entity extraction server
+EXPOSE 5000
+CMD python3 extraction_server.py

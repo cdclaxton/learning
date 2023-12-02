@@ -135,3 +135,13 @@ Build the image:
 ```bash
 docker build -f Dockerfile_02 -t simple-python .
 ```
+
+Check the Docker images and then run the updated image `simple-python`:
+
+```bash
+docker image ls
+docker run simple-python
+```
+
+The container will print `Python packages installed` before exiting.
+

@@ -122,6 +122,29 @@ docker run simple-python
 
 The container will print `Hello, World!` before exiting.
 
+### Bash terminal in the container
+
+```bash
+docker run -it simple-python sh
+```
+
+Once inside the container, run:
+
+```bash
+# Get the current location
+pwd
+
+# List the files
+ls
+
+# Run Python
+python3
+```
+
+Leave the Docker container terminal by pressing `Control+D`.
+
+
+
 ### Install Python dependencies into the image
 
 ```bash
@@ -151,4 +174,10 @@ Build the image:
 
 ```bash
 docker build -f Dockerfile_03 -t entity-extractor .
+```
+
+### Open a Bash terminal in the container
+
+```bash
+
 ```

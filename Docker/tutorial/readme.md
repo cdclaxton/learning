@@ -383,6 +383,8 @@ and run the image, but this time mapping the host port 5000 to the container por
 docker run -p 5000:5000 entity-extractor
 ```
 
+The `-p` parameter is of the form `<host port>:<container port>`, so to map the host port 80 to the container port 5000, use `-p 80:5000`.
+
 The logs from the Flask HTTP server should be visible on the terminal.
 
 In a new Terminal window run:

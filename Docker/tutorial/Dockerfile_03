@@ -17,3 +17,5 @@ COPY *.py .
 
 # Run the unit tests
 RUN python -m pytest .
+
+CMD echo "Python code tested"

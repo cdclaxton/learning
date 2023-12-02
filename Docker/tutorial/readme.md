@@ -143,8 +143,6 @@ python3
 
 Leave the Docker container terminal by pressing `Control+D`.
 
-
-
 ### Install Python dependencies into the image
 
 ```bash
@@ -152,12 +150,6 @@ docker build -f Dockerfile_02 -t simple-python .
 ```
 
 Note that the Docker image name is being reused.
-
-Build the image:
-
-```bash
-docker build -f Dockerfile_02 -t simple-python .
-```
 
 Check the Docker images and then run the updated image `simple-python`:
 
@@ -167,6 +159,17 @@ docker run simple-python
 ```
 
 The container will print `Python packages installed` before exiting.
+
+### Run unit tests
+
+Build and run the image:
+
+```bash
+docker build -f Dockerfile_03 -t simple-python .
+docker run simple-python
+```
+
+
 
 ### Build a Docker image with the HTTP server
 

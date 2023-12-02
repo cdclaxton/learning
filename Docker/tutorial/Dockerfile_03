@@ -1,15 +1,16 @@
 FROM python:3.9.18-alpine3.18
 
-# Install dependencies
+# Make a directory
+RUN mkdir server
+
+# Set the working directory
+WORKDIR server
+
+# Copy the requirements.txt from the local folder to the image
 COPY requirements.txt .
+
+# Install dependencies
 RUN pip install -r requirements.txt
 
-# Copy the Python source files
-COPY *.py .
-
 # Run the unit tests
-RUN python3 -m pytest
-
-# Run the entity extraction server
-EXPOSE 5000
-CMD python3 extraction_server.py
+RUN python -m pytest .

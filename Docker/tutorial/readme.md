@@ -82,3 +82,6 @@ docker container ls
 
 Python Docker images can be found here: https://hub.docker.com/_/python
 
+```bash
+docker build -f Dockerfile_01 .
+```

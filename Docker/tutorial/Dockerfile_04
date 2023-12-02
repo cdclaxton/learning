@@ -1,0 +1,23 @@
+FROM python:3.9.18-alpine3.18
+
+# Make a directory
+RUN mkdir server
+
+# Set the working directory
+WORKDIR server
+
+# Copy the requirements.txt from the local folder to the image
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install -r requirements.txt
+
+# Copy the Python files
+COPY *.py .
+
+# Run the unit tests
+RUN python -m pytest .
+
+# Run the Python HTTP server
+EXPOSE 5000
+CMD python extraction_server.py

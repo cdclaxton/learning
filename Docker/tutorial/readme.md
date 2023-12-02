@@ -122,7 +122,7 @@ docker run simple-python
 
 The container will print `Hello, World!` before exiting.
 
-### Bash terminal in the container
+### Open a Bash terminal in the container
 
 ```bash
 docker run -it simple-python sh
@@ -169,18 +169,17 @@ docker build -f Dockerfile_03 -t simple-python .
 docker run simple-python
 ```
 
-
-
 ### Build a Docker image with the HTTP server
 
 Build the image:
 
 ```bash
-docker build -f Dockerfile_03 -t entity-extractor .
+docker build -f Dockerfile_04 -t entity-extractor .
 ```
 
-### Open a Bash terminal in the container
+and run the image:
 
 ```bash
-
+docker run entity-extractor
 ```
+

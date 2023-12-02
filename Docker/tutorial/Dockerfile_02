@@ -3,11 +3,13 @@ FROM python:3.9.18-alpine3.18
 # Make a directory
 RUN mkdir server
 
+# Set the working directory
+WORKDIR server
+
 # Copy the requirements.txt from the local folder to the image
-COPY requirements.txt server/
+COPY requirements.txt .
 
 # Install dependencies
-RUN cd server
-RUN pip install -r requirements.txt
+RUN pip install -r server/requirements.txt
 
 CMD echo "Python packages installed"

@@ -411,7 +411,7 @@ docker container stop <hash>
 Using the hash to stop the container is inelegant. To name the container as `extractor` run:
 
 ```bash
-docker run -p 5000:5000 -n extractor entity-extractor
+docker run -p 5000:5000 --name extractor entity-extractor
 ```
 
 When listing the containers using `docker container ls`, the container `extractor` should be present.
@@ -420,6 +420,15 @@ Now the container can be stopped using:
 
 ```bash
 docker container stop extractor
+```
+
+### Clear the containers and images
+
+Having got to the end of the tutorial, the Docker images and containers can now be cleared down to free up disk space. To do this run:
+
+```bash
+docker container prune
+docker image prune -a
 ```
 
 ## Conclusion

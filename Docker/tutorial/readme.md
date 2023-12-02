@@ -406,6 +406,22 @@ docker container ls
 docker container stop <hash>
 ```
 
+### Name the container
+
+Using the hash to stop the container is inelegant. To name the container as `extractor` run:
+
+```bash
+docker run -p 5000:5000 -n extractor entity-extractor
+```
+
+When listing the containers using `docker container ls`, the container `extractor` should be present.
+
+Now the container can be stopped using:
+
+```bash
+docker container stop extractor
+```
+
 ## Conclusion
 
 In this tutorial, an entity extractor has been written as a standalone function using a regular expression. The function was wrapped up in a web-server that ran locally and accepted text sent to it using the HTTP POST method. Finally, a Docker image was built from scratch and run that listens to web requests and returns extracted entities.

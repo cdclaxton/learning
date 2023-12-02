@@ -78,10 +78,54 @@ Check the containers that are running:
 docker container ls
 ```
 
-### Simple base Python container
+### Simple base Python image
 
 Python Docker images can be found here: https://hub.docker.com/_/python
 
 ```bash
 docker build -f Dockerfile_01 .
 ```
+
+Show a list of Docker images:
+
+```bash
+docker image ls
+```
+
+Run the container:
+
+```bash
+docker run <MD5 hash>  # e.g. docker run 22a6 (don't need all of it)
+```
+
+The container will print `Hello, World!` before exiting.
+
+### Name the base Python image
+
+Using the hash isn't particularly friendly, so it'll be named:
+
+```bash
+docker build -f Dockerfile_01 -t simple-python .
+```
+
+Show a list of Docker images:
+
+```bash
+docker image ls
+```
+
+and there should be an image called `simple-python`. Run the image:
+
+```bash
+docker run simple-python
+```
+
+The container will print `Hello, World!` before exiting.
+
+### Install Python dependencies into the image
+
+```bash
+docker build -f Dockerfile_02 -t simple-python .
+```
+
+Note that the Docker image name is being reused.

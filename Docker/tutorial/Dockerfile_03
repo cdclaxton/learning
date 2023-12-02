@@ -12,5 +12,8 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install -r requirements.txt
 
+# Copy the Python files
+COPY *.py .
+
 # Run the unit tests
 RUN python -m pytest .

@@ -129,3 +129,9 @@ docker build -f Dockerfile_02 -t simple-python .
 ```
 
 Note that the Docker image name is being reused.
+
+Build the image:
+
+```bash
+docker build -f Dockerfile_02 -t simple-python .
+```

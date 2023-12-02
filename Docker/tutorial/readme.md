@@ -145,3 +145,10 @@ docker run simple-python
 
 The container will print `Python packages installed` before exiting.
 
+### Build a Docker image with the HTTP server
+
+Build the image:
+
+```bash
+docker build -f Dockerfile_03 -t entity-extractor .
+```

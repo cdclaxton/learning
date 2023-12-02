@@ -8,7 +8,7 @@ RUN pip install -r requirements.txt
 COPY *.py .
 
 # Run the unit tests
-RUN pytest
+RUN python3 -m pytest
 
 # Run the entity extraction server
 EXPOSE 5000

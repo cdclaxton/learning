@@ -25,7 +25,7 @@ The following software should be installed on a local machine before continuing:
 
 * Docker Desktop
 * Python 3
-* An IDE such as VS Code
+* `pip` installer
 
 ## Install the required Python libraries
 

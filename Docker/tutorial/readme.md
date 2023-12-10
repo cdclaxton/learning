@@ -60,7 +60,7 @@ The first step is to devise a mechanism to extract sort-code and account number 
 
 The pattern is composed of a capture group to detect a sort-code in the form of `XX-XX-XX`, one or more spaces, and then a second capture group for an 8-digit account number in the form `XXXXXXXX`.
 
-![](./regexr.png)
+![](images/regexr.png)
 
 The regular expression was then transferred to `regex_extract.py` to extract the required entities from free-text. The associated unit test file `test_regex_extract.py` contains a series of tests. Have a look at the `regex_extract.py` script to see how the regex can be run in Python using the `re` library and how the text in the capture groups is extracted into a `dict` data structure.
 
@@ -118,7 +118,7 @@ Hello, World!
 
 Another way to test the server is to open a web browser and to navigate to http://localhost:5000. This will display a page like this:
 
-![](./web-browser.png)
+![](images/web-browser.png)
 
 Go back to the terminal running the Flask web server and press `Ctrl+C` to close the server.
 

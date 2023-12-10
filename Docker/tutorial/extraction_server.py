@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["POST"])
-def hello():
+def perform_extraction():
     # Extract the text (as bytes) from the HTTP POST request
     bytes = request.get_data()
 

@@ -45,20 +45,20 @@ The required libraries are:
 The requirements of the Python script are to:
 
 * Listen to an HTTP POST request;
-* Extract sort-code and account number pairs; and
+* Extract sort code and account number pairs; and
 * Return a list of extracted sort codes and account numbers via the HTTP response.
 
 The purpose of the tutorial is to demonstrate how to use Docker, so the Python code will necessarily be lightweight. It can be extended by handling different variants of sort codes and account numbers and handling a different ordering of a given pair.
 
 ### Function to extract entities from free-text
 
-The first step is to devise a mechanism to extract sort-code and account number pairs. To do this, the website http://regexr.com was used to develop a regular expression for extracting pairs from free text. The following regular expression pattern works for simple cases:
+The first step is to devise a mechanism to extract sort code and account number pairs. To do this, the website http://regexr.com was used to develop a regular expression for extracting pairs from free text. The following regular expression pattern works for simple cases:
 
 ```
 ([0-9]{2}-[0-9]{2}-[0-9]{2})\s+([0-9]{8})
 ```
 
-The pattern is composed of a capture group to detect a sort-code in the form of `XX-XX-XX`, one or more spaces, and then a second capture group for an 8-digit account number in the form `XXXXXXXX`.
+The pattern is composed of a capture group to detect a sort code in the form of `XX-XX-XX`, one or more spaces, and then a second capture group for an 8-digit account number in the form `XXXXXXXX`.
 
 ![](images/regexr.png)
 

@@ -3,8 +3,8 @@
 # Suspect a customer of a casino has replaced a die with a crooked (biased)
 # die. In 60 rolls of the die, the following results were obtained:
 #
-# 1  2  3  4  5  6
-# 8  9 19  6  8 10
+# Outcome: 1  2  3  4  5  6
+# Count:   8  9 19  6  8 10
 #
 # Use Monte Carlo simulation to compute the probability of seeing a chi-squared
 # value as given by the values above.
@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from statsmodels.distributions.empirical_distribution import ECDF
+
 
 def chi_squared(values):
     expected = np.ones(6) / 6
@@ -26,20 +27,19 @@ def monte_carlo(num_trials):
 
     chi_squared_results = []
     for _ in range(num_trials):
-        values = np.random.multinomial(60, np.ones(6)/6)
+        values = np.random.multinomial(60, np.ones(6) / 6)
         chi_squared_results.append(chi_squared(values))
 
     # Return a CDF
     return ECDF(chi_squared_results)
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     actual = [8, 9, 19, 6, 8, 10]
     actual_chi_squared = chi_squared(actual)
     print(f"Chi-squared value: {actual_chi_squared}")
 
-    # Calculate the CDF of the chi-squared statistic using Monte Carlo 
+    # Calculate the CDF of the chi-squared statistic using Monte Carlo
     # simulation
     cdf = monte_carlo(1000)
 
@@ -51,9 +51,9 @@ if __name__ == '__main__':
     prob_of_value_or_greater = 1.0 - cdf.y[idx]
 
     plt.plot(cdf.x, cdf.y)
-    plt.axvline(closest, c='r', linestyle="--")
-    plt.axhline(cdf.y[idx], c='r', linestyle="--")
+    plt.axvline(closest, c="r", linestyle="--")
+    plt.axhline(cdf.y[idx], c="r", linestyle="--")
     plt.title(f"Probability of value = {prob_of_value_or_greater:.2f}")
-    plt.xlabel('Chi-squared')
-    plt.ylabel('Probability')
+    plt.xlabel("Chi-squared")
+    plt.ylabel("Probability")
     plt.show()

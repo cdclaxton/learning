@@ -1,2 +1,10 @@
 __pycache__
 .pytest_cache
+
+apache-tinkerpop-gremlin-console-3.7.1
+
+
+*.drawio.bkp
+
+archive.zip
+News_Category_Dataset_v3.json

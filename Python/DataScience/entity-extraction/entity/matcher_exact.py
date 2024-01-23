@@ -106,8 +106,14 @@ class ExactEntityMatcher(EntityMatcher):
         assert max_window_width > 0
 
         self._tree: Tree = tree
+        self._max_window_width: int = max_window_width
         self._window: Window = Window(max_window_width)
         self._matches: List[ProbabilisticMatch] = []
+
+    def reset(self) -> None:
+        """Reset the matcher."""
+        self._window = Window(self._max_window_width)
+        self._matches = []
 
     def next_token(self, token):
         """Receive the next token in the text."""
@@ -120,27 +126,21 @@ class ExactEntityMatcher(EntityMatcher):
         # the tokens in the text
         tokens_in_window, start_idx, end_idx = self._window.get_tokens()
 
-        for i in range(1, end_idx - start_idx + 1):
-            tokens_to_check = tokens_in_window[:i]
-            print(tokens_to_check)
+        for i in range(len(tokens_in_window)):
+            tokens_to_check = tokens_in_window[i:]
 
             # Look for a match
             match, _, entity_id = self._tree.has_tokens(tokens_to_check)
 
-            # If there isn't a match, there's no point checking any further
-            # lists of tokens
-            if not match:
-                return
-
             if entity_id is not None:
-                self._matches.append(
-                    ProbabilisticMatch(
-                        start=start_idx,
-                        end=start_idx + i - 1,
-                        entry_index=entity_id,
-                        probability=1.0,
-                    )
+                m = ProbabilisticMatch(
+                    start=end_idx - len(tokens_to_check) + 1,
+                    end=end_idx,
+                    entry_index=entity_id,
+                    probability=1.0,
                 )
+
+                self._matches.append(m)
 
     def get_matches(self):
         return self._matches

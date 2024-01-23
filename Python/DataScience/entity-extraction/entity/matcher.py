@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import math
 
 
 class ProbabilisticMatch:
@@ -32,7 +31,7 @@ class ProbabilisticMatch:
             self.start == other.start
             and self.end == other.end
             and self.entry_index == other.entry_index
-            and math.abs(self.probability - other.probability) < 1e-6
+            and abs(self.probability - other.probability) < 1e-6
         )
 
 
@@ -45,6 +44,11 @@ class EntityMatcher(ABC):
     @abstractmethod
     def get_matches(self):
         """Return entity extraction results."""
+        pass
+
+    @abstractmethod
+    def reset(self):
+        """Reset the matcher."""
         pass
 
 

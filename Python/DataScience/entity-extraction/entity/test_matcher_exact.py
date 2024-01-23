@@ -77,6 +77,13 @@ def test_exact_entity_matcher():
         }
     )
 
+    assert tree.has_tokens(["a"]) == (True, False, None)
+    assert tree.has_tokens(["a", "b"]) == (True, False, "e-1")
+    assert tree.has_tokens(["a", "b", "c"]) == (True, True, "e-2")
+    assert tree.has_tokens(["d"]) == (True, False, None)
+    assert tree.has_tokens(["d", "e"]) == (True, True, "e-3")
+    assert tree.has_tokens(["f"]) == (False, False, None)
+
     matcher = ExactEntityMatcher(tree, window_size)
 
     # Index:    0 1 2
@@ -91,18 +98,36 @@ def test_exact_entity_matcher():
     # Tokens:   a b c
     # Matches:  ===    <-- e-1
     #           =====  <-- e-2
+    matcher.reset()
     m1 = ProbabilisticMatch(0, 1, "e-1", 1.0)
     m2 = ProbabilisticMatch(0, 2, "e-2", 1.0)
     add_token_check(matcher, "a", [])
     add_token_check(matcher, "b", [m1])
-    add_token_check(matcher, "e", [m1, m2])
+    add_token_check(matcher, "c", [m1, m2])
 
     # Index:    0 1 2 3 4
     # Tokens:   f d e c g
     # Matches:    ===      <-- e-3
+    matcher.reset()
     m1 = ProbabilisticMatch(1, 2, "e-3", 1.0)
     add_token_check(matcher, "f", [])
     add_token_check(matcher, "d", [])
     add_token_check(matcher, "e", [m1])
     add_token_check(matcher, "c", [m1])
     add_token_check(matcher, "g", [m1])
+
+    # Index:    0 1 2 3 4 5
+    # Tokens:   f d e a b c
+    # Matches:    ===        <-- e-3
+    #                 ===    <-- e-1
+    #                 =====  <-- e-2
+    matcher.reset()
+    m1 = ProbabilisticMatch(1, 2, "e-3", 1.0)
+    m2 = ProbabilisticMatch(3, 4, "e-1", 1.0)
+    m3 = ProbabilisticMatch(3, 5, "e-2", 1.0)
+    add_token_check(matcher, "f", [])
+    add_token_check(matcher, "d", [])
+    add_token_check(matcher, "e", [m1])
+    add_token_check(matcher, "a", [m1])
+    add_token_check(matcher, "b", [m1, m2])
+    add_token_check(matcher, "c", [m1, m2, m3])

@@ -1,4 +1,4 @@
-from evaluator import *
+from .evaluator import *
 
 
 def test_entity_span():

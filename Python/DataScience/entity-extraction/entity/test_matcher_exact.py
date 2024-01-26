@@ -60,9 +60,10 @@ def test_tree():
 
 
 def add_token_check(matcher, token, expected):
+    """Add a token to the matcher and check the result."""
     matcher.next_token(token)
     actual = matcher.get_matches()
-    assert actual == expected, f"expected: {expected}, got: {actual}"
+    assert expected == actual, f"expected: {expected}, got: {actual}"
 
 
 def test_exact_entity_matcher():

@@ -1,5 +1,7 @@
 from collections import deque
 
+from domain import Tokens
+
 from .matcher import EntityMatcher, ProbabilisticMatch
 from .sequence import Window
 from lookup.lookup import Lookup
@@ -74,7 +76,7 @@ class Tree:
         return True, current_node.is_leaf(), current_node.get_entity_id()
 
 
-def tree_from_entities(entities: Dict[str, List[str]]) -> Tuple[Tree, int]:
+def tree_from_entities(entities: Dict[str, Tokens]) -> Tuple[Tree, int]:
     """Returns a Tree for given dict of entities and the max number of tokens."""
 
     assert type(entities) == dict
@@ -124,13 +126,13 @@ class ExactEntityMatcher(EntityMatcher):
 
         # Get the tokens in the window and the absolute start and end indices of
         # the tokens in the text
-        tokens_in_window, start_idx, end_idx = self._window.get_tokens()
+        tokens_in_window, _, end_idx = self._window.get_tokens()
 
         for i in range(len(tokens_in_window)):
             tokens_to_check = tokens_in_window[i:]
 
             # Look for a match
-            match, _, entity_id = self._tree.has_tokens(tokens_to_check)
+            _, _, entity_id = self._tree.has_tokens(tokens_to_check)
 
             if entity_id is not None:
                 m = ProbabilisticMatch(
@@ -142,5 +144,5 @@ class ExactEntityMatcher(EntityMatcher):
 
                 self._matches.append(m)
 
-    def get_matches(self):
+    def get_matches(self) -> List[ProbabilisticMatch]:
         return self._matches

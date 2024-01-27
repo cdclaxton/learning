@@ -16,6 +16,12 @@ A piece of text to undergo extraction is provided, such as "Go to 37 Straight St
 
 This page captures the design and experiments that were performed during the development of the approach. The order of the scripts that were written and their descriptions is reflected in the structure of the sections below. The complexity of the solution is built up incrementally.
 
+## Dataflow
+
+The image below shows a high-level view of the data (denoted with two horizontal lines) and the processes (shown with circles) used in the experiment.
+
+![](./images/data-flow.png)
+
 ## Exact extraction
 
 If the tokens in the text are present exactly as provided in the corpus, i.e. in the same order and without any spelling mistakes, then the problem of finding matching tokens in the corpus is fairly trivial. In the example, the matching entry begins at index 2 and ends at index 4, as shown below:

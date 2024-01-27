@@ -30,7 +30,7 @@ def generate_ground_truth(
     assert type(min_text_tokens) == int and min_text_tokens > 0
     assert type(max_text_tokens) == int and max_text_tokens > 0
 
-    # Number of tokens to the left and right of the entity
+    # Number of tokens to the left and to right of the entity
     num_tokens_left = random.randint(min_text_tokens, max_text_tokens)
     num_tokens_right = random.randint(min_text_tokens, max_text_tokens)
 
@@ -42,9 +42,11 @@ def generate_ground_truth(
     entity_id = random_entity_id(entities)
     entity_tokens = entities[entity_id]
 
+    # Ground truth entity span
     start = len(tokens_left)
     e = EntitySpan(start, start + len(entity_tokens) - 1, entity_id)
 
+    # Create the text that includes the entity
     text = tokens_left[:]
     text.extend(entity_tokens)
     text.extend(tokens_right)

@@ -1,55 +1,61 @@
+from __future__ import annotations
 from collections import deque
 
-from domain import Tokens
+from domain import Tokens, assert_token_valid, assert_tokens_valid
 
 from .matcher import EntityMatcher, ProbabilisticMatch
 from .sequence import Window
-from lookup.lookup import Lookup
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 
 class Node:
     """Represents a node in a tree data structure."""
 
-    def __init__(self, token):
+    def __init__(self, token: str):
         assert token is None or type(token) == str, f"Got type {type(token)}"
+
         self._token = token
         self._children = {}  # Map of the token to its node
-        self._entity_id = None
+        self._entity_id: str = None
 
-    def add_child(self, token):
+    def add_child(self, token: str) -> None:
         """Add child node if the token doesn't already exist as a child."""
-        assert type(token) == str
+        assert_token_valid(token)
+
         if token not in self._children:
             self._children[token] = Node(token)
 
         return self._children[token]
 
-    def get_child(self, token):
+    def get_child(self, token: str) -> Optional[Node]:
         """Get child node given the token (returns None if child not found)."""
-        assert type(token) == str
+        assert_token_valid(token)
+
         return self._children.get(token, None)
 
-    def is_leaf(self):
+    def is_leaf(self) -> bool:
         """Is the node a leaf node?"""
         return len(self._children) == 0
 
-    def set_entity_id(self, entity_id):
+    def set_entity_id(self, entity_id: str) -> None:
         """Set the entity ID associated with the node."""
         self._entity_id = entity_id
 
-    def get_entity_id(self):
+    def get_entity_id(self) -> str:
         """Get the entity ID associated with the node."""
         return self._entity_id
 
 
 class Tree:
+    """Represents a simple tree data structure."""
+
     def __init__(self):
         self._root = Node(None)
 
-    def add_tokens(self, tokens, entity_id=None):
-        assert type(tokens) == list
+    def add_tokens(self, tokens: Tokens, entity_id: Optional[str] = None) -> None:
+        """Add tokens to the tree (and potentially an entity ID for the last node)."""
+        assert_tokens_valid(tokens)
         assert len(tokens) > 0
 
         if len(tokens) == 1:
@@ -63,8 +69,9 @@ class Tree:
         if entity_id is not None:
             current_token.set_entity_id(entity_id)
 
-    def has_tokens(self, tokens):
-        assert type(tokens) == list
+    def has_tokens(self, tokens: Tokens) -> Tuple[bool, bool, Optional[str]]:
+        """Returns whether the tree contains all of the tokens, the final token is a leaf and the entity ID."""
+        assert_tokens_valid(tokens)
         assert len(tokens) > 0
 
         current_node = self._root
@@ -119,7 +126,7 @@ class ExactEntityMatcher(EntityMatcher):
 
     def next_token(self, token):
         """Receive the next token in the text."""
-        assert type(token) == str
+        assert_token_valid(token)
 
         # Adjust the window by adding the token
         self._window.add_token(token)
@@ -138,11 +145,12 @@ class ExactEntityMatcher(EntityMatcher):
                 m = ProbabilisticMatch(
                     start=end_idx - len(tokens_to_check) + 1,
                     end=end_idx,
-                    entry_index=entity_id,
+                    entity_id=entity_id,
                     probability=1.0,
                 )
 
                 self._matches.append(m)
 
     def get_matches(self) -> List[ProbabilisticMatch]:
+        """Return entity extraction results."""
         return self._matches

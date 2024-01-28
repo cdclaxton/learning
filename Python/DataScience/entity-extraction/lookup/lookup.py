@@ -1,56 +1,69 @@
+from typing import Dict, List, Set
+
+from domain import Tokens
+
+
 class Lookup:
     """Holds two lookups."""
 
     def __init__(self):
-        self.token_to_entries = {}
-        self.entry_to_tokens = {}
+        self._token_to_entity_ids: Dict[str, Set[str]] = {}
+        self._entity_id_to_tokens: Dict[str, List[str]] = {}
 
-    def add(self, entry_id, tokens):
-        """Add an entry to the lookup."""
-        assert type(entry_id) == int
+    def add(self, entity_id: str, tokens: Tokens):
+        """Add an entity to the lookup."""
+        assert type(entity_id) == str
         assert type(tokens) == list
+        assert all([type(t) == str for t in tokens])
         assert len(tokens) > 0
 
         # Store the tokens for the entry
-        assert entry_id not in self.entry_to_tokens, f"entry {entry_id} already exists"
-        self.entry_to_tokens[entry_id] = tokens
+        assert (
+            entity_id not in self._entity_id_to_tokens
+        ), f"entity {entity_id} already exists"
 
-        # Store the entry for the tokens
+        self._entity_id_to_tokens[entity_id] = tokens
+
+        # Store the entity ID for the tokens
         for t in tokens:
-            if t not in self.token_to_entries:
-                self.token_to_entries[t] = set()
+            if t not in self._token_to_entity_ids:
+                self._token_to_entity_ids[t] = set()
 
-            self.token_to_entries[t].add(entry_id)
+            self._token_to_entity_ids[t].add(entity_id)
 
-    def tokens_for_entry(self, entry_id):
-        """Get tokens for an entry given its ID."""
+    def tokens_for_entity(self, entity_id):
+        """Get tokens for an entity given its ID."""
 
-        assert type(entry_id) == int
-        return self.entry_to_tokens.get(entry_id, None)
+        assert type(entity_id) == str
+        return self._entity_id_to_tokens.get(entity_id, None)
 
-    def entries_for_token(self, token):
-        return self.token_to_entries.get(token, None)
+    def entity_ids_for_token(self, token):
+        """Get the entity IDs for a given token."""
+
+        assert type(token) == str
+        return self._token_to_entity_ids.get(token, None)
 
     def matching_entries(self, tokens):
-        """Find the matching entries in the lookup given the tokens."""
+        """Find the matching entities in the lookup given the tokens."""
 
         assert type(tokens) == list
+        assert all([type(t) == str for t in tokens])
         assert len(tokens) > 0
 
-        # Get the entries for each token
+        # Get the entities for each token
         for idx, t in enumerate(tokens):
-            es = self.entries_for_token(t)
+            es = self.entity_ids_for_token(t)
 
             if es is None:
                 return None
 
             if idx == 0:
-                entries = es
+                entity_ids = es
             else:
-                entries = entries.intersection(es)
+                entity_ids = entity_ids.intersection(es)
 
             # No entries match, so there's no point looking at any further tokens
-            if len(entries) == 0:
+            if len(entity_ids) == 0:
                 return None
 
-        return entries
+        return entity_ids

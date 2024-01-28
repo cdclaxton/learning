@@ -7,7 +7,7 @@ from entity.matcher import (
     feed_entity_matchers,
     threshold_matcher_results,
 )
-from entity.matcher_exact import ExactEntityMatcher, tree_from_entities
+from entity.matcher_exact import ExactEntityMatcher, Tree, tree_from_entities
 from evaluator.evaluator import EntitySpan
 from typing import Tuple
 
@@ -78,16 +78,21 @@ if __name__ == "__main__":
     # Create a tree data structure for holding the entities
     tree, max_window = tree_from_entities(entities)
 
-    # Instantiate an exact entity matcher
+    # Instantiate an exact entity matcher with a tree constructed from the
+    # entities and an exact entity matcher with an empty tree
     exact_entity_matcher = ExactEntityMatcher(tree, max_window)
+    exact_entity_matcher_empty_tree = ExactEntityMatcher(Tree(), max_window)
 
     # Create a random piece of text containing zero or more entities
     tokens, gt_entity_span = generate_ground_truth(
         min_text_tokens, max_text_tokens, text_generator, entities
     )
 
-    # Run the exact entity matcher
-    matchers = {"exact matcher": exact_entity_matcher}
+    # Run the exact entity matchers
+    matchers = {
+        "exact matcher": exact_entity_matcher,
+        "exact matcher with an empty tree": exact_entity_matcher_empty_tree,
+    }
     feed_entity_matchers(tokens, matchers)
 
     # Get the entity matches

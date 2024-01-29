@@ -11,7 +11,6 @@ from likelihood.likelihood import (
 )
 from lookup.lookup import Lookup
 from visualisation.visualisation import (
-    visualise_probabilistic_matches,
     visualise_probabilistic_matches_over_threshold,
 )
 

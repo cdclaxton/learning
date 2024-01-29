@@ -17,6 +17,7 @@ from generator.generator import (
     make_uniform_num_entity_tokens_generator,
     random_entity_id,
 )
+from visualisation.visualisation import visualise_probabilistic_matches
 
 
 def generate_ground_truth(
@@ -95,9 +96,14 @@ if __name__ == "__main__":
     }
     feed_entity_matchers(tokens, matchers)
 
+    # Visualise the results
+    print(
+        visualise_probabilistic_matches(tokens, exact_entity_matcher._matches, entities)
+    )
+
     # Get the entity matches
     entity_spans = threshold_matcher_results(matchers, 0.5)
 
     # Calculate the error
     errors = calc_matcher_error([gt_entity_span], entity_spans)
-    print(errors)
+    print(f"Matcher errors: {errors}")

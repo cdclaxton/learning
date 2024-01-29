@@ -10,6 +10,10 @@ from likelihood.likelihood import (
     LikelihoodFunctionProbMissing,
 )
 from lookup.lookup import Lookup
+from visualisation.visualisation import (
+    visualise_probabilistic_matches,
+    visualise_probabilistic_matches_over_threshold,
+)
 
 
 if __name__ == "__main__":
@@ -43,8 +47,17 @@ if __name__ == "__main__":
     # Send the tokens to the entity matchers
     feed_entity_matchers(text_tokens, entity_matchers)
 
-    matches1 = m1.get_sorted_matches_above_threshold(0.0)
-    print(matches1)
+    # Visualise the results
+    print("Constant probability of missing token matcher:")
+    print(
+        visualise_probabilistic_matches_over_threshold(
+            text_tokens, m1._matches, lookup._entity_id_to_tokens, 0.001
+        )
+    )
 
-    matches2 = m2.get_sorted_matches_above_threshold(0.0)
-    print(matches2)
+    print("Logistic likelihood function missing token matcher:")
+    print(
+        visualise_probabilistic_matches_over_threshold(
+            text_tokens, m2._matches, lookup._entity_id_to_tokens, 0.001
+        )
+    )

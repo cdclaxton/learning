@@ -16,6 +16,15 @@ A piece of text to undergo extraction is provided, such as "Go to 37 Straight St
 
 This page captures the design and experiments that were performed during the development of the approach. The order of the scripts that were written and their descriptions is reflected in the structure of the sections below. The complexity of the solution is built up incrementally.
 
+## Unit tests
+
+To run the unit tests, enter:
+
+```bash
+
+pytest .
+```
+
 ## Dataflow
 
 The image below shows a high-level view of the data (denoted with two horizontal lines) and the processes (shown with circles) used in the experiment.

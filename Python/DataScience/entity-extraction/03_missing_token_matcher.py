@@ -9,7 +9,7 @@ from likelihood.likelihood import (
     LikelihoodFunctionLogistic,
     LikelihoodFunctionProbMissing,
 )
-from lookup.lookup import Lookup
+from lookup.in_memory_lookup import InMemoryLookup
 from visualisation.visualisation import (
     visualise_probabilistic_matches_over_threshold,
 )
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # Create a lookup from a token to the entries to which it occurs and a
     # lookup from the entry to its tokens
-    lookup = Lookup()
+    lookup = InMemoryLookup()
 
     for idx, entry in enumerate(entries):
         tokens = [t for t in entry]

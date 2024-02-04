@@ -1,10 +1,10 @@
-from .lookup import Lookup
+from lookup.in_memory_lookup import InMemoryLookup
 
 
 def test_lookup():
     """Unit tests for the Lookup class."""
 
-    l = Lookup()
+    l = InMemoryLookup()
 
     # Add an entry
     l.add("e-0", ["80", "Straight", "Street"])
@@ -29,7 +29,7 @@ def test_lookup():
 def test_matching_entries():
     """Unit tests for matching_entries()."""
 
-    l = Lookup()
+    l = InMemoryLookup()
     l.add("e-0", ["80", "Straight", "Street"])
     l.add("e-1", ["80", "River", "Street"])
     l.add("e-2", ["80", "Broad", "Walk"])

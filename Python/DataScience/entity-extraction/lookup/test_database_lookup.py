@@ -29,6 +29,7 @@ def test_database_lookup():
     # Get the tokens for the entities
     assert lookup.tokens_for_entity("e-1") == ["A", "B"]
     assert lookup.tokens_for_entity("e-2") == ["A", "C", "D"]
+    assert lookup.tokens_for_entity("e-3") is None
 
     # Get the entities for the tokens
     assert lookup.entity_ids_for_token("A") == set(["e-1", "e-2"])

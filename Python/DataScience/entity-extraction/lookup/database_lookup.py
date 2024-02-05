@@ -34,6 +34,9 @@ class DatabaseBackedLookup(Lookup):
         self._conn: Optional[sqlite3.Connection] = None
         self._cursor: Optional[sqlite3.Cursor] = None
 
+        # Number of times the add() method has been called since a database commit
+        self._num_adds = 0
+
         self._initialise_database()
 
     def _initialise_database(self):
@@ -123,11 +126,18 @@ class DatabaseBackedLookup(Lookup):
                 (token, entity_id),
             )
 
+        self._num_adds += 1
+
         # Commit the inserts
-        self._conn.commit()
+        if self._num_adds == 1000:
+            self._conn.commit()
+            self._num_adds = 0
 
     def finalise(self) -> None:
         """Finalise the entries in the lookup."""
+
+        if self._num_adds > 0:
+            self._conn.commit()
 
         # Add an index to the tables
         self._cursor.execute(

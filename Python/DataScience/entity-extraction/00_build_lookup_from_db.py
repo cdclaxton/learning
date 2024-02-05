@@ -28,9 +28,11 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
         if result is None:
             break
 
+        # Extract the entity ID and parse the tokens from the database row
         entity_id = result[0]
         tokens = [ri.replace(",", "").lower() for ri in result[1].split()]
 
+        # Add the entity to the lookup
         lookup.add(entity_id, tokens)
 
         if num_rows_processed % 10000 == 0:
@@ -45,7 +47,7 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
     conn.close()
 
     end_time = datetime.now()
-    print(f"Time taken: {(end_time - start_time).total_seconds()}")
+    print(f"Time taken to load: {(end_time - start_time).total_seconds()} seconds")
 
 
 if __name__ == "__main__":
@@ -67,6 +69,10 @@ if __name__ == "__main__":
     # Load the lookup
     load_lookup(lookup, username, password)
 
-    # Finalise the entries and close the connection to the database
+    # Finalise the entries
+    start = datetime.now()
     lookup.finalise()
+    print(f"Time taken to finalise: {(datetime.now() - start).total_seconds()} seconds")
+
+    # Close the connection to the database
     lookup.close()

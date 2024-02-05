@@ -202,7 +202,12 @@ class DatabaseBackedLookup(Lookup):
         """Create debug output (only for small databases)."""
 
         res = self._cursor.execute("SELECT name FROM sqlite_master;")
-        print(res.fetchall())
+        while True:
+            result = res.fetchone()
+            if result is None:
+                break
+            print(f"Table: {result[0]}")
+
         print("")
 
         print("Entity ID to tokens:")

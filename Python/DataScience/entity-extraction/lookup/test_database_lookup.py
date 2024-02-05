@@ -24,19 +24,24 @@ def test_database_lookup():
     # Initialise a lookup for reading
     lookup = DatabaseBackedLookup(database_filepath, False)
 
-    lookup._debug()
-
     # Get the tokens for the entities
     assert lookup.tokens_for_entity("e-1") == ["A", "B"]
     assert lookup.tokens_for_entity("e-2") == ["A", "C", "D"]
     assert lookup.tokens_for_entity("e-3") is None
 
     # Get the entities for the tokens
-    assert lookup.entity_ids_for_token("A") == set(["e-1", "e-2"])
-    assert lookup.entity_ids_for_token("B") == set(["e-1"])
-    assert lookup.entity_ids_for_token("C") == set(["e-2"])
-    assert lookup.entity_ids_for_token("D") == set(["e-2"])
+    assert lookup.entity_ids_for_token("A") == {"e-1", "e-2"}
+    assert lookup.entity_ids_for_token("B") == {"e-1"}
+    assert lookup.entity_ids_for_token("C") == {"e-2"}
+    assert lookup.entity_ids_for_token("D") == {"e-2"}
     assert lookup.entity_ids_for_token("E") is None
+
+    # Get the matching entities
+    assert lookup.matching_entries(["A"]) == {"e-1", "e-2"}
+    assert lookup.matching_entries(["B"]) == {"e-1"}
+    assert lookup.matching_entries(["A", "B"]) == {"e-1"}
+    assert lookup.matching_entries(["A", "D", "C"]) == {"e-2"}
+    assert lookup.matching_entries(["A", "B", "E"]) is None
 
     # Close the database connection in the lookup
     lookup.close()

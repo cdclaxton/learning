@@ -15,7 +15,7 @@ class MissingTokenEntityMatcher(EntityMatcher):
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
     ):
-        assert type(lookup) == Lookup
+        assert isinstance(lookup, Lookup)
         assert type(max_window_width) == int
         assert max_window_width > 0
         assert isinstance(likelihood_function, LikelihoodFunction)
@@ -53,7 +53,9 @@ class MissingTokenEntityMatcher(EntityMatcher):
                         start=end_idx - len(tokens_to_check) + 1,
                         end=end_idx,
                         entity_id=entry_idx,
-                        probability=self._likelihood_function.calc(tokens_to_check, entity_tokens)
+                        probability=self._likelihood_function.calc(
+                            tokens_to_check, entity_tokens
+                        ),
                     )
 
                     self._matches.append(m)

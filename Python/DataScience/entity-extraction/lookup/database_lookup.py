@@ -216,7 +216,28 @@ class DatabaseBackedLookup(Lookup):
 
     def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
         """Find the matching entities in the lookup given the tokens."""
-        pass
+
+        assert type(tokens) == list
+        assert all([type(t) == str for t in tokens])
+        assert len(tokens) > 0
+
+        # Get the entities for each token
+        for idx, t in enumerate(tokens):
+            es = self.entity_ids_for_token(t)
+
+            if es is None:
+                return None
+
+            if idx == 0:
+                entity_ids = es
+            else:
+                entity_ids = entity_ids.intersection(es)
+
+            # No entries match, so there's no point looking at any further tokens
+            if len(entity_ids) == 0:
+                return None
+
+        return entity_ids
 
     def __repr__(self):
         return f"DatabaseBackedLookup(filepath={self._filepath})"

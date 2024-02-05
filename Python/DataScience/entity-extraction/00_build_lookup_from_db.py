@@ -16,17 +16,19 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
     )
 
     cur = conn.cursor()
-    res = cur.execute(
-        "SELECT address_id, address_base_source_full FROM address limit 10"
-    )
+    cur.execute("SELECT address_id, address_base_source_full FROM address limit 10")
 
     num_rows_processed = 0
 
     while True:
-        result = res.fetchone()
+        result = cur.fetchone()
         if result is None:
             break
-        print(result)
+
+        entity_id = result[0]
+        tokens = [ri.replace(",", "") for ri in result[1].split()]
+
+        lookup.add(entity_id, tokens)
 
         if num_rows_processed % 10000 == 0:
             print(f"Processed {num_rows_processed} rows")

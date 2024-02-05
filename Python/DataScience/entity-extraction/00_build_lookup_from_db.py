@@ -2,6 +2,7 @@
 import mysql.connector
 import sys
 
+from datetime import datetime
 from lookup.database_lookup import DatabaseBackedLookup
 
 
@@ -16,9 +17,11 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
     )
 
     cur = conn.cursor()
-    cur.execute("SELECT address_id, address_base_source_full FROM address limit 10")
+    cur.execute("SELECT address_id, address_base_source_full FROM address")
 
     num_rows_processed = 0
+    start_time = datetime.now()
+    start_time_batch = datetime.now()
 
     while True:
         result = cur.fetchone()
@@ -26,15 +29,23 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
             break
 
         entity_id = result[0]
-        tokens = [ri.replace(",", "") for ri in result[1].split()]
+        tokens = [ri.replace(",", "").lower() for ri in result[1].split()]
 
         lookup.add(entity_id, tokens)
 
         if num_rows_processed % 10000 == 0:
-            print(f"Processed {num_rows_processed} rows")
+            end_time_batch = datetime.now()
+            time_diff = (end_time_batch - start_time_batch).total_seconds()
+            print(f"Processed {num_rows_processed} rows ({time_diff} seconds)")
+            start_time_batch = datetime.now()
+
+        num_rows_processed += 1
 
     # Close the connection to the database
     conn.close()
+
+    end_time = datetime.now()
+    print(f"Time taken: {(end_time - start_time).total_seconds()}")
 
 
 if __name__ == "__main__":

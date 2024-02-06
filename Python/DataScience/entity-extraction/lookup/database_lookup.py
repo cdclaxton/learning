@@ -13,11 +13,13 @@ logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 # Database table names
 ENTITY_ID_TO_TOKENS_TABLENAME = "EntityIdToTokens"
 TOKEN_TO_ENTITY_ID_TABLENAME = "TokenToEntityID"
+MAX_TOKENS_TABLENAME = "MaxTokens"
 
 # Database column names
 ENTITY_ID_COLUMN = "entityId"
 TOKENS_COLUMN = "tokens"
 TOKEN_COLUMN = "token"
+MAX_TOKENS_COLUMN = "maxTokens"
 
 TOKEN_SEPARATOR = " "
 
@@ -36,6 +38,9 @@ class DatabaseBackedLookup(Lookup):
 
         # Number of times the add() method has been called since a database commit
         self._num_adds = 0
+
+        # Maximum number of tokens for a single entity
+        self._max_num_tokens = 0
 
         self._initialise_database()
 
@@ -75,6 +80,11 @@ class DatabaseBackedLookup(Lookup):
         # Create the token to entity ID table
         self._cursor.execute(
             f"CREATE TABLE {TOKEN_TO_ENTITY_ID_TABLENAME}({TOKEN_COLUMN}, {ENTITY_ID_COLUMN});"
+        )
+
+        # Create a table to hold the maximum number of tokens for a entity
+        self._cursor.execute(
+            f"CREATE TABLE {MAX_TOKENS_TABLENAME}({MAX_TOKENS_COLUMN});"
         )
 
     def _initialise_read_mode(self):
@@ -126,9 +136,12 @@ class DatabaseBackedLookup(Lookup):
                 (token, entity_id),
             )
 
+        # Update the maximum number of tokens for an entity
+        self._max_num_tokens = max(self._max_num_tokens, len(tokens))
+
         self._num_adds += 1
 
-        # Commit the inserts
+        # Commit the inserts if the insert threshold has been met
         if self._num_adds == 1000:
             self._conn.commit()
             self._num_adds = 0
@@ -136,8 +149,15 @@ class DatabaseBackedLookup(Lookup):
     def finalise(self) -> None:
         """Finalise the entries in the lookup."""
 
+        # Commit any remaining insert operations
         if self._num_adds > 0:
             self._conn.commit()
+
+        # Write the maximum number of tokens for an entity
+        self._cursor.execute(
+            f"INSERT INTO " + MAX_TOKENS_TABLENAME + " VALUES(?);",
+            (self._max_num_tokens,),
+        )
 
         # Add an index to the tables
         self._cursor.execute(
@@ -253,6 +273,17 @@ class DatabaseBackedLookup(Lookup):
                 return None
 
         return entity_ids
+
+    def get_max_tokens(self) -> int:
+        """Get the maximum number of tokens for an entity."""
+
+        res = self._cursor.execute(
+            "SELECT " + MAX_TOKENS_COLUMN + " FROM " + MAX_TOKENS_TABLENAME
+        )
+        num = res.fetchone()[0]
+        assert type(num) == int
+
+        return num
 
     def __repr__(self):
         return f"DatabaseBackedLookup(filepath={self._filepath})"

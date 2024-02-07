@@ -1,0 +1,42 @@
+FROM python:3.8-slim
+
+# # Configure apt and install packages
+# RUN apt-get update -y && \
+#     apt-get install -y \
+#     libglib2.0-0 \
+#     libsm6 \
+#     libxext6 \
+#     libxrender-dev \
+#     libgl1-mesa-dev \
+#     # cleanup
+#     && apt-get autoremove -y \
+#     && apt-get clean -y \
+#     && rm -rf /var/lib/apt/li
+
+# # Install Tesseract OCR
+# RUN apt-get install -y tesseract-ocr
+
+# # Install OpenCV dependencies
+# RUN apt-get install -y ffmpeg 
+
+# # Install the required Python libraries
+# COPY requirements-easyocr.txt /opt/
+# RUN ["pip", "install", "-r", "/opt/requirements-easyocr.txt"]
+
+# Install PyTorch
+RUN pip3 install torch==1.10.1+cpu torchvision==0.11.2+cpu torchaudio==0.10.1+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+
+# # Copy the Jupyter config
+# COPY ./jupyter-config/jupyter_notebook_config.py /root/.jupyter/
+
+# # Mount a volume for the Jupyter notebooks
+# RUN ["mkdir", "/notebooks"]
+
+# # Set the working directory
+# WORKDIR /notebooks
+
+# # Expose the Jupyter Notebook port
+# EXPOSE 8888
+
+# # Run the Jupyter notebook
+# CMD ["jupyter", "notebook", "--allow-root", "--no-browser"]

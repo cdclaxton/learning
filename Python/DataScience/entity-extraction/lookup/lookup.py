@@ -1,56 +1,28 @@
-class Lookup:
-    """Holds two lookups."""
+from abc import ABC, abstractmethod
+from typing import Optional, Set
 
-    def __init__(self):
-        self.token_to_entries = {}
-        self.entry_to_tokens = {}
+from domain import Tokens
 
-    def add(self, entry_id, tokens):
-        """Add an entry to the lookup."""
-        assert type(entry_id) == int
-        assert type(tokens) == list
-        assert len(tokens) > 0
 
-        # Store the tokens for the entry
-        assert entry_id not in self.entry_to_tokens, f"entry {entry_id} already exists"
-        self.entry_to_tokens[entry_id] = tokens
+class Lookup(ABC):
+    """Abstract base class for a entity and tokens lookup."""
 
-        # Store the entry for the tokens
-        for t in tokens:
-            if t not in self.token_to_entries:
-                self.token_to_entries[t] = set()
+    @abstractmethod
+    def add(self, entity_id: str, tokens: Tokens) -> None:
+        """Add an entity to the lookup."""
+        pass
 
-            self.token_to_entries[t].add(entry_id)
+    @abstractmethod
+    def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
+        """Get tokens for an entity given its ID."""
+        pass
 
-    def tokens_for_entry(self, entry_id):
-        """Get tokens for an entry given its ID."""
+    @abstractmethod
+    def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
+        """Get the entity IDs for a given token."""
+        pass
 
-        assert type(entry_id) == int
-        return self.entry_to_tokens.get(entry_id, None)
-
-    def entries_for_token(self, token):
-        return self.token_to_entries.get(token, None)
-
-    def matching_entries(self, tokens):
-        """Find the matching entries in the lookup given the tokens."""
-
-        assert type(tokens) == list
-        assert len(tokens) > 0
-
-        # Get the entries for each token
-        for idx, t in enumerate(tokens):
-            es = self.entries_for_token(t)
-
-            if es is None:
-                return None
-
-            if idx == 0:
-                entries = es
-            else:
-                entries = entries.intersection(es)
-
-            # No entries match, so there's no point looking at any further tokens
-            if len(entries) == 0:
-                return None
-
-        return entries
+    @abstractmethod
+    def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
+        """Find the matching entities in the lookup given the tokens."""
+        pass

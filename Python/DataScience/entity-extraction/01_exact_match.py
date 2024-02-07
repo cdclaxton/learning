@@ -1,140 +1,109 @@
 # This script explores how to find exact matches in an efficient manner.
-from dataclasses import dataclass
+
+import random
+from domain import EntityToTokens, TextGenerator, Tokens
+from entity.matcher import (
+    calc_matcher_error,
+    feed_entity_matchers,
+    threshold_matcher_results,
+)
+from entity.matcher_exact import ExactEntityMatcher, Tree, tree_from_entities
+from evaluator.evaluator import EntitySpan
+from typing import Tuple
+
+from generator.generator import (
+    generate_entities,
+    make_generator_fns,
+    make_uniform_num_entity_tokens_generator,
+    random_entity_id,
+)
+from visualisation.visualisation import visualise_probabilistic_matches
 
 
-class TokenMatch:
-    """Represents where tokens match in a list of tokens."""
+def generate_ground_truth(
+    min_text_tokens: int,
+    max_text_tokens: int,
+    text_generator: TextGenerator,
+    entities: EntityToTokens,
+) -> Tuple[Tokens, EntitySpan]:
+    """Generate a ground-truth piece of text with a known entity."""
 
-    def __init__(self, start_index: int, length: int):
-        assert start_index >= 0, f"Invalid start index: {start_index}"
-        assert length > 0, f"Invalid length: {length}"
+    assert type(min_text_tokens) == int and min_text_tokens > 0
+    assert type(max_text_tokens) == int and max_text_tokens > 0
 
-        self.start_index = start_index
-        self.length = length
+    # Number of tokens to the left and to right of the entity
+    num_tokens_left = random.randint(min_text_tokens, max_text_tokens)
+    num_tokens_right = random.randint(min_text_tokens, max_text_tokens)
 
-    def __eq__(self, other):
-        if not isinstance(other, TokenMatch):
-            return False
+    # Generate the text tokens
+    tokens_left = text_generator(num_tokens_left)
+    tokens_right = text_generator(num_tokens_right)
 
-        return self.start_index == other.start_index and self.length == other.length
+    # Select the entity
+    entity_id = random_entity_id(entities)
+    entity_tokens = entities[entity_id]
 
-    def __repr__(self) -> str:
-        class_name = type(self).__name__
-        return f"{class_name}(start={self.start_index}, length={self.length})"
+    # Ground truth entity span
+    start = len(tokens_left)
+    e = EntitySpan(start, start + len(entity_tokens) - 1, entity_id)
 
-    def __str__(self) -> str:
-        return self.__repr__()
+    # Create the text that includes the entity
+    text = tokens_left[:]
+    text.extend(entity_tokens)
+    text.extend(tokens_right)
 
-
-def test_token_match():
-    """Unit tests for TokenMatch."""
-
-    t1 = TokenMatch(0, 2)
-    t2 = TokenMatch(0, 2)
-    t3 = TokenMatch(1, 2)
-
-    assert t1 == t2
-    assert t1 != t3
-
-
-def find_matches(tree, tokens):
-    """Find matches in the tokens given a tree of tokens to find."""
-
-    assert type(tree) == Tree
-    assert type(tokens) == list
-    assert all([type(t) == str for t in tokens])
-
-    matches = []
-
-    for start_idx in range(0, len(tokens)):
-        match, leaf = tree.has_tokens([tokens[start_idx]])
-
-        if not match:
-            continue
-
-        if leaf:
-            matches.append(TokenMatch(start_idx, 1))
-
-        for span_idx in range(start_idx + 1, len(tokens)):
-            match, leaf = tree.has_tokens(tokens[start_idx : (span_idx + 1)])
-
-            if not match:
-                break
-
-            if leaf:
-                length = span_idx - start_idx + 1
-                matches.append(TokenMatch(start_idx, length))
-
-    if len(matches) == 0:
-        matches = None
-
-    return matches
-
-
-def test_find_matches():
-    # Make a tree that holds:
-    #
-    #     /--> a -> b -> c
-    # root           \--> d -> e -> e
-    #     \
-    #      \--> b -> c
-    #       \
-    #        \--> e
-    # Note that the sequence [b, c] exists as part of [a, b, c] and on its own.
-
-    tree = Tree()
-    tree.add_tokens(["a", "b", "c"])
-    tree.add_tokens(["a", "b", "d", "e", "e"])
-    tree.add_tokens(["b", "c"])
-    tree.add_tokens(["e"])
-
-    # No match
-    assert find_matches(tree, ["x", "y"]) is None
-
-    # No match (just partial)
-    assert find_matches(tree, ["a"]) is None
-    assert find_matches(tree, ["a", "b"]) is None
-    assert find_matches(tree, ["a", "b", "d", "f"]) is None
-    assert find_matches(tree, ["b"]) is None
-
-    # Full match (matches all tokens)
-    assert find_matches(tree, ["b", "c"]) == [TokenMatch(0, 2)]
-    assert find_matches(tree, ["a", "b", "c"]) == [TokenMatch(0, 3), TokenMatch(1, 2)]
-    assert find_matches(tree, ["a", "b", "d", "e", "e"]) == [
-        TokenMatch(0, 5),
-        TokenMatch(3, 1),
-        TokenMatch(4, 1),
-    ]
-    assert find_matches(tree, ["e"]) == [TokenMatch(0, 1)]
-
-    # Full, single match with surrounding tokens
-    assert find_matches(tree, ["x", "b", "c"]) == [TokenMatch(1, 2)]
-    assert find_matches(tree, ["x", "b", "c", "y"]) == [TokenMatch(1, 2)]
-    assert find_matches(tree, ["x", "y", "b", "c", "z"]) == [TokenMatch(2, 2)]
-    assert find_matches(tree, ["x", "y", "a", "b", "c"]) == [
-        TokenMatch(2, 3),
-        TokenMatch(3, 2),
-    ]
-
-    assert find_matches(tree, ["x", "a", "b", "d", "e", "e", "z"]) == [
-        TokenMatch(1, 5),
-        TokenMatch(4, 1),
-        TokenMatch(5, 1),
-    ]
-    assert find_matches(tree, ["e", "x"]) == [TokenMatch(0, 1)]
-    assert find_matches(tree, ["x", "e"]) == [TokenMatch(1, 1)]
-
-    # Multiple matches
-    assert find_matches(tree, ["e", "b", "c"]) == [TokenMatch(0, 1), TokenMatch(1, 2)]
-    assert find_matches(tree, ["e", "x", "b", "c"]) == [
-        TokenMatch(0, 1),
-        TokenMatch(2, 2),
-    ]
+    return text, e
 
 
 if __name__ == "__main__":
-    # Run unit tests
-    test_node()
-    test_tree()
-    test_token_match()
-    test_find_matches()
+    n_tokens = 100
+    prop_entity_tokens = 0.2
+    min_num_entity_tokens = 6
+    max_num_entity_tokens = 10
+    min_text_tokens = 1
+    max_text_tokens = 10
+
+    n_entity_tokens_fn = make_uniform_num_entity_tokens_generator(
+        min_num_entity_tokens, max_num_entity_tokens
+    )
+    num_entities = 20
+
+    # Text and entity token generator
+    text_generator, entity_generator = make_generator_fns(
+        n_tokens, prop_entity_tokens, n_entity_tokens_fn
+    )
+
+    # Randomly generate entities
+    entities = generate_entities(num_entities, entity_generator)
+
+    # Create a tree data structure for holding the entities
+    tree, max_window = tree_from_entities(entities)
+
+    # Instantiate an exact entity matcher with a tree constructed from the
+    # entities and an exact entity matcher with an empty tree
+    exact_entity_matcher = ExactEntityMatcher(tree, max_window)
+    exact_entity_matcher_empty_tree = ExactEntityMatcher(Tree(), max_window)
+
+    # Create a random piece of text containing zero or more entities
+    tokens, gt_entity_span = generate_ground_truth(
+        min_text_tokens, max_text_tokens, text_generator, entities
+    )
+
+    # Run the exact entity matchers
+    matchers = {
+        "exact matcher": exact_entity_matcher,
+        "exact matcher with an empty tree": exact_entity_matcher_empty_tree,
+    }
+    feed_entity_matchers(tokens, matchers)
+
+    # Visualise the results
+    print(
+        visualise_probabilistic_matches(tokens, exact_entity_matcher._matches, entities)
+    )
+
+    # Get the entity matches
+    entity_spans = threshold_matcher_results(matchers, 0.5)
+
+    # Calculate the error
+    errors = calc_matcher_error([gt_entity_span], entity_spans)
+    print(f"Matcher errors: {errors}")

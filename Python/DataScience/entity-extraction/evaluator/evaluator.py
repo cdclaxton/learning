@@ -19,6 +19,12 @@ class EntitySpan:
     def in_span(self, i):
         return self.start <= i and i <= self.end
 
+    def __repr__(self):
+        return f"EntitySpan({self.start}, {self.end}, {self.entity_id})"
+
+    def __str__(self):
+        return self.__repr__()
+
 
 def error_pair(s1, s2):
     """Error between the two entity spans."""

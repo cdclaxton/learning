@@ -16,13 +16,35 @@ A piece of text to undergo extraction is provided, such as "Go to 37 Straight St
 
 This page captures the design and experiments that were performed during the development of the approach. The order of the scripts that were written and their descriptions is reflected in the structure of the sections below. The complexity of the solution is built up incrementally.
 
-## Unit tests
+## Setup
+
+Install the required Python libraries using:
+
+```bash
+pip install -r requirements.txt
+```
 
 To run the unit tests, enter:
 
 ```bash
 
 pytest .
+```
+
+## Run the entity extraction web service
+
+To run the entity extraction web service:
+
+```bash
+uvicorn service:app --reload
+```
+
+The Swagger documentation can be found at http://127.0.0.1:8000/docs.
+
+To run an entity extraction job:
+
+```bash
+curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is", "threshold": 0.9}'
 ```
 
 ## Dataflow

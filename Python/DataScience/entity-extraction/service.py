@@ -161,6 +161,8 @@ if __name__ == "__main__":
     # Initialise a lookup for reading and initialise the matcher
     lookup = DatabaseBackedLookup(database_filepath, False)
     max_window = lookup.get_max_tokens()
+
+    # Make a matcher that handles missing tokens using a logistic likelihood function
     likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
     matcher = MissingTokenEntityMatcher(lookup, max_window, likelihood)
 

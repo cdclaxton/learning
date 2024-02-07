@@ -1,6 +1,6 @@
 # Token span extraction
 
-This project explores ways to extract one or more contiguous tokens from a text where a large corpus of sets of contiguous of tokens is available. A token is defined as a sequence of alphanumeric characters with no whitespace or punctuation.
+This project explores ways to extract one or more contiguous tokens from a text where a large corpus of sets of contiguous of tokens is available (such as known entities). A token is defined as a sequence of alphanumeric characters with no whitespace or punctuation.
 
 Suppose the corpus has an entry of "37 Straight Street". This entry can be tokenised into 3 elements:
 
@@ -39,12 +39,14 @@ To run the entity extraction web service:
 python3 service.py
 ```
 
+The service will use the `./data/full-database.db` Sqlite file if present (for example if it is created using script `00_build_lookup_from_db.py`) or it will create a very simple test database for demo purposes.
+
 The Swagger documentation can be found at http://127.0.0.1:8000/docs.
 
 To run an entity extraction job:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is", "threshold": 0.9}'
+curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is 78 Straight Street.", "threshold": 0.9}'
 ```
 
 ## Dataflow

@@ -36,7 +36,7 @@ pytest .
 To run the entity extraction web service:
 
 ```bash
-uvicorn service:app --reload
+python3 service.py
 ```
 
 The Swagger documentation can be found at http://127.0.0.1:8000/docs.

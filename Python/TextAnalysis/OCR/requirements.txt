@@ -1,0 +1,11 @@
+jupyter
+matplotlib
+nltk
+numpy
+opencv-python
+openpyxl
+pandas
+pytesseract
+pytest
+scikit-learn
+scipy

@@ -53,6 +53,9 @@ class MissingTokenEntityMatcher(EntityMatcher):
         for i in range(len(tokens_in_window)):
             tokens_to_check = tokens_in_window[i:]
 
+            if len(tokens_to_check) < self._min_tokens_to_check:
+                continue
+
             # Get the entities in common for the tokens to check
             entities = self._token_to_entities_cache.entities_in_common(tokens_to_check)
 

@@ -170,6 +170,9 @@ if __name__ == "__main__":
 
     # Make a matcher that handles missing tokens using a logistic likelihood function
     likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
-    matcher = MissingTokenEntityMatcher(lookup, max_window, likelihood)
+    min_tokens_to_check = 3
+    matcher = MissingTokenEntityMatcher(
+        lookup, max_window, likelihood, min_tokens_to_check
+    )
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

@@ -15,14 +15,17 @@ class MissingTokenEntityMatcher(EntityMatcher):
         lookup: Lookup,
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
+        min_tokens_to_check=0,
     ):
         assert isinstance(lookup, Lookup)
         assert type(max_window_width) == int
         assert max_window_width > 0
         assert isinstance(likelihood_function, LikelihoodFunction)
+        assert type(min_tokens_to_check) == int and min_tokens_to_check >= 0
 
         self._lookup = lookup
         self._max_window_width = max_window_width
+        self._min_tokens_to_check = min_tokens_to_check
         self._window: Window = Window(max_window_width)
         self._likelihood_function: LikelihoodFunction = likelihood_function
         self._matches: List[ProbabilisticMatch] = []

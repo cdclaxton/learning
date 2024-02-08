@@ -4,6 +4,7 @@ from entity.matcher import EntityMatcher, ProbabilisticMatch
 from entity.sequence import Window, correct_sequence
 from likelihood.likelihood import LikelihoodFunction
 from lookup.lookup import Lookup
+from lookup.token_to_entities_cache import TokenToEntitiesCache
 
 
 class MissingTokenEntityMatcher(EntityMatcher):
@@ -25,6 +26,7 @@ class MissingTokenEntityMatcher(EntityMatcher):
         self._window: Window = Window(max_window_width)
         self._likelihood_function: LikelihoodFunction = likelihood_function
         self._matches: List[ProbabilisticMatch] = []
+        self._token_to_entities_cache = TokenToEntitiesCache()
 
     def next_token(self, token) -> None:
         """Receive the next token in the text."""
@@ -38,27 +40,41 @@ class MissingTokenEntityMatcher(EntityMatcher):
         # the tokens in the text
         tokens_in_window, _, end_idx = self._window.get_tokens()
 
+        # Update the cache
+        self._token_to_entities_cache.retain(tokens_in_window)
+
+        for required_token in self._token_to_entities_cache.required(tokens_in_window):
+            entities = self._lookup.entity_ids_for_token(required_token)
+            self._token_to_entities_cache.add(required_token, entities)
+
         for i in range(len(tokens_in_window)):
             tokens_to_check = tokens_in_window[i:]
 
-            # Find matching entries in the lookup given the text tokens
-            entries = self._lookup.matching_entries(tokens_to_check)
-            if entries is None:
-                continue
+            # Get the entities in common for the tokens to check
+            entities = self._token_to_entities_cache.entities_in_common(tokens_to_check)
 
-            for entry_idx in entries:
-                entity_tokens = self._lookup.tokens_for_entity(entry_idx)
-                if correct_sequence(entity_tokens, tokens_to_check):
-                    m = ProbabilisticMatch(
-                        start=end_idx - len(tokens_to_check) + 1,
-                        end=end_idx,
-                        entity_id=entry_idx,
-                        probability=self._likelihood_function.calc(
-                            tokens_to_check, entity_tokens
-                        ),
+            # Walk through each of the entities in common
+            for entity_id in entities:
+
+                # Get the tokens for the entity
+                entity_tokens = self._lookup.tokens_for_entity(entity_id)
+
+                # Check the tokens appear in the correct order
+                if not correct_sequence(entity_tokens, tokens_to_check):
+                    continue
+
+                # Calculate the probability of a match
+                prob = self._likelihood_function.calc(tokens_to_check, entity_tokens)
+
+                if prob >= self._min_probability:
+                    self._matches.append(
+                        ProbabilisticMatch(
+                            start=end_idx - len(tokens_to_check) + 1,
+                            end=end_idx,
+                            entity_id=entity_id,
+                            probability=prob,
+                        )
                     )
-
-                    self._matches.append(m)
 
     def get_matches(self) -> List[ProbabilisticMatch]:
         """Return entity extraction results."""

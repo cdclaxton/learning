@@ -13,13 +13,13 @@ class ProbabilisticMatch:
         assert_entity_id_valid(entity_id)
         assert_probability_valid(probability)
 
-        self._start = start
-        self._end = end
-        self._entity_id = entity_id
-        self._probability = probability
+        self.start = start
+        self.end = end
+        self.entity_id = entity_id
+        self.probability = probability
 
     def __repr__(self):
-        return f"ProbabilisticMatch(start={self._start}, end={self._end}, entity_id={self._entity_id}, probability={self._probability})"
+        return f"ProbabilisticMatch(start={self.start}, end={self.end}, entity_id={self.entity_id}, probability={self.probability})"
 
     def __str__(self):
         return self.__repr__()
@@ -29,14 +29,23 @@ class ProbabilisticMatch:
             return False
 
         return (
-            self._start == other._start
-            and self._end == other._end
-            and self._entity_id == other._entity_id
-            and abs(self._probability - other._probability) < 1e-6
+            self.start == other.start
+            and self.end == other.end
+            and self.entity_id == other.entity_id
+            and abs(self.probability - other.probability) < 1e-6
         )
 
 
 class EntityMatcher(ABC):
+    #  Minimum probability for a match to be retained
+    _min_probability = 0
+
+    def set_min_probability_for_match(self, threshold: float):
+        """Set the minimum probability for a match to be retained."""
+
+        assert_probability_valid(threshold)
+        self._min_probability = threshold
+
     @abstractmethod
     def next_token(self, token) -> None:
         """Receive the next token in the text."""
@@ -53,9 +62,9 @@ class EntityMatcher(ABC):
         assert_probability_valid(threshold)
 
         return [
-            EntitySpan(match._start, match._end, match._entity_id)
+            EntitySpan(match.start, match.end, match.entity_id)
             for match in self.get_matches()
-            if match._probability >= threshold
+            if match.probability >= threshold
         ]
 
     def get_sorted_matches_above_threshold(
@@ -66,7 +75,7 @@ class EntityMatcher(ABC):
         assert_probability_valid(threshold)
 
         matches = [m for m in self._matches if m._probability > threshold]
-        return sorted(matches, key=lambda m: m._probability, reverse=True)
+        return sorted(matches, key=lambda m: m.probability, reverse=True)
 
     @abstractmethod
     def reset(self) -> None:

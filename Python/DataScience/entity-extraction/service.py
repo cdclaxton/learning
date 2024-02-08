@@ -36,6 +36,7 @@ class ExtractionMatch(BaseModel):
 class ExtractionResponse(BaseModel):
     matches: List[ExtractionMatch]
     message: str
+    num_matches: int
 
 
 def tokenise_text(text: str) -> Optional[Tokens]:
@@ -74,19 +75,19 @@ def convert_matches(
         assert type(prob_match) == ProbabilisticMatch
 
         # Get the entity from the lookup
-        entity = " ".join(lookup.tokens_for_entity(prob_match._entity_id))
+        entity = " ".join(lookup.tokens_for_entity(prob_match.entity_id))
 
-        assert prob_match._start >= 0 and prob_match._start < len(tokens)
-        assert prob_match._end >= 0 and prob_match._end < len(tokens)
+        assert prob_match.start >= 0 and prob_match.start < len(tokens)
+        assert prob_match.end >= 0 and prob_match.end < len(tokens)
 
         results.append(
             ExtractionMatch(
-                entity_id=prob_match._entity_id,
+                entity_id=prob_match.entity_id,
                 entity=entity,
-                match=" ".join(tokens[prob_match._start : prob_match._end + 1]),
-                probability=prob_match._probability,
-                start=prob_match._start,
-                end=prob_match._end,
+                match=" ".join(tokens[prob_match.start : prob_match.end + 1]),
+                probability=prob_match.probability,
+                start=prob_match.start,
+                end=prob_match.end,
             )
         )
 
@@ -101,10 +102,12 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
 
     # Check the request
     if req.threshold < 0.0 or req.threshold > 1.0:
-        return ExtractionResponse(matches=[], message="invalid threshold")
+        return ExtractionResponse(
+            matches=[], message="invalid threshold", num_matches=0
+        )
 
     if len(req.text) == 0:
-        return ExtractionResponse(matches=[], message="empty text")
+        return ExtractionResponse(matches=[], message="empty text", num_matches=0)
 
     # All entity matchers
     matcher.reset()
@@ -120,11 +123,13 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     matches = matcher.get_sorted_matches_above_threshold(req.threshold)
 
     if len(matches) == 0:
-        return ExtractionResponse(matches=[], message="no matches")
+        return ExtractionResponse(matches=[], message="no matches", num_matches=0)
 
     # Return the response
     return ExtractionResponse(
-        matches=convert_matches(matches, tokens), message="success"
+        matches=convert_matches(matches, tokens),
+        message="success",
+        num_matches=len(matches),
     )
 
 

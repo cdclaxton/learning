@@ -1,3 +1,4 @@
+from functools import lru_cache
 import logging
 import os
 import sqlite3
@@ -182,6 +183,7 @@ class DatabaseBackedLookup(Lookup):
         """Close the database connection."""
         self._conn.close()
 
+    @lru_cache(maxsize=100)
     def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
 
@@ -207,6 +209,7 @@ class DatabaseBackedLookup(Lookup):
 
         return result[0][0].split(TOKEN_SEPARATOR)
 
+    @lru_cache(maxsize=100)
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
 

@@ -119,7 +119,7 @@ def visualise_probabilistic_matches(
         assert type(match) == ProbabilisticMatch
 
         # Draw a symbol to show the entity span
-        for col_idx in range(match._start, match._end + 1):
+        for col_idx in range(match.start, match.end + 1):
             assert col_idx < len(
                 column_widths
             ), f"got token match position {col_idx}, but there are {len(text_tokens)} tokens"
@@ -127,12 +127,10 @@ def visualise_probabilistic_matches(
             tt.cell(row_offset + match_idx, col_idx, symb)
 
         # Show the probability
-        tt.cell(
-            row_offset + match_idx, prob_col, format_probability(match._probability)
-        )
+        tt.cell(row_offset + match_idx, prob_col, format_probability(match.probability))
 
         # Show the matched entity
-        entity_id = match._entity_id
+        entity_id = match.entity_id
         assert entity_id in entity_id_to_tokens
         tt.cell(
             row_offset + match_idx,
@@ -154,11 +152,11 @@ def visualise_probabilistic_matches_over_threshold(
     assert_probability_valid(threshold)
 
     # Retain matches that at or exceed the threshold
-    filtered_matches = [m for m in matches if m._probability >= threshold]
+    filtered_matches = [m for m in matches if m.probability >= threshold]
 
     # Sort the matches by their probability
     sorted_filtered_matches = sorted(
-        filtered_matches, key=lambda x: x._probability, reverse=True
+        filtered_matches, key=lambda x: x.probability, reverse=True
     )
 
     return visualise_probabilistic_matches(

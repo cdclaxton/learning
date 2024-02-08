@@ -111,6 +111,7 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
 
     # All entity matchers
     matcher.reset()
+    matcher.set_min_probability_for_match(req.threshold)
     entity_matchers = {"matcher": matcher}
 
     # Tokenise the text

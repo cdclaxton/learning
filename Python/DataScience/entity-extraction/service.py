@@ -7,6 +7,7 @@ from domain import Tokens, assert_tokens_valid
 from entity.matcher import (
     ProbabilisticMatch,
     feed_entity_matchers,
+    most_likely_matches,
     threshold_matcher_results,
 )
 from entity.matcher_missing_token import MissingTokenEntityMatcher
@@ -17,6 +18,8 @@ from nltk.tokenize import wordpunct_tokenize
 import os
 import string
 import uvicorn
+
+app = FastAPI()
 
 
 class ExtractionRequest(BaseModel):
@@ -35,6 +38,7 @@ class ExtractionMatch(BaseModel):
 
 class ExtractionResponse(BaseModel):
     matches: List[ExtractionMatch]
+    most_likely_matches: List[List[ExtractionMatch]]
     message: str
     num_matches: int
 
@@ -61,6 +65,30 @@ def tokenise_text(text: str) -> Optional[Tokens]:
     return [t for t in tokens if not only_punctuation(t)]
 
 
+def probability_match_to_extraction_match(
+    prob_match: ProbabilisticMatch, tokens: Tokens
+) -> ExtractionMatch:
+    """Convert a ProbabilisticMatch to an ExtractionMatch."""
+
+    assert type(prob_match) == ProbabilisticMatch
+    assert_tokens_valid(tokens)
+
+    # Get the entity from the lookup
+    entity = " ".join(lookup.tokens_for_entity(prob_match.entity_id))
+
+    assert prob_match.start >= 0 and prob_match.start < len(tokens)
+    assert prob_match.end >= 0 and prob_match.end < len(tokens)
+
+    return ExtractionMatch(
+        entity_id=prob_match.entity_id,
+        entity=entity,
+        match=" ".join(tokens[prob_match.start : prob_match.end + 1]),
+        probability=prob_match.probability,
+        start=prob_match.start,
+        end=prob_match.end,
+    )
+
+
 def convert_matches(
     matches: List[ProbabilisticMatch], tokens: Tokens
 ) -> List[ExtractionMatch]:
@@ -69,32 +97,19 @@ def convert_matches(
     assert type(matches) == list
     assert_tokens_valid(tokens)
 
-    results = []
-
-    for prob_match in matches:
-        assert type(prob_match) == ProbabilisticMatch
-
-        # Get the entity from the lookup
-        entity = " ".join(lookup.tokens_for_entity(prob_match.entity_id))
-
-        assert prob_match.start >= 0 and prob_match.start < len(tokens)
-        assert prob_match.end >= 0 and prob_match.end < len(tokens)
-
-        results.append(
-            ExtractionMatch(
-                entity_id=prob_match.entity_id,
-                entity=entity,
-                match=" ".join(tokens[prob_match.start : prob_match.end + 1]),
-                probability=prob_match.probability,
-                start=prob_match.start,
-                end=prob_match.end,
-            )
-        )
-
-    return results
+    return [
+        probability_match_to_extraction_match(prob_match, tokens)
+        for prob_match in matches
+    ]
 
 
-app = FastAPI()
+def convert_most_likely_matches(
+    matches: List[List[ProbabilisticMatch]], tokens: Tokens
+) -> List[List[ExtractionMatch]]:
+    """Convert the list of list of probabilistic matches to extraction matches."""
+
+    assert type(matches) == list
+    return [convert_matches(m, tokens) for m in matches]
 
 
 @app.post("/")
@@ -126,9 +141,13 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     if len(matches) == 0:
         return ExtractionResponse(matches=[], message="no matches", num_matches=0)
 
+    # Find the most likely matches
+    most_likely = most_likely_matches(matches)
+
     # Return the response
     return ExtractionResponse(
         matches=convert_matches(matches, tokens),
+        most_likely_matches=convert_most_likely_matches(most_likely, tokens),
         message="success",
         num_matches=len(matches),
     )

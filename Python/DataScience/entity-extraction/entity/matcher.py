@@ -127,3 +127,82 @@ def calc_matcher_error(
         key: calc_error(ground_truth, entity_spans)
         for key, entity_spans in matcher_results.items()
     }
+
+
+def spans_overlap(start0: int, end0: int, start1: int, end1: int) -> bool:
+    """Do the spans overlap?"""
+
+    assert type(start0) == int and start0 > 0
+    assert type(end0) == int and end0 > 0
+    assert type(start1) == int and start1 > 0
+    assert type(end1) == int and end1 > 0
+
+    values0 = set(range(start0, end0 + 1))
+    values1 = set(range(start1, end1 + 1))
+
+    return len(values0.intersection(values1)) > 0
+
+
+def most_likely_matches(
+    matches: List[ProbabilisticMatch],
+) -> List[List[ProbabilisticMatch]]:
+    """Most likely matches for a given span."""
+
+    assert type(matches) == list
+
+    # Sort the matches in descending order of probability
+    matches = sorted(matches, lambda m: m.probability, reverse=True)
+
+    # Group assignment for ech match
+    group = 0
+    assignment = [None for _ in range(matches)]
+
+    # Iterate through the matches until every one of them has been assigned to
+    # a group
+    while any([a is None for a in assignment]):
+
+        # Find the first unassigned match from the sorted list of matches
+        seed_idx = [idx for idx, a in enumerate(assignment) if a is None][0]
+
+        # Assign the match to the new group
+        assignment[seed_idx] = group
+
+        for i in range(len(assignment)):
+
+            # Skip over matches that have already been assigned to a group
+            if assignment[i] is not None:
+                continue
+
+            # If the spans of the seed match and this match overlap, then add
+            # this match to the same group as the seed match
+            if spans_overlap(
+                start0=matches[seed_idx].start,
+                end0=matches[seed_idx].end,
+                start1=matches[i].start,
+                end1=matches[i].end,
+            ):
+                assignment[i] = group
+
+        group += 1
+
+    max_group = group - 1
+
+    # Find the most likely matches for each group
+    most_likely = []
+    for group in range(max_group):
+
+        group_matches = [m for idx, m in enumerate(matches) if assignment[idx] == group]
+        assert len(group_matches) > 0
+
+        # The group matches will already been in sort order
+        max_prob_for_group = group_matches[0].probability
+        assert_probability_valid(max_prob_for_group)
+
+        # Retain matches with the same probability
+        group_matches = [
+            m for m in group_matches if m.probability == max_prob_for_group
+        ]
+
+        most_likely.append(group_matches)
+
+    return most_likely

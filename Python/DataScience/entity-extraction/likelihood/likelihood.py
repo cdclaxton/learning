@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from functools import lru_cache
 import math
 
 from domain import Tokens, assert_probability_valid, assert_tokens_valid
@@ -57,6 +58,16 @@ class LikelihoodFunctionLogistic(LikelihoodFunction):
         prop = n_p / len(entity_tokens)
 
         # Probability
+        return self._calc_prob(prop)
+
+    @lru_cache(maxsize=100)
+    def _calc_prob(self, prop: float) -> float:
+        """Calculate the probability of the proportion of tokens."""
+        if prop == 1.0:
+            return 1.0
+        elif prop == 0.0:
+            return 0.0
+
         y = 1 / (1 + math.exp(-self._k * (prop - self._x0)))
         assert_probability_valid(y)
 

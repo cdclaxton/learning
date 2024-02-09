@@ -1,7 +1,80 @@
 from functools import lru_cache
-from typing import List, Optional, Set, Tuple
+from typing import Callable, List, Optional, Set, Tuple
 
 from domain import Tokens, assert_token_valid, assert_tokens_valid
+
+
+def one_more(original: Set[str], new: Set[str]) -> Tuple[bool, Optional[str]]:
+    """Does the new set have one more element than the origina set?"""
+
+    assert type(original) == set
+    assert type(new) == set
+
+    # All elements in the new must be in the original
+    if len(original.difference(new)) > 0:
+        return False, None
+
+    # Find elements in the new set that aren't in the original set
+    extra = new.difference(original)
+    if len(extra) == 1:
+        return True, list(extra)[0]
+
+    return False, None
+
+
+class OptimisedTokenToEntitiesCache:
+
+    def __init__(self, entity_getter: Callable[[str], Optional[Set[str]]]) -> None:
+        self._entity_getter = entity_getter
+        self._tokens = set()
+        self._entities = set()
+
+    def clear(self):
+        """Clear the cache."""
+
+        self._tokens = set()
+        self._entities = set()
+
+    def get(self, tokens: Tokens) -> Tuple[Set[str], bool]:
+        """Get the entity IDs in common for the tokens."""
+
+        assert_tokens_valid(tokens)
+
+        # Set of new tokens for which entities in common are required
+        new_tokens = set(tokens)
+
+        # If there are no new tokens, just return the existing cached entities
+        if new_tokens == self._tokens:
+            return self._entities, True
+
+        # Is there just one more token than in the cache?
+        one_more_token, token = one_more(self._tokens, new_tokens)
+        if one_more_token:
+            cache_used = True
+            extra_entities = self._entity_getter(token)
+            if extra_entities is None:
+                self._entities = set()
+            else:
+                self._entities = self._entities.intersection(extra_entities)
+
+        else:
+            cache_used = False
+            for idx, token in enumerate(tokens):
+                entities = self._entity_getter(token)
+                if entities is None:
+                    self._entities = set()
+                    break
+                elif idx == 0:
+                    self._entities = entities
+                else:
+                    self._entities = self._entities.intersection(entities)
+
+                if len(self._entities) == 0:
+                    break
+
+        self._tokens = new_tokens
+
+        return self._entities, cache_used
 
 
 class TokenToEntitiesCache:

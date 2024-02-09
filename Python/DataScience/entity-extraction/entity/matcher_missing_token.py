@@ -4,7 +4,10 @@ from entity.matcher import EntityMatcher, ProbabilisticMatch
 from entity.sequence import Window, correct_sequence
 from likelihood.likelihood import LikelihoodFunction
 from lookup.lookup import Lookup
-from lookup.token_to_entities_cache import TokenToEntitiesCache
+from lookup.token_to_entities_cache import (
+    OptimisedTokenToEntitiesCache,
+    TokenToEntitiesCache,
+)
 
 
 class MissingTokenEntityMatcher(EntityMatcher):
@@ -15,13 +18,13 @@ class MissingTokenEntityMatcher(EntityMatcher):
         lookup: Lookup,
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
-        min_tokens_to_check=0,
+        min_tokens_to_check=1,
     ):
         assert isinstance(lookup, Lookup)
         assert type(max_window_width) == int
         assert max_window_width > 0
         assert isinstance(likelihood_function, LikelihoodFunction)
-        assert type(min_tokens_to_check) == int and min_tokens_to_check >= 0
+        assert type(min_tokens_to_check) == int and min_tokens_to_check >= 1
 
         self._lookup = lookup
         self._max_window_width = max_window_width
@@ -29,7 +32,12 @@ class MissingTokenEntityMatcher(EntityMatcher):
         self._window: Window = Window(max_window_width)
         self._likelihood_function: LikelihoodFunction = likelihood_function
         self._matches: List[ProbabilisticMatch] = []
-        self._token_to_entities_cache = TokenToEntitiesCache()
+
+        # Initialise a cache that optimises the calculation of entities in
+        # common for a list of tokens
+        self._token_to_entities_cache = OptimisedTokenToEntitiesCache(
+            lookup.entity_ids_for_token
+        )
 
     def next_token(self, token) -> None:
         """Receive the next token in the text."""
@@ -37,30 +45,27 @@ class MissingTokenEntityMatcher(EntityMatcher):
         assert_token_valid(token)
 
         # Adjust the window by adding the token
+        print(f"** Adding token {token}")
         self._window.add_token(token)
 
         # Get the tokens in the window and the absolute start and end indices of
         # the tokens in the text
         tokens_in_window, _, end_idx = self._window.get_tokens()
 
-        # Update the cache
-        self._token_to_entities_cache.retain(tokens_in_window)
+        # If the aren't sufficient tokens in the window, then just return
+        if len(tokens_in_window) < self._min_tokens_to_check:
+            return
 
-        for required_token in self._token_to_entities_cache.required(tokens_in_window):
-            entities = self._lookup.entity_ids_for_token(required_token)
-            self._token_to_entities_cache.add(required_token, entities)
-
-        for i in range(len(tokens_in_window)):
+        # Walk from the last tokens to the first tokens
+        for i in range(len(tokens_in_window) - self._min_tokens_to_check, -1, -1):
             tokens_to_check = tokens_in_window[i:]
-
-            if len(tokens_to_check) < self._min_tokens_to_check:
-                continue
+            assert len(tokens_to_check) >= self._min_tokens_to_check
 
             # Get the entities in common for the tokens to check
-            entities = self._token_to_entities_cache.entities_in_common(tokens_to_check)
+            entity_ids, cache_used = self._token_to_entities_cache.get(tokens_to_check)
 
             # Walk through each of the entities in common
-            for entity_id in entities:
+            for entity_id in entity_ids:
 
                 # Get the tokens for the entity
                 entity_tokens = self._lookup.tokens_for_entity(entity_id)

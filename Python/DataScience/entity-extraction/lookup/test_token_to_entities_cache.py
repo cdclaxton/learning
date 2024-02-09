@@ -1,5 +1,9 @@
 import pytest
-from lookup.token_to_entities_cache import TokenToEntitiesCache
+from lookup.token_to_entities_cache import (
+    OptimisedTokenToEntitiesCache,
+    TokenToEntitiesCache,
+    one_more,
+)
 
 
 def test_token_to_entities_cache():
@@ -91,3 +95,57 @@ def test_token_to_entities_cache_no_entities():
     cache.entities_in_common(["t1"]) == {"e0", "e1"}
     cache.entities_in_common(["t2"]) == {}
     cache.entities_in_common(["t1", "t2"]) == {}
+
+
+def test_one_more():
+    """Unit tests for one_more()."""
+
+    assert one_more(set(), {"a"}) == (True, "a")
+    assert one_more({"a"}, {"a", "b"}) == (True, "b")
+    assert one_more({"a", "b"}, {"a", "b", "c"}) == (True, "c")
+    assert one_more({"a", "b", "c"}, {"a", "b", "c", "d"}) == (True, "d")
+
+    assert one_more({"a"}, {"a"}) == (False, None)
+    assert one_more({"a"}, {"b"}) == (False, None)
+    assert one_more({"a", "b"}, {"b"}) == (False, None)
+    assert one_more({"a", "b"}, {"a", "b"}) == (False, None)
+    assert one_more({"a", "b"}, {"a", "d"}) == (False, None)
+    assert one_more({"a", "b", "c"}, {"a", "d", "e"}) == (False, None)
+
+
+def test_optimised_token_to_entities_cache():
+
+    # Map of token to entity IDs
+    token_to_entity_ids = {
+        "a": {"e0"},
+        "b": {"e0", "e1"},
+        "c": {"e0", "e2"},
+        "d": {"e3"},
+    }
+
+    def entity_getter(entity):
+        return token_to_entity_ids.get(entity, None)
+
+    cache = OptimisedTokenToEntitiesCache(entity_getter)
+
+    # Get entities for a single token
+    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["b"]) == ({"e0", "e1"}, False)
+
+    # Check tokens [a] -> [a,b] -> [a,b,c]
+    cache.clear()
+    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["a", "b"]) == ({"e0"}, True)
+    cache.get(["a", "b", "c"]) == ({"e0"}, True)
+
+    # Check tokens [a] -> [a,d] -> [a,d,b]
+    cache.clear()
+    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["a", "d"]) == ({}, True)
+    cache.get(["a", "d", "b"]) == ({}, True)
+
+    # Check tokens [a] -> [a, e] -> [a, e, b]
+    cache.clear()
+    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["a", "e"]) == ({}, True)
+    cache.get(["a", "e", "b"]) == ({}, True)

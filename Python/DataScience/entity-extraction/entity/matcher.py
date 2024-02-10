@@ -185,13 +185,11 @@ def most_likely_matches(
 
         group += 1
 
-    max_group = group - 1
-
     # Find the most likely matches for each group
     most_likely = []
-    for group in range(max_group):
+    for grp in range(group):
 
-        group_matches = [m for idx, m in enumerate(matches) if assignment[idx] == group]
+        group_matches = [m for idx, m in enumerate(matches) if assignment[idx] == grp]
         assert len(group_matches) > 0
 
         # The group matches will already been in sort order

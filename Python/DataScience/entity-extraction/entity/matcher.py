@@ -141,10 +141,12 @@ def calc_matcher_error(
 def spans_overlap(start0: int, end0: int, start1: int, end1: int) -> bool:
     """Do the spans overlap?"""
 
-    assert type(start0) == int and start0 > 0
-    assert type(end0) == int and end0 > 0
-    assert type(start1) == int and start1 > 0
-    assert type(end1) == int and end1 > 0
+    assert type(start0) == int and start0 >= 0
+    assert type(end0) == int and end0 >= 0
+    assert end0 >= start0
+    assert type(start1) == int and start1 >= 0
+    assert type(end1) == int and end1 >= 0
+    assert end1 >= start1
 
     values0 = set(range(start0, end0 + 1))
     values1 = set(range(start1, end1 + 1))

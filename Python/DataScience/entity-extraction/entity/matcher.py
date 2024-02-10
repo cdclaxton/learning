@@ -155,7 +155,7 @@ def most_likely_matches(
 
     # Group assignment for each match
     group = 0
-    assignment = [None for _ in range(matches)]
+    assignment = [None for _ in matches]
 
     # Iterate through the matches until every one of them has been assigned to
     # a group

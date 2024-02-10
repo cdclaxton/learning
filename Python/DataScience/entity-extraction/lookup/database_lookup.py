@@ -1,15 +1,11 @@
-from functools import lru_cache
-import logging
 import os
 import sqlite3
+
+from functools import lru_cache
 from typing import Optional, Set
 from domain import Tokens, assert_entity_id_valid, assert_tokens_valid
-
 from lookup.lookup import Lookup
-
-
-FORMAT = "%(asctime)s %(levelname)s %(message)s"
-logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+from loguru import logger
 
 # Database table names
 ENTITY_ID_TO_TOKENS_TABLENAME = "EntityIdToTokens"
@@ -91,8 +87,8 @@ class DatabaseBackedLookup(Lookup):
     def _initialise_read_mode(self):
         """Initialise the database for reading."""
 
-        logging.info("Database in read mode")
-        logging.info(f"Opening connection to database: {self._filepath}")
+        logger.info("Database in read mode")
+        logger.info(f"Opening connection to database: {self._filepath}")
 
         # Check a database file exists
         if not os.path.exists(self._filepath):

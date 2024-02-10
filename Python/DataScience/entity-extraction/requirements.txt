@@ -1,3 +1,4 @@
 fastapi[all]
+loguru
 mysql-connector
 nltk

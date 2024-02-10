@@ -40,11 +40,20 @@ class EntityMatcher(ABC):
     #  Minimum probability for a match to be retained
     _min_probability = 0
 
+    # Minimum number of tokens to check
+    _min_tokens_to_check = 1
+
     def set_min_probability_for_match(self, threshold: float):
         """Set the minimum probability for a match to be retained."""
 
         assert_probability_valid(threshold)
         self._min_probability = threshold
+
+    def set_min_tokens_to_check(self, min_tokens_to_check: int):
+        """Set the minimum number of tokens to check for a match."""
+
+        assert type(min_tokens_to_check) == int and min_tokens_to_check > 0
+        self._min_tokens_to_check = min_tokens_to_check
 
     @abstractmethod
     def next_token(self, token) -> None:

@@ -14,6 +14,7 @@ from entity.matcher_missing_token import MissingTokenEntityMatcher
 from likelihood.likelihood import LikelihoodFunctionLogistic
 from lookup.database_lookup import DatabaseBackedLookup
 from nltk.tokenize import wordpunct_tokenize
+from loguru import logger
 
 import os
 import string
@@ -25,6 +26,7 @@ app = FastAPI()
 class ExtractionRequest(BaseModel):
     text: str
     threshold: float
+    min_tokens_to_check: int
 
 
 class ExtractionMatch(BaseModel):
@@ -112,25 +114,42 @@ def convert_most_likely_matches(
     return [convert_matches(m, tokens) for m in matches]
 
 
+def error_response(message: str) -> ExtractionResponse:
+    """Returns an ExtractionResponse for the error case."""
+
+    assert type(message) == str
+    return ExtractionResponse(
+        matches=[],
+        most_likely_matches=[],
+        message=message,
+        num_matches=0,
+    )
+
+
 @app.post("/")
 async def root(req: ExtractionRequest) -> ExtractionResponse:
 
     # Check the request
     if req.threshold < 0.0 or req.threshold > 1.0:
-        return ExtractionResponse(
-            matches=[], message="invalid threshold", num_matches=0
-        )
+        return error_response("invalid threshold")
 
     if len(req.text) == 0:
-        return ExtractionResponse(matches=[], message="empty text", num_matches=0)
+        return error_response("empty text")
+
+    if req.min_tokens_to_check <= 0:
+        return error_response("invalid minimum number of tokens to check")
 
     # All entity matchers
     matcher.reset()
     matcher.set_min_probability_for_match(req.threshold)
+    matcher.set_min_tokens_to_check(req.min_tokens_to_check)
     entity_matchers = {"matcher": matcher}
 
     # Tokenise the text
     tokens = tokenise_text(req.text)
+    logger.debug(
+        f"Request: tokens={tokens}, threshold={req.threshold}, min tokens={req.min_tokens_to_check}"
+    )
 
     # Send the tokens to the entity matchers
     feed_entity_matchers(tokens, entity_matchers)
@@ -139,7 +158,9 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     matches = matcher.get_sorted_matches_above_threshold(req.threshold)
 
     if len(matches) == 0:
-        return ExtractionResponse(matches=[], message="no matches", num_matches=0)
+        return ExtractionResponse(
+            matches=[], most_likely_matches=[], message="no matches", num_matches=0
+        )
 
     # Find the most likely matches
     most_likely = most_likely_matches(matches)
@@ -180,18 +201,20 @@ if __name__ == "__main__":
 
     # If the database doesn't exist, make a test database for demo purposes
     if not os.path.exists(database_filepath):
+        logger.info(f"Making a test database as {database_filepath} doesn't exist")
         entities = ["A B C", "A B", "A D E F"]
         make_test_database(database_filepath, entities)
 
     # Initialise a lookup for reading and initialise the matcher
     lookup = DatabaseBackedLookup(database_filepath, False)
     max_window = lookup.get_max_tokens()
+    logger.info(f"Maximum window size: {max_window}")
 
     # Make a matcher that handles missing tokens using a logistic likelihood function
-    likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
-    min_tokens_to_check = 3
-    matcher = MissingTokenEntityMatcher(
-        lookup, max_window, likelihood, min_tokens_to_check
+    logger.info(
+        "Instantiating a missing token entity matcher with a logistic likelihood function"
     )
+    likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
+    matcher = MissingTokenEntityMatcher(lookup, max_window, likelihood)
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

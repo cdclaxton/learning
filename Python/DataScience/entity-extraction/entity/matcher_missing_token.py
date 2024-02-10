@@ -4,10 +4,8 @@ from entity.matcher import EntityMatcher, ProbabilisticMatch
 from entity.sequence import Window, correct_sequence
 from likelihood.likelihood import LikelihoodFunction
 from lookup.lookup import Lookup
-from lookup.token_to_entities_cache import (
-    OptimisedTokenToEntitiesCache,
-    TokenToEntitiesCache,
-)
+from lookup.token_to_entities_cache import OptimisedTokenToEntitiesCache
+from loguru import logger
 
 
 class MissingTokenEntityMatcher(EntityMatcher):
@@ -18,17 +16,14 @@ class MissingTokenEntityMatcher(EntityMatcher):
         lookup: Lookup,
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
-        min_tokens_to_check=1,
     ):
         assert isinstance(lookup, Lookup)
         assert type(max_window_width) == int
         assert max_window_width > 0
         assert isinstance(likelihood_function, LikelihoodFunction)
-        assert type(min_tokens_to_check) == int and min_tokens_to_check >= 1
 
         self._lookup = lookup
         self._max_window_width = max_window_width
-        self._min_tokens_to_check = min_tokens_to_check
         self._window: Window = Window(max_window_width)
         self._likelihood_function: LikelihoodFunction = likelihood_function
         self._matches: List[ProbabilisticMatch] = []
@@ -45,12 +40,12 @@ class MissingTokenEntityMatcher(EntityMatcher):
         assert_token_valid(token)
 
         # Adjust the window by adding the token
-        print(f"** Adding token {token}")
         self._window.add_token(token)
 
         # Get the tokens in the window and the absolute start and end indices of
         # the tokens in the text
         tokens_in_window, _, end_idx = self._window.get_tokens()
+        logger.debug(f"Processing window: {tokens_in_window}")
 
         # If the aren't sufficient tokens in the window, then just return
         if len(tokens_in_window) < self._min_tokens_to_check:
@@ -86,6 +81,10 @@ class MissingTokenEntityMatcher(EntityMatcher):
                             probability=prob,
                         )
                     )
+
+        logger.debug(
+            f"Number of matches in this and previous windows: {len(self._matches)}"
+        )
 
     def get_matches(self) -> List[ProbabilisticMatch]:
         """Return entity extraction results."""

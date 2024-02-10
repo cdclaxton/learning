@@ -31,6 +31,13 @@ To run the unit tests, enter:
 pytest .
 ```
 
+Formatting the JSON response from the API can be performed using the JQ library. To install:
+
+```bash
+brew install jq  # Mac
+sudo apt-get install jq  # Linux
+```
+
 ## Run the entity extraction web service
 
 To run the entity extraction web service:

@@ -199,10 +199,18 @@ if __name__ == "__main__":
     # Database file
     database_filepath = "./data/full-database.db"
 
-    # If the database doesn't exist, make a test database for demo purposes
+    # If the database doesn't exist, make a test database for demo purposes.
+    # Note that if entities are added below, be sure to delete the existing
+    # database using:
+    # rm ./data/full-database.db
     if not os.path.exists(database_filepath):
         logger.info(f"Making a test database as {database_filepath} doesn't exist")
-        entities = ["A B C", "A B", "A D E F"]
+        entities = [
+            "78 Straight Street London",
+            "6 The Walk London",
+            "10 The Mews Birmingham",
+            "12 The Mews Birmingham",
+        ]
         make_test_database(database_filepath, entities)
 
     # Initialise a lookup for reading and initialise the matcher

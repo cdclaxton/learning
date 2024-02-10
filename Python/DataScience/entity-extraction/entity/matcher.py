@@ -151,9 +151,9 @@ def most_likely_matches(
     assert type(matches) == list
 
     # Sort the matches in descending order of probability
-    matches = sorted(matches, lambda m: m.probability, reverse=True)
+    matches = sorted(matches, key=lambda m: m.probability, reverse=True)
 
-    # Group assignment for ech match
+    # Group assignment for each match
     group = 0
     assignment = [None for _ in range(matches)]
 

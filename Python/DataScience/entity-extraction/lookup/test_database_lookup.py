@@ -1,5 +1,5 @@
 import os
-from lookup.database_lookup import DatabaseBackedLookup
+from lookup.database_lookup import DatabaseBackedLookup, pickle_set, unpickle_set
 
 
 def test_database_lookup():
@@ -51,3 +51,8 @@ def test_database_lookup():
 
     # Delete the database file
     os.remove(database_filepath)
+
+
+def test_pickle_unpickle():
+    s = {"a", "b", "c"}
+    assert s == unpickle_set(pickle_set(s))

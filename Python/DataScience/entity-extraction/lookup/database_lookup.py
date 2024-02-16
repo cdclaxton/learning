@@ -1,4 +1,5 @@
 import os
+import pickle
 import sqlite3
 
 from functools import lru_cache
@@ -10,15 +11,27 @@ from loguru import logger
 # Database table names
 ENTITY_ID_TO_TOKENS_TABLENAME = "EntityIdToTokens"
 TOKEN_TO_ENTITY_ID_TABLENAME = "TokenToEntityID"
+TOKEN_TO_ENTITY_IDS_TABLENAME = "TokenToEntityIDs"
 MAX_TOKENS_TABLENAME = "MaxTokens"
 
 # Database column names
 ENTITY_ID_COLUMN = "entityId"
+ENTITY_IDS_COLUMN = "entityIds"
 TOKENS_COLUMN = "tokens"
 TOKEN_COLUMN = "token"
 MAX_TOKENS_COLUMN = "maxTokens"
 
+# Token separator
 TOKEN_SEPARATOR = " "
+
+
+def pickle_set(s: Set[str]) -> bytes:
+    assert type(s) == set
+    return pickle.dumps(s)
+
+
+def unpickle_set(b: bytes) -> Set[str]:
+    return pickle.loads(b)
 
 
 class DatabaseBackedLookup(Lookup):
@@ -77,6 +90,11 @@ class DatabaseBackedLookup(Lookup):
         # Create the token to entity ID table
         self._cursor.execute(
             f"CREATE TABLE {TOKEN_TO_ENTITY_ID_TABLENAME}({TOKEN_COLUMN}, {ENTITY_ID_COLUMN});"
+        )
+
+        # Create the token to entity IDs table
+        self._cursor.execute(
+            f"CREATE TABLE {TOKEN_TO_ENTITY_IDS_TABLENAME}({TOKEN_COLUMN}, {ENTITY_IDS_COLUMN});"
         )
 
         # Create a table to hold the maximum number of tokens for a entity
@@ -175,11 +193,69 @@ class DatabaseBackedLookup(Lookup):
 
         self._conn.commit()
 
+        # Populate the token to entity IDs table
+        self._build_token_to_entity_ids_table()
+
+        # Create an index on the token to entity IDs table
+        self._cursor.execute(
+            "CREATE INDEX index3 ON "
+            + TOKEN_TO_ENTITY_IDS_TABLENAME
+            + " ( "
+            + TOKEN_COLUMN
+            + ");"
+        )
+
+        self._conn.commit()
+
+    def _add_token_to_entities(self, token: str, entities: Set[str]) -> None:
+        assert type(token) == str
+
+        self._cursor.execute(
+            f"INSERT INTO " + TOKEN_TO_ENTITY_IDS_TABLENAME + " VALUES(?,?);",
+            (token, pickle_set(entities)),
+        )
+        self._num_adds += 1
+
+        # Commit the inserts if the insert threshold has been met
+        if self._num_adds == 1000:
+            self._conn.commit()
+            self._num_adds = 0
+
+    def _build_token_to_entity_ids_table(self) -> None:
+        """Build a token to entity IDs table for tokens with lots of entity IDs."""
+
+        # Find the unique tokens
+        cur2 = self._conn.cursor()
+        res = cur2.execute(
+            "SELECT DISTINCT " + TOKEN_COLUMN + " FROM " + TOKEN_TO_ENTITY_ID_TABLENAME
+        )
+
+        self._num_adds = 0
+        num_tokens = 0
+        num_additions = 0
+
+        for row in res:
+            token = row[0]
+
+            # Get the entities for the token
+            entities = self.entity_ids_for_token(token)
+
+            if len(entities) > 10000:
+                self._add_token_to_entities(token, entities)
+                num_additions += 1
+
+        logger.debug(
+            f"There are {num_tokens} unique tokens, {num_additions} tokens added for fast lookup"
+        )
+
+        if self._num_adds > 0:
+            self._conn.commit()
+
     def close(self) -> None:
         """Close the database connection."""
         self._conn.close()
 
-    @lru_cache(maxsize=100)
+    @lru_cache(maxsize=100000)
     def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
 
@@ -208,6 +284,24 @@ class DatabaseBackedLookup(Lookup):
     @lru_cache(maxsize=100)
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
+
+        # Check to see if the token is in the token-to-entity IDs table
+        res = self._cursor.execute(
+            "SELECT "
+            + ENTITY_IDS_COLUMN
+            + " FROM "
+            + TOKEN_TO_ENTITY_IDS_TABLENAME
+            + " WHERE "
+            + TOKEN_COLUMN
+            + "=?",
+            (token,),
+        )
+
+        result = res.fetchone()
+
+        # Unpickle and return set
+        if result is not None:
+            return unpickle_set(result[0])
 
         res = self._cursor.execute(
             "SELECT "
@@ -246,6 +340,12 @@ class DatabaseBackedLookup(Lookup):
 
         print("Token to entity ID:")
         res = self._cursor.execute("SELECT * FROM " + TOKEN_TO_ENTITY_ID_TABLENAME)
+        print(res.fetchall())
+
+        print("Token to entity IDs:")
+        res = self._cursor.execute(
+            "SELECT " + TOKEN_COLUMN + " FROM " + TOKEN_TO_ENTITY_IDS_TABLENAME
+        )
         print(res.fetchall())
 
     def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:

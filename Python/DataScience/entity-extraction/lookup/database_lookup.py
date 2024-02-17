@@ -72,6 +72,9 @@ class DatabaseBackedLookup(Lookup):
     def _initialise_load_mode(self):
         """Initialise the database for load mode."""
 
+        logger.info("Database in load mode")
+        logger.info(f"Opening connection to database: {self._filepath}")
+
         # Check that the a file with the database filepath doesn't exist
         if os.path.exists(self._filepath):
             raise Exception(f"File already exists: {self._filepath}")
@@ -154,6 +157,7 @@ class DatabaseBackedLookup(Lookup):
         # Update the maximum number of tokens for an entity
         self._max_num_tokens = max(self._max_num_tokens, len(tokens))
 
+        # One more entity and its tokens have been added
         self._num_adds += 1
 
         # Commit the inserts if the insert threshold has been met
@@ -224,6 +228,8 @@ class DatabaseBackedLookup(Lookup):
     def _build_token_to_entity_ids_table(self) -> None:
         """Build a token to entity IDs table for tokens with lots of entity IDs."""
 
+        logger.debug("Building the token to entity IDs fast lookup")
+
         # Find the unique tokens
         cur2 = self._conn.cursor()
         res = cur2.execute(
@@ -244,7 +250,11 @@ class DatabaseBackedLookup(Lookup):
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-        logger.debug(
+            logger.debug(
+                f"Processed {num_tokens} tokens, with {num_additions} added for fast lookup"
+            )
+
+        logger.info(
             f"There are {num_tokens} unique tokens, {num_additions} tokens added for fast lookup"
         )
 
@@ -299,7 +309,7 @@ class DatabaseBackedLookup(Lookup):
 
         result = res.fetchone()
 
-        # Unpickle and return set
+        # Unpickle and return a set if there is an entry
         if result is not None:
             return unpickle_set(result[0])
 
@@ -341,6 +351,7 @@ class DatabaseBackedLookup(Lookup):
         print("Token to entity ID:")
         res = self._cursor.execute("SELECT * FROM " + TOKEN_TO_ENTITY_ID_TABLENAME)
         print(res.fetchall())
+        print("")
 
         print("Token to entity IDs:")
         res = self._cursor.execute(

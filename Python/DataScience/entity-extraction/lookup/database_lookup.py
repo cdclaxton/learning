@@ -257,9 +257,10 @@ class DatabaseBackedLookup(Lookup):
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-                logger.info(
-                    f"Processed {num_tokens} tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
-                )
+                if num_tokens % 10000 == 0:
+                    logger.info(
+                        f"Processed {num_tokens} tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
+                    )
 
         logger.info(
             f"There are {num_tokens} unique tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"

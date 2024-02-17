@@ -248,6 +248,7 @@ class DatabaseBackedLookup(Lookup):
 
         for row in res:
             token = row[0]
+            num_tokens += 1
 
             # Get the entities for the token
             entities = self.entity_ids_for_token(token)

@@ -4,7 +4,12 @@ import sqlite3
 
 from functools import lru_cache
 from typing import Optional, Set
-from domain import Tokens, assert_entity_id_valid, assert_tokens_valid
+from domain import (
+    Tokens,
+    assert_entity_id_valid,
+    assert_token_valid,
+    assert_tokens_valid,
+)
 from lookup.lookup import Lookup
 from loguru import logger
 
@@ -234,7 +239,7 @@ class DatabaseBackedLookup(Lookup):
     def _build_token_to_entity_ids_table(self) -> None:
         """Build a token to entity IDs table for tokens with lots of entity IDs."""
 
-        logger.debug("Building the token to entity IDs fast lookup")
+        logger.info("Building the token to entity IDs fast lookup")
 
         # Find the unique tokens
         cur2 = self._conn.cursor()
@@ -251,7 +256,7 @@ class DatabaseBackedLookup(Lookup):
             num_tokens += 1
 
             # Get the entities for the token
-            entities = self.entity_ids_for_token(token)
+            entities = self._entity_ids_for_token_slow(token)
 
             if len(entities) > 10000:
                 self._add_token_to_entities(token, entities)
@@ -300,8 +305,32 @@ class DatabaseBackedLookup(Lookup):
         return result[0][0].split(TOKEN_SEPARATOR)
 
     @lru_cache(maxsize=100)
+    def _entity_ids_for_token_slow(self, token: str) -> Optional[Set[str]]:
+        """Get the entity IDs for a given token without using the dedicated table."""
+
+        res = self._cursor.execute(
+            "SELECT "
+            + ENTITY_ID_COLUMN
+            + " FROM "
+            + TOKEN_TO_ENTITY_ID_TABLENAME
+            + " WHERE "
+            + TOKEN_COLUMN
+            + "=?",
+            (token,),
+        )
+
+        result = res.fetchall()
+
+        if len(result) == 0:
+            return None
+
+        return {ri[0] for ri in result}
+
+    @lru_cache(maxsize=100)
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
+
+        assert_token_valid(token)
 
         # Check to see if the token is in the token-to-entity IDs table
         res = self._cursor.execute(
@@ -321,23 +350,7 @@ class DatabaseBackedLookup(Lookup):
         if result is not None:
             return unpickle_set(result[0])
 
-        res = self._cursor.execute(
-            "SELECT "
-            + ENTITY_ID_COLUMN
-            + " FROM "
-            + TOKEN_TO_ENTITY_ID_TABLENAME
-            + " WHERE "
-            + TOKEN_COLUMN
-            + "=?",
-            (token,),
-        )
-
-        result = res.fetchall()
-
-        if len(result) == 0:
-            return None
-
-        return {ri[0] for ri in result}
+        return self._entity_ids_for_token_slow(token)
 
     def _debug(self):
         """Create debug output (only for small databases)."""

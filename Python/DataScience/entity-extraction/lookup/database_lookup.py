@@ -4,6 +4,7 @@ import pickle
 import sqlite3
 
 from functools import lru_cache
+import time
 from typing import Optional, Set
 from domain import (
     Tokens,
@@ -196,6 +197,8 @@ class DatabaseBackedLookup(Lookup):
             (self._max_num_tokens,),
         )
 
+        start_time = time.time()
+
         # Add an index to the tables
         self._cursor.execute(
             "CREATE INDEX index1 ON "
@@ -215,10 +218,17 @@ class DatabaseBackedLookup(Lookup):
 
         self._conn.commit()
 
+        print(f"Time taken to create the indices: {time.time() - start_time} seconds")
+
         # Populate the token to entity IDs table
+        start_time = time.time()
         self._build_token_to_entity_ids_table()
+        logger.info(
+            f"Time taken to build the fast token to entity IDs lookup: {time.time() - start_time}"
+        )
 
         # Create an index on the token to entity IDs table
+        start_time = time.time()
         self._cursor.execute(
             "CREATE INDEX index3 ON "
             + TOKEN_TO_ENTITY_IDS_TABLENAME
@@ -228,6 +238,9 @@ class DatabaseBackedLookup(Lookup):
         )
 
         self._conn.commit()
+        print(
+            f"Time taken to create the token-to-entity IDs index: {time.time() - start_time} seconds"
+        )
 
     def _add_token_to_entities(self, token: str, entities: Set[str]) -> None:
         assert type(token) == str
@@ -257,13 +270,14 @@ class DatabaseBackedLookup(Lookup):
         for token, count in self._token_to_count.items():
             num_tokens_processed += 1
 
-            if count > 10000:
-                # Get the entities for the token
+            if count > 1000:
+                # Get the entities for the token and add to the dedicated lookup
+                # table
                 entities = self._entity_ids_for_token_slow(token)
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-            if num_tokens_processed % 10000 == 0:
+            if num_tokens_processed % 1000 == 0:
                 percentage_processed = 100.0 * num_tokens_processed / total_tokens
                 percentage_added = 100 * num_additions / num_tokens_processed
                 logger.info(

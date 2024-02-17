@@ -31,6 +31,9 @@ MAX_TOKENS_COLUMN = "maxTokens"
 # Token separator
 TOKEN_SEPARATOR = " "
 
+# Minimum number of entities for a token to be added to the fast cache
+MIN_ENTITIES_FOR_CACHE = 100
+
 
 def pickle_set(s: Set[str]) -> bytes:
     """Pickle a set for storage in the database."""
@@ -273,7 +276,7 @@ class DatabaseBackedLookup(Lookup):
         for token, count in self._token_to_count.items():
             num_tokens_processed += 1
 
-            if count > 100:
+            if count >= MIN_ENTITIES_FOR_CACHE:
                 # Get the entities for the token and add to the dedicated lookup
                 # table
                 entities = self._entity_ids_for_token_slow(token)

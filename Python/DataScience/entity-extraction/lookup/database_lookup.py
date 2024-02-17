@@ -32,7 +32,7 @@ MAX_TOKENS_COLUMN = "maxTokens"
 TOKEN_SEPARATOR = " "
 
 # Minimum number of entities for a token to be added to the fast cache
-MIN_ENTITIES_FOR_CACHE = 100
+MIN_ENTITIES_FOR_CACHE = 10
 
 
 def pickle_set(s: Set[str]) -> bytes:

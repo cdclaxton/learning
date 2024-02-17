@@ -256,7 +256,7 @@ class DatabaseBackedLookup(Lookup):
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-                logger.debug(
+                logger.info(
                     f"Processed {num_tokens} tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
                 )
 

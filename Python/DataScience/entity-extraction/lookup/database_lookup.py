@@ -218,7 +218,9 @@ class DatabaseBackedLookup(Lookup):
 
         self._conn.commit()
 
-        print(f"Time taken to create the indices: {time.time() - start_time} seconds")
+        logger.info(
+            f"Time taken to create the indices: {time.time() - start_time} seconds"
+        )
 
         # Populate the token to entity IDs table
         start_time = time.time()
@@ -238,7 +240,7 @@ class DatabaseBackedLookup(Lookup):
         )
 
         self._conn.commit()
-        print(
+        logger.info(
             f"Time taken to create the token-to-entity IDs index: {time.time() - start_time} seconds"
         )
 
@@ -260,8 +262,9 @@ class DatabaseBackedLookup(Lookup):
         """Build a token to entity IDs table for tokens with lots of entity IDs."""
 
         total_tokens = len(self._token_to_count)
-        logger.info("Building the token to entity IDs fast lookup")
-        logger.info(f"There are {total_tokens} tokens")
+        logger.info(
+            "Building the token to entity IDs fast lookup ({total_tokens} tokens)"
+        )
 
         self._num_adds = 0
         num_tokens_processed = 0
@@ -277,7 +280,7 @@ class DatabaseBackedLookup(Lookup):
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-            if num_tokens_processed % 1000 == 0:
+            if num_tokens_processed % 100 == 0:
                 percentage_processed = 100.0 * num_tokens_processed / total_tokens
                 percentage_added = 100 * num_additions / num_tokens_processed
                 logger.info(

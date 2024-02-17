@@ -45,6 +45,8 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
 
         num_rows_processed += 1
 
+    logger.info(f"Processed {num_rows_processed} rows")
+
     # Close the connection to the database
     conn.close()
 

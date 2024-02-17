@@ -1,3 +1,4 @@
+from collections import defaultdict
 import os
 import pickle
 import sqlite3
@@ -59,6 +60,9 @@ class DatabaseBackedLookup(Lookup):
 
         # Maximum number of tokens for a single entity
         self._max_num_tokens = 0
+
+        # Token to number of entities count
+        self._token_to_count = defaultdict(int)
 
         # Initialise the database for loading or reading
         self._initialise_database()
@@ -152,6 +156,9 @@ class DatabaseBackedLookup(Lookup):
         assert_entity_id_valid(entity_id)
         assert_tokens_valid(tokens)
 
+        for token in tokens:
+            self._token_to_count[token] += 1
+
         # Add the entity to tokens mapping
         self._cursor.execute(
             f"INSERT INTO " + ENTITY_ID_TO_TOKENS_TABLENAME + " VALUES(?,?);",
@@ -239,36 +246,32 @@ class DatabaseBackedLookup(Lookup):
     def _build_token_to_entity_ids_table(self) -> None:
         """Build a token to entity IDs table for tokens with lots of entity IDs."""
 
+        total_tokens = len(self._token_to_count)
         logger.info("Building the token to entity IDs fast lookup")
-
-        # Find the unique tokens
-        cur2 = self._conn.cursor()
-        res = cur2.execute(
-            "SELECT DISTINCT " + TOKEN_COLUMN + " FROM " + TOKEN_TO_ENTITY_ID_TABLENAME
-        )
+        logger.info(f"There are {total_tokens} tokens")
 
         self._num_adds = 0
-        num_tokens = 0
+        num_tokens_processed = 0
         num_additions = 0
 
-        for row in res:
-            token = row[0]
-            num_tokens += 1
+        for token, count in self._token_to_count.items():
+            num_tokens_processed += 1
 
-            # Get the entities for the token
-            entities = self._entity_ids_for_token_slow(token)
-
-            if len(entities) > 10000:
+            if count > 10000:
+                # Get the entities for the token
+                entities = self._entity_ids_for_token_slow(token)
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-                if num_tokens % 10000 == 0:
-                    logger.info(
-                        f"Processed {num_tokens} tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
-                    )
+            if num_tokens_processed % 10000 == 0:
+                percentage_processed = 100.0 * num_tokens_processed / total_tokens
+                percentage_added = 100 * num_additions / num_tokens_processed
+                logger.info(
+                    f"Processed {num_tokens_processed} tokens ({percentage_processed} %), {num_additions} ({percentage_added :.4f} %) added for fast lookup"
+                )
 
         logger.info(
-            f"There are {num_tokens} unique tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
+            f"There are {total_tokens} unique tokens, {num_additions} ({100 * num_additions/total_tokens :.4f} %) added for fast lookup"
         )
 
         if self._num_adds > 0:

@@ -4,6 +4,7 @@ import sys
 
 from datetime import datetime
 from lookup.database_lookup import DatabaseBackedLookup
+from loguru import logger
 
 
 def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
@@ -22,6 +23,7 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
     num_rows_processed = 0
     start_time = datetime.now()
     start_time_batch = datetime.now()
+    batch_size = 10000
 
     while True:
         result = cur.fetchone()
@@ -35,10 +37,10 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
         # Add the entity to the lookup
         lookup.add(entity_id, tokens)
 
-        if num_rows_processed % 10000 == 0:
+        if num_rows_processed % batch_size == 0:
             end_time_batch = datetime.now()
             time_diff = (end_time_batch - start_time_batch).total_seconds()
-            print(f"Processed {num_rows_processed} rows ({time_diff} seconds)")
+            logger.info(f"Processed {num_rows_processed} rows (batch of {batch_size} took {time_diff} seconds)")
             start_time_batch = datetime.now()
 
         num_rows_processed += 1
@@ -47,7 +49,9 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
     conn.close()
 
     end_time = datetime.now()
-    print(f"Time taken to load: {(end_time - start_time).total_seconds()} seconds")
+    logger.info(
+        f"Time taken to load: {(end_time - start_time).total_seconds()} seconds"
+    )
 
 
 if __name__ == "__main__":
@@ -72,7 +76,9 @@ if __name__ == "__main__":
     # Finalise the entries
     start = datetime.now()
     lookup.finalise()
-    print(f"Time taken to finalise: {(datetime.now() - start).total_seconds()} seconds")
+    logger.info(
+        f"Time taken to finalise: {(datetime.now() - start).total_seconds()} seconds"
+    )
 
     # Close the connection to the database
     lookup.close()

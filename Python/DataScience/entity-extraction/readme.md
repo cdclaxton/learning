@@ -60,6 +60,14 @@ curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"te
 
 ## Dataflow
 
+The high-level concept of the service is illustrated below.
+
+![](./images/concept.png)
+
+The generation of the Sqlite database used to perform token to entity ID and entity ID to token lookups is shown below.
+
+![](./images/database-load.png)
+
 The image below shows a high-level view of the data (denoted with two horizontal lines) and the processes (shown with circles) used in the experiment.
 
 ![](./images/data-flow.png)

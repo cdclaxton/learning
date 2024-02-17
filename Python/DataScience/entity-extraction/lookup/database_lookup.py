@@ -262,7 +262,7 @@ class DatabaseBackedLookup(Lookup):
                 )
 
         logger.info(
-            f"There are {num_tokens} unique tokens, {num_additions} tokens added for fast lookup"
+            f"There are {num_tokens} unique tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
         )
 
         if self._num_adds > 0:

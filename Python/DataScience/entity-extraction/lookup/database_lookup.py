@@ -226,7 +226,7 @@ class DatabaseBackedLookup(Lookup):
         start_time = time.time()
         self._build_token_to_entity_ids_table()
         logger.info(
-            f"Time taken to build the fast token to entity IDs lookup: {time.time() - start_time}"
+            f"Time taken to build the fast token to entity IDs lookup: {time.time() - start_time} seconds"
         )
 
         # Create an index on the token to entity IDs table
@@ -263,7 +263,7 @@ class DatabaseBackedLookup(Lookup):
 
         total_tokens = len(self._token_to_count)
         logger.info(
-            "Building the token to entity IDs fast lookup ({total_tokens} tokens)"
+            f"Building the token to entity IDs fast lookup ({total_tokens} tokens)"
         )
 
         self._num_adds = 0
@@ -273,14 +273,14 @@ class DatabaseBackedLookup(Lookup):
         for token, count in self._token_to_count.items():
             num_tokens_processed += 1
 
-            if count > 1000:
+            if count > 100:
                 # Get the entities for the token and add to the dedicated lookup
                 # table
                 entities = self._entity_ids_for_token_slow(token)
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-            if num_tokens_processed % 100 == 0:
+            if num_tokens_processed % 10000 == 0:
                 percentage_processed = 100.0 * num_tokens_processed / total_tokens
                 percentage_added = 100 * num_additions / num_tokens_processed
                 logger.info(

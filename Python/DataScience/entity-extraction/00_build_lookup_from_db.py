@@ -40,7 +40,9 @@ def load_lookup(lookup: DatabaseBackedLookup, username: str, password: str):
         if num_rows_processed % batch_size == 0:
             end_time_batch = datetime.now()
             time_diff = (end_time_batch - start_time_batch).total_seconds()
-            logger.info(f"Processed {num_rows_processed} rows (batch of {batch_size} took {time_diff} seconds)")
+            logger.info(
+                f"Processed {num_rows_processed} rows (batch of {batch_size} took {time_diff} seconds)"
+            )
             start_time_batch = datetime.now()
 
         num_rows_processed += 1
@@ -70,17 +72,22 @@ if __name__ == "__main__":
     database_filepath = "./data/full-database.db"
 
     # Initialise the database-backed lookup for loading
+    start_script = datetime.now()
     lookup = DatabaseBackedLookup(database_filepath, True)
 
     # Load the lookup
     load_lookup(lookup, username, password)
 
     # Finalise the entries
-    start = datetime.now()
+    start_finalise = datetime.now()
     lookup.finalise()
     logger.info(
-        f"Time taken to finalise: {(datetime.now() - start).total_seconds()} seconds"
+        f"Time taken to finalise: {(datetime.now() - start_finalise).total_seconds()} seconds"
     )
 
     # Close the connection to the database
     lookup.close()
+
+    logger.info(
+        f"Total time to build database: {(datetime.now() - start_script).total_seconds()} seconds"
+    )

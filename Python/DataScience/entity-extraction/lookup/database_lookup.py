@@ -26,11 +26,14 @@ TOKEN_SEPARATOR = " "
 
 
 def pickle_set(s: Set[str]) -> bytes:
+    """Pickle a set for storage in the database."""
     assert type(s) == set
     return pickle.dumps(s)
 
 
 def unpickle_set(b: bytes) -> Set[str]:
+    """Unpickle a set from storage in the database."""
+    assert type(b) == bytes
     return pickle.loads(b)
 
 
@@ -52,6 +55,7 @@ class DatabaseBackedLookup(Lookup):
         # Maximum number of tokens for a single entity
         self._max_num_tokens = 0
 
+        # Initialise the database for loading or reading
         self._initialise_database()
 
     def _initialise_database(self):
@@ -64,6 +68,8 @@ class DatabaseBackedLookup(Lookup):
 
     def _table_exists(self, table_name: str) -> bool:
         """Does the table exist?"""
+        assert type(table_name) == str
+
         res = self._cursor.execute(
             "SELECT name FROM sqlite_master WHERE name='" + table_name + "';"
         )
@@ -250,9 +256,9 @@ class DatabaseBackedLookup(Lookup):
                 self._add_token_to_entities(token, entities)
                 num_additions += 1
 
-            logger.debug(
-                f"Processed {num_tokens} tokens, with {num_additions} added for fast lookup"
-            )
+                logger.debug(
+                    f"Processed {num_tokens} tokens, {num_additions} ({100 * num_additions/num_tokens :.4f} %) added for fast lookup"
+                )
 
         logger.info(
             f"There are {num_tokens} unique tokens, {num_additions} tokens added for fast lookup"

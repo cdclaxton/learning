@@ -8,10 +8,11 @@ from entity.matcher import (
     ProbabilisticMatch,
     feed_entity_matchers,
     most_likely_matches,
-    threshold_matcher_results,
 )
+from entity.matcher_generic import GenericEntityMatcher
 from entity.matcher_missing_token import MissingTokenEntityMatcher
 from likelihood.likelihood import LikelihoodFunctionLogistic
+from likelihood.likelihood_add_remove import make_likelihood_symmetric
 from lookup.database_lookup import DatabaseBackedLookup
 from nltk.tokenize import wordpunct_tokenize
 from loguru import logger
@@ -139,10 +140,24 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     if req.min_tokens_to_check <= 0:
         return error_response("invalid minimum number of tokens to check")
 
+    # Make the entity matcher
+    # matcher = MissingTokenEntityMatcher(
+    #     lookup=lookup,
+    #     max_window_width=max_window,
+    #     likelihood_function=likelihood,
+    #     min_probability=req.threshold,
+    #     min_tokens_to_check=req.min_tokens_to_check,
+    # )
+
+    matcher = GenericEntityMatcher(
+        lookup=lookup,
+        likelihood=likelihood_symmetric,
+        max_window_width=max_window,
+        min_probability=req.threshold,
+        min_tokens_to_check=req.min_tokens_to_check,
+    )
+
     # All entity matchers
-    matcher.reset()
-    matcher.set_min_probability_for_match(req.threshold)
-    matcher.set_min_tokens_to_check(req.min_tokens_to_check)
     entity_matchers = {"matcher": matcher}
 
     # Tokenise the text
@@ -218,11 +233,9 @@ if __name__ == "__main__":
     max_window = lookup.get_max_tokens()
     logger.info(f"Maximum window size: {max_window}")
 
-    # Make a matcher that handles missing tokens using a logistic likelihood function
-    logger.info(
-        "Instantiating a missing token entity matcher with a logistic likelihood function"
-    )
+    # Make the logistic likelihood function
+    logger.info("Instantiating a logistic likelihood function")
     likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
-    matcher = MissingTokenEntityMatcher(lookup, max_window, likelihood)
+    likelihood_symmetric = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1)
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

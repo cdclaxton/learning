@@ -15,20 +15,20 @@ class GenericEntityMatcher(EntityMatcher):
         lookup: Lookup,
         likelihood: LikelihoodFunction,
         max_window_width: int,
-        min_tokens: int,
+        min_tokens_to_check: int,
         min_probability: float,
     ):
         assert isinstance(lookup, Lookup)
         assert isinstance(likelihood, LikelihoodFunction)
         assert type(max_window_width) == int
         assert max_window_width > 0
-        assert type(min_tokens) == int and min_tokens > 0
+        assert type(min_tokens_to_check) == int and min_tokens_to_check > 0
         assert_probability_valid(min_probability)
 
         self._lookup = lookup
         self._likelihood = likelihood
         self._max_window_width = max_window_width
-        self._min_tokens_to_check = min_tokens
+        self._min_tokens_to_check = min_tokens_to_check
         self._min_probability = min_probability
 
         self._window: Window = Window(max_window_width)
@@ -60,6 +60,8 @@ class GenericEntityMatcher(EntityMatcher):
             for token in tokens_in_window:
 
                 entity_ids = self._lookup.entity_ids_for_token(token)
+                if entity_ids is None:
+                    continue
 
                 # Walk through each entity
                 for entity_id in entity_ids:

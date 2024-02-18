@@ -27,7 +27,7 @@ pip install -r requirements.txt
 To run the unit tests, enter:
 
 ```bash
-
+python3 -m pytest . # Inside a virtual environment
 pytest .
 ```
 

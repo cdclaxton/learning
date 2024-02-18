@@ -1,5 +1,5 @@
 from typing import List
-from domain import assert_token_valid
+from domain import assert_probability_valid, assert_token_valid
 from entity.matcher import EntityMatcher, ProbabilisticMatch
 from entity.sequence import Window, correct_sequence
 from likelihood.likelihood import LikelihoodFunction
@@ -16,16 +16,23 @@ class MissingTokenEntityMatcher(EntityMatcher):
         lookup: Lookup,
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
+        min_probability: int,
+        min_tokens_to_check: int,
     ):
         assert isinstance(lookup, Lookup)
         assert type(max_window_width) == int
         assert max_window_width > 0
         assert isinstance(likelihood_function, LikelihoodFunction)
+        assert_probability_valid(min_probability)
+        assert type(min_tokens_to_check) == int and min_tokens_to_check > 0
 
         self._lookup = lookup
         self._max_window_width = max_window_width
         self._window: Window = Window(max_window_width)
         self._likelihood_function: LikelihoodFunction = likelihood_function
+        self._min_probability = min_probability
+        self._min_tokens_to_check = min_tokens_to_check
+
         self._matches: List[ProbabilisticMatch] = []
 
         # Initialise a cache that optimises the calculation of entities in

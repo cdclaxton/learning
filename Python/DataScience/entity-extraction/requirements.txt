@@ -1,4 +1,7 @@
 fastapi[all]
 loguru
+matplotlib
 mysql-connector
 nltk
+numpy
+pytest

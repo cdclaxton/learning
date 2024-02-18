@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from functools import lru_cache
 import math
+from typing import Tuple
 
 from domain import Tokens, assert_probability_valid, assert_tokens_valid
 
@@ -72,3 +73,34 @@ class LikelihoodFunctionLogistic(LikelihoodFunction):
         assert_probability_valid(y)
 
         return y
+
+
+def num_token_additions_removals(actual: Tokens, entity: Tokens) -> Tuple[int, int]:
+    """Number of tokens that have been added and removed."""
+
+    assert_tokens_valid(actual)
+    assert_tokens_valid(entity)
+
+    # Convert the lists to sets
+    actual = set(actual)
+    entity = set(entity)
+
+    removed = entity.difference(actual)
+    added = actual.difference(entity)
+
+    return len(added), len(removed)
+
+
+class LikelihoodFunctionAddRemove(LikelihoodFunction):
+    def __init__(
+        self,
+    ):
+        pass
+
+    def calc(self, actual_tokens: Tokens, entity_tokens: Tokens) -> float:
+        """Calculate the likelihood of the actual_tokens given the entity_tokens."""
+        pass
+
+    @lru_cache(maxsize=100)
+    def _calc_prob(self, n_tokens: int, n_additions: int, n_removals: int) -> float:
+        pass

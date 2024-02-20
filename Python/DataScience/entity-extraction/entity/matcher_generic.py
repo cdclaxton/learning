@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Generator, List, Tuple
 from domain import (
     Tokens,
@@ -59,7 +60,7 @@ class GenericEntityMatcher(EntityMatcher):
 
         # Entity IDs of entities that need to be checked as they match one or
         # more tokens in the text
-        self._entity_ids = set()
+        self._entity_id_to_count = defaultdict(int)
 
         # Initialise the list of matches
         self._matches: List[ProbabilisticMatch] = []
@@ -72,8 +73,11 @@ class GenericEntityMatcher(EntityMatcher):
 
         # Get a set of the entity IDs that contain the token
         entity_ids = self._lookup.entity_ids_for_token(token)
-        if entity_ids is not None:
-            self._entity_ids = self._entity_ids.union(entity_ids)
+        if entity_ids is None:
+            return
+
+        for entity_id in entity_ids:
+            self._entity_id_to_count[entity_id] += 1
 
     def _calc_matches_for_entity(
         self, start_idx: int, end_idx: int, entity_id: str
@@ -105,11 +109,17 @@ class GenericEntityMatcher(EntityMatcher):
     def get_matches(self) -> List[ProbabilisticMatch]:
         """Return entity extraction results."""
 
-        logger.debug(f"Number of entities matching tokens: {len(self._entity_ids)}")
+        logger.debug(
+            f"Number of entities matching tokens: {len(self._entity_id_to_count)}"
+        )
 
         # Walk through each entity first because getting the entity from the
         # lookup can be expensive
-        for entity_id in self._entity_ids:
+        for entity_id, count in self._entity_id_to_count.items():
+
+            # If the entity ID appears insufficiently, don't test it
+            if count < 2:
+                continue
 
             # Walk through each start and end position for the sub-window
             for start_idx, end_idx in calc_windows(

@@ -1,6 +1,6 @@
 from functools import lru_cache, partial
 from typing import Callable, Tuple
-from domain import Tokens, assert_tokens_valid
+from domain import Tokens, assert_probability_valid, assert_tokens_valid
 from likelihood.likelihood import LikelihoodFunction
 from likelihood.piecewise_linear import piecewise_likelihood
 
@@ -46,6 +46,16 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
         return self._likelihood_add(n_additions / n_tokens) * self._likelihood_remove(
             n_removals / n_tokens
         )
+
+    def min_count(self, min_window: int, min_prob: float) -> int:
+        assert type(min_window) == int and min_window > 0
+        assert_probability_valid(min_prob)
+
+        min_count_to_prob = [(i, self._calc_prob(min_window, 0, min_window-i)) for i in range(0, min_window+1)]
+
+        for mc, prob in  min_count_to_prob:
+            if prob >= min_prob:
+                return mc
 
 
 def make_likelihood_symmetric(

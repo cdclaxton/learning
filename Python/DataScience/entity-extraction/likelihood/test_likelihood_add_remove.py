@@ -59,3 +59,15 @@ def test_make_likelihood_symmetric():
         likelihood_fn.calc(["7", "straight", "street"], ["7", "straight", "street"])
         == 1.0
     )
+
+
+def test_min_count():
+    likelihood = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1)
+
+    # n = 5
+    # for i in range(n):
+    #     num_matching = n - i
+    #     print(f"{num_matching}: {likelihood._calc_prob(n, 0, i)}")
+
+    assert likelihood.min_count(4, 0.2) == 3
+    assert likelihood.min_count(5, 0.6) == 4

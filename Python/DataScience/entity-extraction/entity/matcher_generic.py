@@ -113,14 +113,22 @@ class GenericEntityMatcher(EntityMatcher):
             f"Number of entities matching tokens: {len(self._entity_id_to_count)}"
         )
 
+        # Determine the minimum count of an entity for it to be tested
+        min_count = self._likelihood.min_count(self._min_window, self._min_probability)
+        logger.debug(
+            f"Minimum number of times the entity must appear for evaluation: {min_count}"
+        )
+
         # Walk through each entity first because getting the entity from the
         # lookup can be expensive
+        num_tested = 0
         for entity_id, count in self._entity_id_to_count.items():
 
             # If the entity ID appears insufficiently, don't test it
-            if count < 2:
+            if count < min_count:
                 continue
 
+            num_tested += 1
             # Walk through each start and end position for the sub-window
             for start_idx, end_idx in calc_windows(
                 num_tokens=len(self._tokens),
@@ -130,6 +138,8 @@ class GenericEntityMatcher(EntityMatcher):
 
                 # Calculate the matches for the entity in the sub-window
                 self._calc_matches_for_entity(start_idx, end_idx, entity_id)
+
+        logger.debug(f"Number of entities tested: {num_tested}")
 
         return self._matches
 

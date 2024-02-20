@@ -67,7 +67,7 @@ class EntityMatcher(ABC):
 
         assert_probability_valid(threshold)
 
-        matches = [m for m in self._matches if m.probability > threshold]
+        matches = [m for m in self.get_matches() if m.probability > threshold]
         return sorted(matches, key=lambda m: m.probability, reverse=True)
 
     @abstractmethod

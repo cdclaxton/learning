@@ -152,9 +152,9 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     matcher = GenericEntityMatcher(
         lookup=lookup,
         likelihood=likelihood_symmetric,
-        max_window_width=max_window,
+        min_window=req.min_tokens_to_check,
+        max_window=max_window,
         min_probability=req.threshold,
-        min_tokens_to_check=req.min_tokens_to_check,
     )
 
     # All entity matchers
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     logger.info(f"Maximum window size: {max_window}")
 
     # Make the logistic likelihood function
-    logger.info("Instantiating a logistic likelihood function")
+    logger.info("Instantiating the likelihood function")
     likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
     likelihood_symmetric = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1)
 

@@ -8,9 +8,6 @@ from likelihood.piecewise_linear import piecewise_likelihood
 def num_token_additions_removals(actual: Tokens, entity: Tokens) -> Tuple[int, int]:
     """Number of tokens that have been added and removed."""
 
-    assert_tokens_valid(actual)
-    assert_tokens_valid(entity)
-
     # Convert the lists to sets
     actual = set(actual)
     entity = set(entity)
@@ -51,9 +48,12 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
         assert type(min_window) == int and min_window > 0
         assert_probability_valid(min_prob)
 
-        min_count_to_prob = [(i, self._calc_prob(min_window, 0, min_window-i)) for i in range(0, min_window+1)]
+        min_count_to_prob = [
+            (i, self._calc_prob(min_window, 0, min_window - i))
+            for i in range(0, min_window + 1)
+        ]
 
-        for mc, prob in  min_count_to_prob:
+        for mc, prob in min_count_to_prob:
             if prob >= min_prob:
                 return mc
 

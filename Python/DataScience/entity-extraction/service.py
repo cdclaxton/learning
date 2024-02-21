@@ -33,7 +33,7 @@ class ExtractionRequest(BaseModel):
 class ExtractionMatch(BaseModel):
     entity_id: str  # Entity ID
     entity: str  # Entity tokens
-    match: str  # Text that matched the entity
+    matched_text: str  # Text that matched the entity
     probability: float  # Probability of the match
     start: int  # Start index in the text
     end: int  # End index in the text
@@ -85,7 +85,7 @@ def probability_match_to_extraction_match(
     return ExtractionMatch(
         entity_id=prob_match.entity_id,
         entity=entity,
-        match=" ".join(tokens[prob_match.start : prob_match.end + 1]),
+        matched_text=" ".join(tokens[prob_match.start : prob_match.end + 1]),
         probability=prob_match.probability,
         start=prob_match.start,
         end=prob_match.end,

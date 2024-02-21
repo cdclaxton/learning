@@ -38,6 +38,14 @@ brew install jq  # Mac
 sudo apt-get install jq  # Linux
 ```
 
+## Profiling the code
+
+To profile the code, run:
+
+```bash
+python3 -m cProfile service.py
+```
+
 ## Run the entity extraction web service
 
 To run the entity extraction web service:

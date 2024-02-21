@@ -106,6 +106,19 @@ class GenericEntityMatcher(EntityMatcher):
                 )
             )
 
+    def _calc_matches_for_entity_in_subwindows(self, entity_id: str) -> None:
+        """Calculate matches for the entity in all sub-windows."""
+
+        # Walk through each start and end position for the sub-window
+        for start_idx, end_idx in calc_windows(
+            num_tokens=len(self._tokens),
+            min_window=self._min_window,
+            max_window=self._max_window,
+        ):
+
+            # Calculate the matches for the entity in the sub-window
+            self._calc_matches_for_entity(start_idx, end_idx, entity_id)
+
     def get_matches(self) -> List[ProbabilisticMatch]:
         """Return entity extraction results."""
 
@@ -128,16 +141,8 @@ class GenericEntityMatcher(EntityMatcher):
             if count < min_count:
                 continue
 
+            self._calc_matches_for_entity_in_subwindows(entity_id)
             num_tested += 1
-            # Walk through each start and end position for the sub-window
-            for start_idx, end_idx in calc_windows(
-                num_tokens=len(self._tokens),
-                min_window=self._min_window,
-                max_window=self._max_window,
-            ):
-
-                # Calculate the matches for the entity in the sub-window
-                self._calc_matches_for_entity(start_idx, end_idx, entity_id)
 
         logger.debug(f"Number of entities tested: {num_tested}")
 

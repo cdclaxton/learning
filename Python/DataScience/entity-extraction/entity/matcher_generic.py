@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Generator, List, Tuple
 from domain import (
     Tokens,
@@ -60,7 +59,7 @@ class GenericEntityMatcher(EntityMatcher):
 
         # Entity IDs of entities that need to be checked as they match one or
         # more tokens in the text
-        self._entity_id_to_count = defaultdict(int)
+        self._entity_id_to_count: dict[str, int] = dict()
 
         # Initialise the list of matches
         self._matches: List[ProbabilisticMatch] = []
@@ -72,12 +71,16 @@ class GenericEntityMatcher(EntityMatcher):
         self._tokens.append(token)
 
         # Get a set of the entity IDs that contain the token
-        entity_ids = self._lookup.entity_ids_for_token(token)
+        entity_ids = self._lookup.entity_ids_for_token_list(token)
         if entity_ids is None:
             return
 
+        # Using a dict and as a defaultdict was found to be slower
         for entity_id in entity_ids:
-            self._entity_id_to_count[entity_id] += 1
+            if entity_id in self._entity_id_to_count:
+                self._entity_id_to_count[entity_id] += 1
+            else:
+                self._entity_id_to_count[entity_id] = 1
 
     def _calc_matches_for_entity(
         self, start_idx: int, end_idx: int, entity_id: str

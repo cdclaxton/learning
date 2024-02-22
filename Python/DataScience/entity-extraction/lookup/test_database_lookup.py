@@ -1,5 +1,11 @@
 import os
-from lookup.database_lookup import DatabaseBackedLookup, pickle_set, unpickle_set
+from lookup.database_lookup import (
+    DatabaseBackedLookup,
+    pickle_list,
+    pickle_set,
+    unpickle_list,
+    unpickle_set,
+)
 
 
 def test_database_lookup():
@@ -36,6 +42,12 @@ def test_database_lookup():
     assert lookup.entity_ids_for_token("D") == {"e-2"}
     assert lookup.entity_ids_for_token("E") is None
 
+    assert lookup.entity_ids_for_token_list("A") == ["e-1", "e-2"]
+    assert lookup.entity_ids_for_token_list("B") == ["e-1"]
+    assert lookup.entity_ids_for_token_list("C") == ["e-2"]
+    assert lookup.entity_ids_for_token_list("D") == ["e-2"]
+    assert lookup.entity_ids_for_token_list("E") is None
+
     # Get the matching entities
     assert lookup.matching_entries(["A"]) == {"e-1", "e-2"}
     assert lookup.matching_entries(["B"]) == {"e-1"}
@@ -56,3 +68,6 @@ def test_database_lookup():
 def test_pickle_unpickle():
     s = {"a", "b", "c"}
     assert s == unpickle_set(pickle_set(s))
+
+    l = ["a", "b", "c"]
+    assert l == unpickle_list(pickle_list(l))

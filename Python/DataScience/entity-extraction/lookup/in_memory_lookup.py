@@ -38,6 +38,14 @@ class InMemoryLookup(Lookup):
         assert type(entity_id) == str
         return self._entity_id_to_tokens.get(entity_id, None)
 
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+        """Get the entity IDs as a list for a given token."""
+
+        assert type(token) == str
+        if token in self._token_to_entity_ids:
+            return sorted(list(self._token_to_entity_ids[token]))
+        return None
+
     def entity_ids_for_token(self, token) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
 

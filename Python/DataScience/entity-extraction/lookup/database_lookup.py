@@ -5,7 +5,7 @@ import sqlite3
 
 from functools import lru_cache
 import time
-from typing import Optional, Set
+from typing import List, Optional, Set
 from domain import (
     Tokens,
     assert_entity_id_valid,
@@ -23,7 +23,8 @@ MAX_TOKENS_TABLENAME = "MaxTokens"
 
 # Database column names
 ENTITY_ID_COLUMN = "entityId"
-ENTITY_IDS_COLUMN = "entityIds"
+SET_ENTITY_IDS_COLUMN = "setEntityIds"
+LIST_ENTITY_IDS_COLUMN = "listEntityIds"
 TOKENS_COLUMN = "tokens"
 TOKEN_COLUMN = "token"
 MAX_TOKENS_COLUMN = "maxTokens"
@@ -43,6 +44,18 @@ def pickle_set(s: Set[str]) -> bytes:
 
 def unpickle_set(b: bytes) -> Set[str]:
     """Unpickle a set from storage in the database."""
+    assert type(b) == bytes
+    return pickle.loads(b)
+
+
+def pickle_list(l: List[str]) -> bytes:
+    """Pickle a list for storage in the database."""
+    assert type(l) == list
+    return pickle.dumps(l)
+
+
+def unpickle_list(b: bytes) -> List[str]:
+    """Unpickle a list from storage in the database."""
     assert type(b) == bytes
     return pickle.loads(b)
 
@@ -114,9 +127,9 @@ class DatabaseBackedLookup(Lookup):
             f"CREATE TABLE {TOKEN_TO_ENTITY_ID_TABLENAME}({TOKEN_COLUMN}, {ENTITY_ID_COLUMN});"
         )
 
-        # Create the token to entity IDs table
+        # Create the token to the set of entity IDs and list of entity IDs table
         self._cursor.execute(
-            f"CREATE TABLE {TOKEN_TO_ENTITY_IDS_TABLENAME}({TOKEN_COLUMN}, {ENTITY_IDS_COLUMN});"
+            f"CREATE TABLE {TOKEN_TO_ENTITY_IDS_TABLENAME}({TOKEN_COLUMN}, {SET_ENTITY_IDS_COLUMN}, {LIST_ENTITY_IDS_COLUMN});"
         )
 
         # Create a table to hold the maximum number of tokens for a entity
@@ -247,12 +260,14 @@ class DatabaseBackedLookup(Lookup):
             f"Time taken to create the token-to-entity IDs index: {time.time() - start_time} seconds"
         )
 
-    def _add_token_to_entities(self, token: str, entities: Set[str]) -> None:
+    def _add_token_to_entities(
+        self, token: str, setEntities: Set[str], listEntities: List[str]
+    ) -> None:
         assert type(token) == str
 
         self._cursor.execute(
             f"INSERT INTO " + TOKEN_TO_ENTITY_IDS_TABLENAME + " VALUES(?,?);",
-            (token, pickle_set(entities)),
+            (token, pickle_set(setEntities), pickle_list(listEntities)),
         )
         self._num_adds += 1
 
@@ -350,6 +365,28 @@ class DatabaseBackedLookup(Lookup):
         return {ri[0] for ri in result}
 
     @lru_cache(maxsize=100)
+    def _entity_ids_for_token_list_slow(self, token: str) -> Optional[Set[str]]:
+        """Get the entity IDs for a given token without using the dedicated table."""
+
+        res = self._cursor.execute(
+            "SELECT "
+            + ENTITY_ID_COLUMN
+            + " FROM "
+            + TOKEN_TO_ENTITY_ID_TABLENAME
+            + " WHERE "
+            + TOKEN_COLUMN
+            + "=?",
+            (token,),
+        )
+
+        result = res.fetchall()
+
+        if len(result) == 0:
+            return None
+
+        return [ri[0] for ri in result]
+
+    @lru_cache(maxsize=100)
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
 
@@ -358,7 +395,7 @@ class DatabaseBackedLookup(Lookup):
         # Check to see if the token is in the token-to-entity IDs table
         res = self._cursor.execute(
             "SELECT "
-            + ENTITY_IDS_COLUMN
+            + SET_ENTITY_IDS_COLUMN
             + " FROM "
             + TOKEN_TO_ENTITY_IDS_TABLENAME
             + " WHERE "
@@ -374,6 +411,32 @@ class DatabaseBackedLookup(Lookup):
             return unpickle_set(result[0])
 
         return self._entity_ids_for_token_slow(token)
+
+    @lru_cache(maxsize=100)
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+        """Get the entity IDs as a list for a given token."""
+
+        assert_token_valid(token)
+
+        # Check to see if the token is in the token-to-entity IDs table
+        res = self._cursor.execute(
+            "SELECT "
+            + LIST_ENTITY_IDS_COLUMN
+            + " FROM "
+            + TOKEN_TO_ENTITY_IDS_TABLENAME
+            + " WHERE "
+            + TOKEN_COLUMN
+            + "=?",
+            (token,),
+        )
+
+        result = res.fetchone()
+
+        # Unpickle and return a set if there is an entry
+        if result is not None:
+            return unpickle_list(result[0])
+
+        return self._entity_ids_for_token_list_slow(token)
 
     def _debug(self):
         """Create debug output (only for small databases)."""

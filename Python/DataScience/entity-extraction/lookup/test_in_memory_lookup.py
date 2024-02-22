@@ -17,6 +17,9 @@ def test_lookup():
     assert l.entity_ids_for_token("Street") == {"e-0"}
     assert l.entity_ids_for_token("Road") is None
 
+    assert l.entity_ids_for_token_list("80") == ["e-0"]
+    assert l.entity_ids_for_token_list("Road") is None
+
     # Add a second entry
     l.add("e-1", ["80", "Broad", "Walk"])
     assert l.tokens_for_entity("e-0") == ["80", "Straight", "Street"]

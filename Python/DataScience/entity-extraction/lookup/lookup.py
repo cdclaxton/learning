@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Set
+from typing import List, Optional, Set
 
 from domain import Tokens
 
@@ -20,6 +20,11 @@ class Lookup(ABC):
     @abstractmethod
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
+        pass
+
+    @abstractmethod
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+        """Get the entity IDs as a list for a given token."""
         pass
 
     @abstractmethod

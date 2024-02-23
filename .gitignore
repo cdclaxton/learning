@@ -10,3 +10,4 @@ archive.zip
 News_Category_Dataset_v3.json
 
 Python/DataScience/entity-extraction/data/*.db
+/Python/DesignPatterns/lmdb_store/db

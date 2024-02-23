@@ -261,7 +261,7 @@ class DatabaseBackedLookup(Lookup):
         )
 
     def _add_token_to_entities(self, token: str, set_entities: Set[str]) -> None:
-        assert type(token) == str
+        """Add a token to entity IDs mapping for fast lookup."""
 
         assert_token_valid(token)
         assert type(set_entities) == set

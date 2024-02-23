@@ -260,14 +260,17 @@ class DatabaseBackedLookup(Lookup):
             f"Time taken to create the token-to-entity IDs index: {time.time() - start_time} seconds"
         )
 
-    def _add_token_to_entities(
-        self, token: str, setEntities: Set[str], listEntities: List[str]
-    ) -> None:
+    def _add_token_to_entities(self, token: str, set_entities: Set[str]) -> None:
         assert type(token) == str
+
+        assert_token_valid(token)
+        assert type(set_entities) == set
+
+        list_entities = list(set_entities)
 
         self._cursor.execute(
             f"INSERT INTO " + TOKEN_TO_ENTITY_IDS_TABLENAME + " VALUES(?,?);",
-            (token, pickle_set(setEntities), pickle_list(listEntities)),
+            (token, pickle_set(set_entities), pickle_list(list_entities)),
         )
         self._num_adds += 1
 

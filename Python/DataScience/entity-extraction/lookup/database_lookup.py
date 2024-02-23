@@ -269,7 +269,7 @@ class DatabaseBackedLookup(Lookup):
         list_entities = list(set_entities)
 
         self._cursor.execute(
-            f"INSERT INTO " + TOKEN_TO_ENTITY_IDS_TABLENAME + " VALUES(?,?);",
+            f"INSERT INTO " + TOKEN_TO_ENTITY_IDS_TABLENAME + " VALUES(?,?,?);",
             (token, pickle_set(set_entities), pickle_list(list_entities)),
         )
         self._num_adds += 1

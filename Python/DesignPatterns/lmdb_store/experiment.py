@@ -42,3 +42,6 @@ if __name__ == "__main__":
         assert raw is None
 
     print(env.stat())
+
+    # Clean up
+    shutil.rmtree(folder)

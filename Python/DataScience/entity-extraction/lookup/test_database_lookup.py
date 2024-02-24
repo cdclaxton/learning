@@ -56,7 +56,7 @@ def test_database_lookup():
     assert lookup.matching_entries(["A", "B", "E"]) is None
 
     # Check the maximum number of tokens for an entity
-    assert lookup.get_max_tokens() == 3
+    assert lookup.max_number_tokens_for_entity() == 3
 
     # Close the database connection in the lookup
     lookup.close()

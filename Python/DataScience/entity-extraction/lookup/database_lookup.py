@@ -494,7 +494,7 @@ class DatabaseBackedLookup(Lookup):
 
         return entity_ids
 
-    def get_max_tokens(self) -> int:
+    def max_number_tokens_for_entity(self) -> int:
         """Get the maximum number of tokens for an entity."""
 
         res = self._cursor.execute(

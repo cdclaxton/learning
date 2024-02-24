@@ -21,6 +21,8 @@ import os
 import string
 import uvicorn
 
+from lookup.lmdb_lookup import LmdbLookup
+
 app = FastAPI()
 
 
@@ -189,14 +191,18 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     )
 
 
-def make_test_database(filepath: str, entities: List[str]) -> None:
+def make_test_database(
+    lmdb_folder: str, sqlite_filepath: str, entities: List[str]
+) -> None:
     """Make a test database."""
 
-    assert type(filepath) == str
+    assert type(lmdb_folder) == str
+    assert type(sqlite_filepath) == str
     assert type(entities) == list
 
     # Make a database-backed lookup
-    lookup = DatabaseBackedLookup(database_filepath, True)
+    # lookup = DatabaseBackedLookup(database_filepath, True)
+    lookup = LmdbLookup(lmdb_folder, True, sqlite_filepath)
 
     # Add all of the entities
     for idx, ent in enumerate(entities):
@@ -212,25 +218,30 @@ def make_test_database(filepath: str, entities: List[str]) -> None:
 if __name__ == "__main__":
 
     # Database file
-    database_filepath = "./data/full-database.db"
+    # database_filepath = "./data/full-database.db"
+
+    lmdb_folder = "./data/lmdb"
+    sqlite_database = "./data/sqlite.db"
 
     # If the database doesn't exist, make a test database for demo purposes.
     # Note that if entities are added below, be sure to delete the existing
     # database using:
     # rm ./data/full-database.db
-    if not os.path.exists(database_filepath):
-        logger.info(f"Making a test database as {database_filepath} doesn't exist")
+    if not os.path.exists(lmdb_folder):
+        logger.info(f"Making a test database as {lmdb_folder} doesn't exist")
         entities = [
             "78 Straight Street London",
             "6 The Walk London",
             "10 The Mews Birmingham",
             "12 The Mews Birmingham",
         ]
-        make_test_database(database_filepath, entities)
+        make_test_database(lmdb_folder, sqlite_database, entities)
 
     # Initialise a lookup for reading and initialise the matcher
-    lookup = DatabaseBackedLookup(database_filepath, False)
-    max_window = lookup.get_max_tokens()
+    # lookup = DatabaseBackedLookup(database_filepath, False)
+    lookup = LmdbLookup(lmdb_folder, False)
+
+    max_window = lookup.max_number_tokens_for_entity()
     logger.info(f"Maximum window size: {max_window}")
 
     # Make the logistic likelihood function

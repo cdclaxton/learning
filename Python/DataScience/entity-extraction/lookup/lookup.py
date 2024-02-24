@@ -31,3 +31,8 @@ class Lookup(ABC):
     def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
         """Find the matching entities in the lookup given the tokens."""
         pass
+
+    @abstractmethod
+    def max_number_tokens_for_entity(self) -> int:
+        """Maximum number of tokens for an entity."""
+        pass

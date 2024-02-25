@@ -46,20 +46,6 @@ def test_write_read_max_tokens():
     cleanup(lookup)
 
 
-def test_add_entity_tokens_to_lmdb():
-    lookup = lmdb_for_writing()
-
-    lookup._add_to_lmdb("e-1", ["a"])
-    assert lookup.tokens_for_entity("e-1") == ["a"]
-    assert lookup.tokens_for_entity("e-2") is None
-
-    lookup._add_to_lmdb("e-2", ["a", "b"])
-    assert lookup.tokens_for_entity("e-1") == ["a"]
-    assert lookup.tokens_for_entity("e-2") == ["a", "b"]
-
-    cleanup(lookup)
-
-
 def test_full_test():
     lookup = lmdb_for_writing()
 

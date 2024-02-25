@@ -47,7 +47,6 @@ class LmdbLookup(Lookup):
         # LMDB environment
         self._env = None
         self._num_lmdb_adds: int = 0
-        self._lmdb_batch = dict()
 
         # Set of tokens (created during load mode)
         self._tokens: Set[str] = set()
@@ -133,17 +132,8 @@ class LmdbLookup(Lookup):
     def _add_to_lmdb(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the LMDB lookup."""
 
-        self._lmdb_batch[entity_id_to_key(entity_id)] = pickle_list(tokens)
-
-        if self._num_lmdb_adds % 1000 == 0:
-            self._flush_local_cache()
-
-    def _flush_local_cache(self):
         with self._env.begin(write=True) as txn:
-            for key, value in self._lmdb_batch.items():
-                txn.put(key, value)
-
-        self._num_lmdb_adds = 0
+            txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
 
     def _add_to_sqlite(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the Sqlite lookup."""
@@ -174,9 +164,6 @@ class LmdbLookup(Lookup):
         # Commit any remaining Sqlite insert operations
         if self._num_adds > 0:
             self._conn.commit()
-
-        # Flush the local LMDB cache
-        self._flush_local_cache()
 
         # Write the maximum number of tokens for a single entity
         logger.info(f"Writing the maximum number of tokens for an entity")

@@ -46,7 +46,8 @@ class LmdbLookup(Lookup):
 
         # LMDB environment
         self._env = None
-        # self._txn = None
+        self._num_lmdb_adds: int = 0
+        self._lmdb_batch = dict()
 
         # Set of tokens (created during load mode)
         self._tokens: Set[str] = set()
@@ -81,8 +82,6 @@ class LmdbLookup(Lookup):
         self._env = lmdb.open(self._lmdb_folder, readonly=True)
         logger.debug(f"LMDB stats: {self._env.stat()}")
 
-        # self._txn = self._env.begin()
-
     def _initialise_lmdb_for_writing(self) -> None:
         """Initialise the LMDB for writing."""
 
@@ -90,8 +89,6 @@ class LmdbLookup(Lookup):
 
         # Open the LMDB environment for writing
         self._env = lmdb.open(self._lmdb_folder, map_size=LMDB_MAP_SIZE)
-
-        # self._txn = self._env.begin(write=True)
 
     def _initialise_sqlite_for_writing(self) -> None:
         """Initialise the (temporary) Sqlite database for writing."""
@@ -136,11 +133,17 @@ class LmdbLookup(Lookup):
     def _add_to_lmdb(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the LMDB lookup."""
 
-        with self._env.begin(write=True) as txn:
-            txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
+        self._lmdb_batch[entity_id_to_key(entity_id)] = pickle_list(tokens)
 
-        # self._txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
-        # self._txn.commit()
+        if self._num_lmdb_adds % 1000 == 0:
+            self._flush_local_cache()
+
+    def _flush_local_cache(self):
+        with self._env.begin(write=True) as txn:
+            for key, value in self._lmdb_batch.items():
+                txn.put(key, value)
+
+        self._num_lmdb_adds = 0
 
     def _add_to_sqlite(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the Sqlite lookup."""
@@ -168,9 +171,12 @@ class LmdbLookup(Lookup):
 
         logger.info(f"Performing lookup finalisation")
 
-        # Commit any remaining insert operations
+        # Commit any remaining Sqlite insert operations
         if self._num_adds > 0:
             self._conn.commit()
+
+        # Flush the local LMDB cache
+        self._flush_local_cache()
 
         # Write the maximum number of tokens for a single entity
         logger.info(f"Writing the maximum number of tokens for an entity")

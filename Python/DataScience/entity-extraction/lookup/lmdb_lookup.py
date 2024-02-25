@@ -87,7 +87,9 @@ class LmdbLookup(Lookup):
         logger.info(f"Initialising the LMDB for writing in folder: {self._lmdb_folder}")
 
         # Open the LMDB environment for writing
-        self._env = lmdb.open(self._lmdb_folder, map_size=LMDB_MAP_SIZE)
+        self._env = lmdb.open(
+            self._lmdb_folder, map_size=LMDB_MAP_SIZE, sync=False, writemap=True
+        )
 
     def _initialise_sqlite_for_writing(self) -> None:
         """Initialise the (temporary) Sqlite database for writing."""
@@ -135,6 +137,12 @@ class LmdbLookup(Lookup):
         with self._env.begin(write=True) as txn:
             txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
 
+        self._num_lmdb_adds += 1
+        if self._num_lmdb_adds % 10000 == 0:
+            self._env.sync()
+            self._num_lmdb_adds = 0
+            logger.debug(f"LMDB stats: {self._env.stat()}")
+
     def _add_to_sqlite(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the Sqlite lookup."""
 
@@ -165,11 +173,16 @@ class LmdbLookup(Lookup):
         if self._num_adds > 0:
             self._conn.commit()
 
+        # Commit any remaining LMDB put operations
+        if self._num_lmdb_adds > 0:
+            self._env.sync()
+
         # Write the maximum number of tokens for a single entity
         logger.info(f"Writing the maximum number of tokens for an entity")
         self._write_max_num_tokens()
 
         # Add an index to the Sqlite token to entity ID table
+        logger.info(f"Adding index to Sqlite database")
         self._cursor.execute(
             "CREATE INDEX index2 ON "
             + TOKEN_TO_ENTITY_ID_TABLENAME
@@ -194,8 +207,10 @@ class LmdbLookup(Lookup):
             f"Building the token to entity IDs lookup in LMDB for {len(self._tokens)} tokens"
         )
 
+        num_tokens = len(self._tokens)
+
         with self._env.begin(write=True) as txn:
-            for token in self._tokens:
+            for idx, token in enumerate(self._tokens):
 
                 # Get the entity IDs for the token from the Sqlite table
                 entity_ids = self._entity_ids_for_token_sqlite(token)
@@ -203,6 +218,13 @@ class LmdbLookup(Lookup):
 
                 # Store the token to entity IDs in LMDB
                 txn.put(token_to_key(token), pickle_list(entity_ids))
+
+                if idx % 100 == 0:
+                    logger.info(f"Processed {idx+1} of {num_tokens} tokens")
+                    logger.debug(f"LMDB stats: {self._env.stat()}")
+                    self._env.sync()
+
+        self._env.sync()
 
     def _entity_ids_for_token_sqlite(self, token: str) -> Optional[List[str]]:
         """Returns the entity IDs for a token from Sqlite."""
@@ -231,6 +253,8 @@ class LmdbLookup(Lookup):
         with self._env.begin(write=True) as txn:
             value = str(self._max_num_tokens).encode("ascii")
             txn.put(MAX_TOKENS_KEY.encode("ascii"), value)
+
+        self._env.sync()
 
     def max_number_tokens_for_entity(self) -> int:
         """Get the maximum number of tokens for an entity."""
@@ -294,5 +318,5 @@ class LmdbLookup(Lookup):
         return entity_ids
 
     def close(self):
-        logger.info(f"Closing. LMDB stats: {self._env.stat()}")
+        logger.info(f"Closing lookup. LMDB stats: {self._env.stat()}")
         self._env.close()

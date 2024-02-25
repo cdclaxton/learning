@@ -77,10 +77,9 @@ class GenericEntityMatcher(EntityMatcher):
 
         # Using a dict as a defaultdict was found to be slower
         for entity_id in entity_ids:
-            if entity_id in self._entity_id_to_count:
-                self._entity_id_to_count[entity_id] += 1
-            else:
-                self._entity_id_to_count[entity_id] = 1
+            self._entity_id_to_count[entity_id] = (
+                self._entity_id_to_count.get(entity_id, 0) + 1
+            )
 
     def _calc_matches_for_entity(
         self, start_idx: int, end_idx: int, entity_id: str, entity_tokens: Tokens

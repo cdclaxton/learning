@@ -75,7 +75,7 @@ class GenericEntityMatcher(EntityMatcher):
         if entity_ids is None:
             return
 
-        # Using a dict and as a defaultdict was found to be slower
+        # Using a dict as a defaultdict was found to be slower
         for entity_id in entity_ids:
             if entity_id in self._entity_id_to_count:
                 self._entity_id_to_count[entity_id] += 1
@@ -83,7 +83,7 @@ class GenericEntityMatcher(EntityMatcher):
                 self._entity_id_to_count[entity_id] = 1
 
     def _calc_matches_for_entity(
-        self, start_idx: int, end_idx: int, entity_id: str
+        self, start_idx: int, end_idx: int, entity_id: str, entity_tokens: Tokens
     ) -> None:
         """Calculate the matches in the text from start:end (inclusive) for a given entity."""
 
@@ -91,15 +91,12 @@ class GenericEntityMatcher(EntityMatcher):
         assert type(end_idx) == int and start_idx <= end_idx < len(self._tokens)
         assert_entity_id_valid(entity_id)
 
-        # Get the tokens for the entity
-        entity_tokens = self._lookup.tokens_for_entity(entity_id)
-
         # Calculate the likelihood of the tokens given the entity
         tokens_to_check = self._tokens[start_idx : (end_idx + 1)]
         prob = self._likelihood.calc(tokens_to_check, entity_tokens)
 
         # If the likelihood is above the threshold, then store the match
-        if prob > self._min_probability:
+        if prob >= self._min_probability:
             self._matches.append(
                 ProbabilisticMatch(
                     start=end_idx - len(tokens_to_check) + 1,
@@ -112,6 +109,9 @@ class GenericEntityMatcher(EntityMatcher):
     def _calc_matches_for_entity_in_subwindows(self, entity_id: str) -> None:
         """Calculate matches for the entity in all sub-windows."""
 
+        # Get the tokens for the entity
+        entity_tokens = self._lookup.tokens_for_entity(entity_id)
+
         # Walk through each start and end position for the sub-window
         for start_idx, end_idx in calc_windows(
             num_tokens=len(self._tokens),
@@ -120,7 +120,7 @@ class GenericEntityMatcher(EntityMatcher):
         ):
 
             # Calculate the matches for the entity in the sub-window
-            self._calc_matches_for_entity(start_idx, end_idx, entity_id)
+            self._calc_matches_for_entity(start_idx, end_idx, entity_id, entity_tokens)
 
     def get_matches(self) -> List[ProbabilisticMatch]:
         """Return entity extraction results."""

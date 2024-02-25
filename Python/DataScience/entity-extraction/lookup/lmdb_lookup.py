@@ -1,3 +1,4 @@
+from functools import lru_cache
 import lmdb
 import os
 import sqlite3
@@ -225,6 +226,7 @@ class LmdbLookup(Lookup):
                     self._env.sync()
 
         self._env.sync()
+        logger.info(f"Processed {num_tokens} tokens")
 
     def _entity_ids_for_token_sqlite(self, token: str) -> Optional[List[str]]:
         """Returns the entity IDs for a token from Sqlite."""
@@ -265,6 +267,7 @@ class LmdbLookup(Lookup):
         assert value is not None
         return int(value)
 
+    @lru_cache(maxsize=100000)
     def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
 
@@ -276,6 +279,7 @@ class LmdbLookup(Lookup):
 
         return unpickle_list(result)
 
+    @lru_cache(maxsize=100000)
     def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
         """Get the entity IDs for a given token."""
 
@@ -285,6 +289,7 @@ class LmdbLookup(Lookup):
 
         return set(entity_ids)
 
+    @lru_cache(maxsize=100000)
     def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
         """Get the entity IDs as a list for a given token."""
 

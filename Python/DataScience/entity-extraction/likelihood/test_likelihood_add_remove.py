@@ -53,7 +53,8 @@ def test_make_likelihood_symmetric():
     p0 = 0.9
     x1 = 0.5
     p1 = 0.1
-    likelihood_fn = make_likelihood_symmetric(x0, p0, x1, p1)
+    n_max = 3
+    likelihood_fn = make_likelihood_symmetric(x0, p0, x1, p1, n_max)
 
     assert (
         likelihood_fn.calc(["7", "straight", "street"], ["7", "straight", "street"])
@@ -62,12 +63,21 @@ def test_make_likelihood_symmetric():
 
 
 def test_min_count():
-    likelihood = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1)
-
-    # n = 5
-    # for i in range(n):
-    #     num_matching = n - i
-    #     print(f"{num_matching}: {likelihood._calc_prob(n, 0, i)}")
+    likelihood = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1, 5)
 
     assert likelihood.min_count(4, 0.2) == 3
     assert likelihood.min_count(5, 0.6) == 4
+
+
+def test_lookup_is_consistent():
+    n_max = 5
+    likelihood = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1, n_max)
+
+    for n_tokens in range(1, n_max + 1):
+        for num_adds in range(n_max + 1):
+            for num_removes in range(n_max + 1):
+                p_calc = likelihood._calc_prob(n_tokens, num_adds, num_removes)
+                p_lookup = likelihood._calc_prob_using_lookup(
+                    n_tokens, num_adds, num_removes
+                )
+                assert abs(p_calc - p_lookup) < 1e-7

@@ -25,9 +25,28 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
         self,
         likelihood_add: Callable[[int], float],
         likelihood_remove: Callable[[int], float],
+        n_max: int,
     ):
         self._likelihood_add = likelihood_add
         self._likelihood_remove = likelihood_remove
+        self._n_max = n_max
+
+        # Build the lookup table
+        self._build_lookup()
+
+    def _build_lookup(self) -> None:
+
+        # The table is in the form of (n_tokens-1) x n_adds x n_removes
+        self._lookup = [
+            [
+                [
+                    self._calc_prob(n_tokens, n_additions, n_removals)
+                    for n_removals in range(self._n_max + 1)
+                ]
+                for n_additions in range(self._n_max + 1)
+            ]
+            for n_tokens in range(1, self._n_max + 1)
+        ]
 
     def calc(self, actual_tokens: Tokens, entity_tokens: Tokens) -> float:
         """Calculate the likelihood of the actual_tokens given the entity_tokens."""
@@ -35,10 +54,13 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
         num_adds, num_removes = num_token_additions_removals(
             actual_tokens, entity_tokens
         )
+        return self._calc_prob_using_lookup(len(entity_tokens), num_adds, num_removes)
 
-        return self._calc_prob(len(entity_tokens), num_adds, num_removes)
+    def _calc_prob_using_lookup(
+        self, n_tokens: int, n_additions: int, n_removals: int
+    ) -> float:
+        return self._lookup[n_tokens - 1][n_additions][n_removals]
 
-    @lru_cache(maxsize=100)
     def _calc_prob(self, n_tokens: int, n_additions: int, n_removals: int) -> float:
         return self._likelihood_add(n_additions / n_tokens) * self._likelihood_remove(
             n_removals / n_tokens
@@ -59,9 +81,11 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
 
 
 def make_likelihood_symmetric(
-    x0: float, p0: float, x1: float, p1: float
+    x0: float, p0: float, x1: float, p1: float, n_max: int
 ) -> LikelihoodFunctionAddRemove:
     """Make a LikelihoodFunctionAddRemove with a symmetric likelihood function."""
 
+    assert type(n_max) == int and n_max > 0
+
     fn = partial(piecewise_likelihood, x0, p0, x1, p1)
-    return LikelihoodFunctionAddRemove(fn, fn)
+    return LikelihoodFunctionAddRemove(fn, fn, n_max)

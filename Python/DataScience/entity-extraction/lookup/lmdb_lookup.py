@@ -16,7 +16,7 @@ ENTITY_ID_COLUMN = "entityId"
 TOKEN_COLUMN = "token"
 
 # LMDB map size in bytes
-LMDB_MAP_SIZE = 100000
+LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 
 # Key for the key-value pair for the maximum number of tokens for an entity
 MAX_TOKENS_KEY = "M"

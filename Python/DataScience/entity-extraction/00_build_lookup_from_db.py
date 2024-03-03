@@ -72,15 +72,16 @@ if __name__ == "__main__":
     password = sys.argv[2]
 
     # Location of the database file
-    #database_filepath = "./data/full-database.db"
+    # database_filepath = "./data/full-database.db"
 
     # Initialise the database-backed lookup for loading
     start_script = datetime.now()
-    #lookup = DatabaseBackedLookup(database_filepath, True)
+    # lookup = DatabaseBackedLookup(database_filepath, True)
 
     lmdb_folder = "./data/lmdb"
     sqlite_database = "./data/sqlite.db"
-    lookup = LmdbLookup(lmdb_folder, True, sqlite_database)
+    token_to_count_filepath = "./data/token-to-count.pickle"
+    lookup = LmdbLookup(lmdb_folder, True, sqlite_database, token_to_count_filepath)
 
     # Load the lookup
     load_lookup(lookup, username, password)

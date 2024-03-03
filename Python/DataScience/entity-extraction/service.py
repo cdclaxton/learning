@@ -192,19 +192,23 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
 
 
 def make_test_database(
-    lmdb_folder: str, sqlite_filepath: str, entities: List[str]
+    lmdb_folder: str,
+    sqlite_filepath: str,
+    token_count_filepath: str,
+    entities: List[str],
 ) -> None:
     """Make a test database."""
 
     assert type(lmdb_folder) == str
     assert type(sqlite_filepath) == str
+    assert type(token_count_filepath) == str
     assert type(entities) == list
 
     # Make a database-backed lookup
     # lookup = DatabaseBackedLookup(database_filepath, True)
-    lookup = LmdbLookup(lmdb_folder, True, sqlite_filepath)
+    lookup = LmdbLookup(lmdb_folder, True, sqlite_filepath, token_count_filepath)
 
-    # Add all of the entities
+    # Add all entities
     for idx, ent in enumerate(entities):
         entity_id = f"e-{idx}"
         tokens = tokenise_text(ent)
@@ -221,6 +225,7 @@ if __name__ == "__main__":
     # database_filepath = "./data/full-database.db"
 
     lmdb_folder = "./data/lmdb"
+    token_to_count_file = "./data/token-to-count.pickle"
     sqlite_database = "./data/sqlite.db"
 
     # If the database doesn't exist, make a test database for demo purposes.
@@ -235,7 +240,7 @@ if __name__ == "__main__":
             "10 The Mews Birmingham",
             "12 The Mews Birmingham",
         ]
-        make_test_database(lmdb_folder, sqlite_database, entities)
+        make_test_database(lmdb_folder, sqlite_database, token_to_count_file, entities)
 
     # Initialise a lookup for reading and initialise the matcher
     # lookup = DatabaseBackedLookup(database_filepath, False)

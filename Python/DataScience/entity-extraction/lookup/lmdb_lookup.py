@@ -1,9 +1,10 @@
 from functools import lru_cache
+import pickle
 import lmdb
 import os
 import sqlite3
 
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 from loguru import logger
 from domain import Tokens, assert_entity_id_valid, assert_tokens_valid
 from lookup.database_lookup import pickle_list, unpickle_list
@@ -35,14 +36,20 @@ class LmdbLookup(Lookup):
     """A lookup backed by an LMDB."""
 
     def __init__(
-        self, lmdb_folder: str, load_mode: bool, sqlite_filepath: Optional[str] = None
+        self,
+        lmdb_folder: str,
+        load_mode: bool,
+        sqlite_filepath: Optional[str] = None,
+        token_count_filepath: Optional[str] = None,
     ):
         assert type(lmdb_folder) == str
         assert type(load_mode) == bool
         assert sqlite_filepath is None or type(sqlite_filepath) == str
+        assert token_count_filepath is None or type(token_count_filepath) == str
 
         self._lmdb_folder = lmdb_folder
         self._load_mode = load_mode
+        self._token_to_count_filepath = token_count_filepath
         self._sqlite_filepath = sqlite_filepath
 
         # LMDB environment
@@ -51,6 +58,9 @@ class LmdbLookup(Lookup):
 
         # Set of tokens (created during load mode)
         self._tokens: Set[str] = set()
+
+        # Number of entities that have a given token
+        self._token_to_count: Dict[str, int] = dict()
 
         # Maximum number of tokens for a single entity
         self._max_num_tokens: int = 0
@@ -132,6 +142,22 @@ class LmdbLookup(Lookup):
         # Update the maximum number of tokens for an entity
         self._max_num_tokens = max(self._max_num_tokens, len(tokens))
 
+        # Record the tokens for the entity in the counts
+        self._record_tokens(tokens)
+
+    def _record_tokens(self, tokens: Tokens) -> None:
+        """Record the tokens for a single entity."""
+
+        for token in tokens:
+            # Store the tokens for the entity in the set
+            self._tokens.add(token)
+
+            # It is assumed that the tokens belong to a single entity
+            if token in self._token_to_count:
+                self._token_to_count[token] += 1
+            else:
+                self._token_to_count[token] = 1
+
     def _add_to_lmdb(self, entity_id: str, tokens: Tokens) -> None:
         """Add an entity to the LMDB lookup."""
 
@@ -149,14 +175,10 @@ class LmdbLookup(Lookup):
 
         # Add the token to entity ID mapping
         for token in tokens:
-
             self._cursor.execute(
                 f"INSERT INTO " + TOKEN_TO_ENTITY_ID_TABLENAME + " VALUES(?,?);",
                 (token, entity_id),
             )
-
-            # Store the tokens for the entity
-            self._tokens.add(token)
 
         # One more entity and its tokens have been added
         self._num_adds += 1
@@ -200,6 +222,21 @@ class LmdbLookup(Lookup):
         self._conn.close()
         logger.info(f"Deleting temporary Sqlite database: {self._sqlite_filepath}")
         os.remove(self._sqlite_filepath)
+
+        # Write the token counts to file
+        self._write_token_counts()
+
+    def _write_token_counts(self):
+        """Pickle the token counts and write to file."""
+
+        if self._token_to_count_filepath is None:
+            return
+
+        logger.info(
+            f"Writing token-to-count dict to file: {self._token_to_count_filepath}"
+        )
+        with open(self._token_to_count_filepath, "wb") as fp:
+            pickle.dump(self._token_to_count, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
     def _write_token_to_entity_ids_lmdb(self):
         """Write the token to entity IDs to LMDB."""

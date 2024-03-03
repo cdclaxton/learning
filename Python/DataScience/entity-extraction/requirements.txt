@@ -5,4 +5,5 @@ matplotlib
 mysql-connector
 nltk
 numpy
+pandas
 pytest

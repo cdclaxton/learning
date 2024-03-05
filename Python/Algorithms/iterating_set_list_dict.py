@@ -5,10 +5,7 @@ import time
 
 
 def make_set(num_values: int) -> Set[str]:
-    s = set()
-    for i in range(num_values):
-        s.add(f"{i}")
-    return s
+    return {f"{i}" for i in range(num_values)}
 
 
 def make_list(num_values: int) -> List[str]:

@@ -505,6 +505,15 @@ class DatabaseBackedLookup(Lookup):
 
         return num
 
+    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+        """Number of tokens for an entity."""
+
+        tokens = self.tokens_for_entity(entity_id)
+        if tokens is None:
+            return None
+        
+        return len(tokens)
+
     def __repr__(self):
         return f"DatabaseBackedLookup(filepath={self._filepath})"
 

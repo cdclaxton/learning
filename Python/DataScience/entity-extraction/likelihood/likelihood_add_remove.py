@@ -89,3 +89,44 @@ def make_likelihood_symmetric(
 
     fn = partial(piecewise_likelihood, x0, p0, x1, p1)
     return LikelihoodFunctionAddRemove(fn, fn, n_max)
+
+
+class LikelihoodAddRemoveFn:
+    def __init__(
+        self,
+        likelihood_add: Callable[[int], float],
+        likelihood_remove: Callable[[int], float],
+    ):
+
+        self._likelihood_add = likelihood_add
+        self._likelihood_remove = likelihood_remove
+
+    @lru_cache(maxsize=100)
+    def calc(self, n_adds: int, n_removes: int, n_e: int) -> float:
+        """Calculate the likelihood."""
+
+        return self._likelihood_add(n_adds / n_e) * self._likelihood_remove(
+            n_removes / n_e
+        )
+
+    def min_count(self, min_window: int, min_prob: float) -> int:
+        assert type(min_window) == int and min_window > 0
+        assert_probability_valid(min_prob)
+
+        min_count_to_prob = [
+            (i, self.calc(0, min_window - i, min_window))
+            for i in range(0, min_window + 1)
+        ]
+
+        for mc, prob in min_count_to_prob:
+            if prob >= min_prob:
+                return mc
+
+
+def make_likelihood_add_remove_symmetric(
+    x0: float, p0: float, x1: float, p1: float
+) -> LikelihoodFunctionAddRemove:
+    """Make a LikelihoodAddRemoveFn with a symmetric likelihood function."""
+
+    fn = partial(piecewise_likelihood, x0, p0, x1, p1)
+    return LikelihoodAddRemoveFn(fn, fn)

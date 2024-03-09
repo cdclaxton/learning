@@ -36,3 +36,8 @@ class Lookup(ABC):
     def max_number_tokens_for_entity(self) -> int:
         """Maximum number of tokens for an entity."""
         pass
+
+    @abstractmethod
+    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+        """Number of tokens for an entity."""
+        pass

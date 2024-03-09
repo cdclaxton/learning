@@ -18,6 +18,13 @@ TOKEN_COLUMN = "token"
 # LMDB map size in bytes
 LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 
+# The key-value structure is:
+#
+# E<entity ID> = pickled list of tokens
+# T<token> = pickled list of entity IDs
+# M = maximum number of tokens for an entity (across all entities)
+# C<entity ID> = number of tokens for the entity
+
 # Key for the key-value pair for the maximum number of tokens for an entity
 MAX_TOKENS_KEY = "M"
 
@@ -30,6 +37,22 @@ def entity_id_to_key(entity_id: str) -> bytes:
 def token_to_key(token: str) -> bytes:
     """Token to key in the LMDB."""
     return f"T{token}".encode("ascii")
+
+
+def entity_id_to_token_count_key(entity_id: str) -> bytes:
+    """Entity ID to key in LMDB to retrieve the number of tokens."""
+    return f"C{entity_id}".encode("ascii")
+
+
+def count_to_bytes(count: int) -> bytes:
+    """Convert the token count to bytes."""
+    assert count <= 255
+    return count.to_bytes()
+
+
+def bytes_to_count(b: bytes) -> int:
+    """Convert bytes to a token count."""
+    return int.from_bytes(b)
 
 
 class LmdbLookup(Lookup):
@@ -163,6 +186,9 @@ class LmdbLookup(Lookup):
 
         with self._env.begin(write=True) as txn:
             txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
+            txn.put(
+                entity_id_to_token_count_key(entity_id), count_to_bytes(len(tokens))
+            )
 
         self._num_lmdb_adds += 1
         if self._num_lmdb_adds % 10000 == 0:
@@ -358,6 +384,17 @@ class LmdbLookup(Lookup):
                 return None
 
         return entity_ids
+
+    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+        """Number of tokens for an entity."""
+
+        with self._env.begin() as txn:
+            result = txn.get(entity_id_to_token_count_key(entity_id))
+
+        if result is None:
+            return None
+
+        return bytes_to_count(result)
 
     def close(self):
         logger.info(f"Closing lookup. LMDB stats: {self._env.stat()}")

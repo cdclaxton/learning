@@ -40,7 +40,7 @@ class EntityMatcher(ABC):
     """Abstract entity matcher."""
 
     @abstractmethod
-    def next_token(self, token) -> None:
+    def next_token(self, token: str) -> None:
         """Receive the next token in the text."""
         pass
 

@@ -28,6 +28,10 @@ def test_lookup():
     assert l.entity_ids_for_token("80") == {"e-0", "e-1"}
     assert l.entity_ids_for_token("Broad") == {"e-1"}
 
+    assert l.num_tokens_for_entity("e-0") == 3
+    assert l.num_tokens_for_entity("e-1") == 3
+    assert l.num_tokens_for_entity("e-100") is None  # Doesn't exist
+
 
 def test_matching_entries():
     """Unit tests for matching_entries()."""

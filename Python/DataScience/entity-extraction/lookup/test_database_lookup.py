@@ -58,6 +58,11 @@ def test_database_lookup():
     # Check the maximum number of tokens for an entity
     assert lookup.max_number_tokens_for_entity() == 3
 
+    # Check the number of tokens for an entity
+    assert lookup.num_tokens_for_entity("e-1") == 2
+    assert lookup.num_tokens_for_entity("e-2") == 3
+    assert lookup.num_tokens_for_entity("e-100") is None  # Doesn't exist
+
     # Close the database connection in the lookup
     lookup.close()
 

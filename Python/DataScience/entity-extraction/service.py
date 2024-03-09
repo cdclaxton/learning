@@ -9,10 +9,14 @@ from entity.matcher import (
     feed_entity_matchers,
     most_likely_matches,
 )
+from entity.matcher_add_remove import EntityMatcherAddRemove
 from entity.matcher_generic import GenericEntityMatcher
 from entity.matcher_missing_token import MissingTokenEntityMatcher
 from likelihood.likelihood import LikelihoodFunctionLogistic
-from likelihood.likelihood_add_remove import make_likelihood_symmetric
+from likelihood.likelihood_add_remove import (
+    make_likelihood_add_remove_symmetric,
+    make_likelihood_symmetric,
+)
 from lookup.database_lookup import DatabaseBackedLookup
 from nltk.tokenize import wordpunct_tokenize
 from loguru import logger
@@ -151,7 +155,15 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     #     min_tokens_to_check=req.min_tokens_to_check,
     # )
 
-    matcher = GenericEntityMatcher(
+    # matcher = GenericEntityMatcher(
+    #     lookup=lookup,
+    #     likelihood=likelihood_symmetric,
+    #     min_window=req.min_tokens_to_check,
+    #     max_window=max_window,
+    #     min_probability=req.threshold,
+    # )
+
+    matcher = EntityMatcherAddRemove(
         lookup=lookup,
         likelihood=likelihood_symmetric,
         min_window=req.min_tokens_to_check,
@@ -251,7 +263,6 @@ if __name__ == "__main__":
 
     # Make the logistic likelihood function
     logger.info("Instantiating the likelihood function")
-    likelihood = LikelihoodFunctionLogistic(10.0, 0.5)
-    likelihood_symmetric = make_likelihood_symmetric(0.2, 0.9, 0.5, 0.1, max_window)
+    likelihood_symmetric = make_likelihood_add_remove_symmetric(0.2, 0.9, 0.5, 0.1)
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

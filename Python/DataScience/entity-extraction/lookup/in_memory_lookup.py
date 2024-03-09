@@ -82,7 +82,16 @@ class InMemoryLookup(Lookup):
         
         max_num_tokens = 0
 
-        for token, entity_ids in self._token_to_entity_ids.items():
+        for _, entity_ids in self._token_to_entity_ids.items():
             max_num_tokens = max(max_num_tokens, len(entity_ids))
 
         return max_num_tokens
+    
+    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+        """Number of tokens for an entity."""
+
+        tokens = self.tokens_for_entity(entity_id)
+        if tokens is None:
+            return None
+        
+        return len(tokens)

@@ -1,6 +1,6 @@
 import os
 import shutil
-from lookup.lmdb_lookup import LmdbLookup
+from lookup.lmdb_lookup import LmdbLookup, bytes_to_count, count_to_bytes
 
 
 TEST_LMDB_FOLDER = "./data/test"
@@ -44,6 +44,11 @@ def test_write_read_max_tokens():
     lookup._write_max_num_tokens()
     assert lookup.max_number_tokens_for_entity() == 10
     cleanup(lookup)
+
+
+def test_token_count():
+    for i in range(0, 100):
+        assert bytes_to_count(count_to_bytes(i)) == i
 
 
 def test_full_test():
@@ -91,5 +96,11 @@ def test_full_test():
     assert lookup.matching_entries(["b", "c"]) == {"e-3"}
     assert lookup.matching_entries(["b", "d", "c"]) == {"e-3"}
     assert lookup.matching_entries(["b", "e", "c"]) is None
+
+    # Check the token count for an entity
+    assert lookup.num_tokens_for_entity("e-1") == 1
+    assert lookup.num_tokens_for_entity("e-2") == 2
+    assert lookup.num_tokens_for_entity("e-3") == 3
+    assert lookup.num_tokens_for_entity("e-100") is None
 
     cleanup(lookup)

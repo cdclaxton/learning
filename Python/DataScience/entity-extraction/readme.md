@@ -76,6 +76,10 @@ The generation of the Sqlite database used to perform token to entity ID and ent
 
 ![](./images/database-load.png)
 
+After the Sqlite database was upgraded to use LMDB, the dataflow became as shown below.
+
+![](./images/lmdb-load.png)
+
 The image below shows a high-level view of the data (denoted with two horizontal lines) and the processes (shown with circles) used in the experiment.
 
 ![](./images/data-flow.png)

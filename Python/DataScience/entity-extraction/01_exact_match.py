@@ -97,6 +97,7 @@ if __name__ == "__main__":
     feed_entity_matchers(tokens, matchers)
 
     # Visualise the results
+    print("Matcher results:")
     print(
         visualise_probabilistic_matches(tokens, exact_entity_matcher._matches, entities)
     )

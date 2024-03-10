@@ -61,7 +61,7 @@ The Swagger documentation can be found at http://127.0.0.1:8000/docs.
 To run an entity extraction job and pipe the result to JQ for pretty printing:
 
 ```bash
-curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is 78 Straight Street.", "threshold": 0.9, "min_tokens_to_check": 2}' | jq
+curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is 78 Straight Street.", "threshold": 0.7, "min_tokens_to_check": 2}' | jq
 
 curl -X POST http://127.0.0.1:8000/ -H "Content-Type: application/json" -d '{"text": "The address is near The Mews Birmingham", "threshold": 0.5, "min_tokens_to_check": 2}' | jq
 ```

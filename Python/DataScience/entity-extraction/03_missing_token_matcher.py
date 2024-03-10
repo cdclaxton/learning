@@ -26,19 +26,19 @@ if __name__ == "__main__":
 
     for idx, entry in enumerate(entries):
         tokens = [t for t in entry]
-        lookup.add(f"e-{idx}", tokens)
+        lookup.add(idx, tokens)
 
     # Index:        0    1    2    3    4    5    6    7    8
     text_tokens = ["A", "E", "A", "B", "F", "A", "C", "D", "F"]
 
     # Entity matcher that has a constant probability of a token being missing
     likelihood1 = LikelihoodFunctionProbMissing(0.1)
-    m1 = MissingTokenEntityMatcher(lookup, max_window, likelihood1)
+    m1 = MissingTokenEntityMatcher(lookup, max_window, likelihood1, 0.0, 1)
 
     # Entity matcher that has a logistic function for the likelihood for the
     # proportion of the tokens being missing
     likelihood2 = LikelihoodFunctionLogistic(10.0, 0.5)
-    m2 = MissingTokenEntityMatcher(lookup, max_window, likelihood2)
+    m2 = MissingTokenEntityMatcher(lookup, max_window, likelihood2, 0.0, 1)
 
     # All entity matchers
     entity_matchers = {"constant prob missing": m1, "logistic likelihood function": m2}

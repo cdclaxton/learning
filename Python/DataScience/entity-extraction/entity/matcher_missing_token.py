@@ -16,7 +16,7 @@ class MissingTokenEntityMatcher(EntityMatcher):
         lookup: Lookup,
         max_window_width: int,
         likelihood_function: LikelihoodFunction,
-        min_probability: int,
+        min_probability: float,
         min_tokens_to_check: int,
     ):
         assert isinstance(lookup, Lookup)

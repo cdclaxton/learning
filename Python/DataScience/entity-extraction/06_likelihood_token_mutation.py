@@ -186,7 +186,7 @@ if __name__ == "__main__":
     # Parameters
     num_addresses_per_road = 3
     num_roads = 2
-    num_trials = 1000
+    num_trials = 10
     p_no_mutations = 0.8
     p_one_mutation = 0.9
     p_two_mutations = 0.1

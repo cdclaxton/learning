@@ -37,7 +37,7 @@ class ExtractionRequest(BaseModel):
 
 
 class ExtractionMatch(BaseModel):
-    entity_id: str  # Entity ID
+    entity_id: int  # Entity ID
     entity: str  # Entity tokens
     matched_text: str  # Text that matched the entity
     probability: float  # Probability of the match

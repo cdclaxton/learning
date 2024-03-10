@@ -243,7 +243,7 @@ if __name__ == "__main__":
     # If the database doesn't exist, make a test database for demo purposes.
     # Note that if entities are added below, be sure to delete the existing
     # database using:
-    # rm ./data/full-database.db
+    # rm -rf ./data/lmdb
     if not os.path.exists(lmdb_folder):
         logger.info(f"Making a test database as {lmdb_folder} doesn't exist")
         entities = [

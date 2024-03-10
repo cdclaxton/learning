@@ -20,10 +20,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
-from token_mutation import random_mutations
+from generator.token_mutation import random_mutations
 from strsimpy.optimal_string_alignment import OptimalStringAlignment
 
-from markdown import markdown_row
+from visualisation.markdown import markdown_row
 
 
 def generate_postcode():

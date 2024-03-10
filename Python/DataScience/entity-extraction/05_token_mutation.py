@@ -17,8 +17,8 @@ from strsimpy.damerau import Damerau
 from strsimpy.optimal_string_alignment import OptimalStringAlignment
 from strsimpy import SIFT4
 
-from markdown import markdown_row
-from token_mutation import random_mutation
+from visualisation.markdown import markdown_row
+from generator.token_mutation import random_mutation
 
 
 fake = Faker()

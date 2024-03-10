@@ -123,8 +123,6 @@ class EntityMatcherAddRemove(EntityMatcher):
         self, entity_id: str, start: int, end: int, n_e: int
     ) -> None:
 
-        logger.debug(f"Checking entity {entity_id} between {start} and {end}")
-
         # Find the number of tokens that have been added to and removed from
         # the entity
         n_adds, n_removes = self._calc_adds_removes(entity_id, start, end, n_e)

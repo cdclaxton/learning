@@ -34,7 +34,7 @@ def load_lookup(lookup: Lookup, username: str, password: str):
             break
 
         # Extract the entity ID and parse the tokens from the database row
-        entity_id = result[0]
+        entity_id = int(result[0])
         tokens = [ri.replace(",", "").lower() for ri in result[1].split()]
 
         # Add the entity to the lookup

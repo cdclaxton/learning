@@ -31,7 +31,11 @@ if __name__ == "__main__":
     plt.show()
 
     # Plot the token vs its count
+    n = min(50, len(token_to_count))
     df.sort_values(by="count", ascending=False, inplace=True)
-    x_values = range(df.shape[0])
-    plt.bar(x_values, df["count"])
+    counts = df.head(n)["count"].to_list()
+    plt.bar(range(n), counts)
+    plt.xticks(range(n), df.head(n)["token"].to_list(), rotation="vertical")
+    plt.xlabel("Token")
+    plt.ylabel("Number of entities")
     plt.show()

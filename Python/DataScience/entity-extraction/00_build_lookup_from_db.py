@@ -28,13 +28,15 @@ def load_lookup(lookup: Lookup, username: str, password: str):
     start_time_batch = datetime.now()
     batch_size = 10000
 
+    # Use a locally-generated entity ID
+    entity_id = 0
+
     while True:
         result = cur.fetchone()
         if result is None:
             break
 
         # Extract the entity ID and parse the tokens from the database row
-        entity_id = int(result[0])
         tokens = [ri.replace(",", "").lower() for ri in result[1].split()]
 
         # Add the entity to the lookup
@@ -49,6 +51,7 @@ def load_lookup(lookup: Lookup, username: str, password: str):
             start_time_batch = datetime.now()
 
         num_rows_processed += 1
+        entity_id += 1
 
     logger.info(f"Processed {num_rows_processed} rows")
 

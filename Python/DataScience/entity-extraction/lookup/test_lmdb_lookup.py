@@ -55,7 +55,7 @@ def test_full_test():
     lookup = lmdb_for_writing()
 
     # Populate the lookup
-    dataset = {"e-1": ["a"], "e-2": ["a", "b"], "e-3": ["b", "c", "d"]}
+    dataset = {1: ["a"], 2: ["a", "b"], 3: ["b", "c", "d"]}
 
     for entity_id, tokens in dataset.items():
         lookup.add(entity_id, tokens)
@@ -76,31 +76,31 @@ def test_full_test():
     assert lookup.max_number_tokens_for_entity() == 3
 
     # Check the entity IDs for a given token
-    assert set(lookup.entity_ids_for_token("a")) == {"e-1", "e-2"}
-    assert set(lookup.entity_ids_for_token("b")) == {"e-2", "e-3"}
-    assert set(lookup.entity_ids_for_token("c")) == {"e-3"}
-    assert set(lookup.entity_ids_for_token("d")) == {"e-3"}
+    assert set(lookup.entity_ids_for_token("a")) == {1, 2}
+    assert set(lookup.entity_ids_for_token("b")) == {2, 3}
+    assert set(lookup.entity_ids_for_token("c")) == {3}
+    assert set(lookup.entity_ids_for_token("d")) == {3}
     assert lookup.entity_ids_for_token("z") is None
 
     # Check the entity IDs for a given token, returned as a list
-    assert sorted(lookup.entity_ids_for_token_list("a")) == ["e-1", "e-2"]
-    assert sorted(lookup.entity_ids_for_token_list("b")) == ["e-2", "e-3"]
-    assert lookup.entity_ids_for_token_list("c") == ["e-3"]
-    assert lookup.entity_ids_for_token_list("d") == ["e-3"]
+    assert sorted(lookup.entity_ids_for_token_list("a")) == [1, 2]
+    assert sorted(lookup.entity_ids_for_token_list("b")) == [2, 3]
+    assert lookup.entity_ids_for_token_list("c") == [3]
+    assert lookup.entity_ids_for_token_list("d") == [3]
     assert lookup.entity_ids_for_token_list("z") is None
 
     # Check the matching entities
-    assert lookup.matching_entries(["a"]) == {"e-1", "e-2"}
-    assert lookup.matching_entries(["a", "b"]) == {"e-2"}
-    assert lookup.matching_entries(["b"]) == {"e-2", "e-3"}
-    assert lookup.matching_entries(["b", "c"]) == {"e-3"}
-    assert lookup.matching_entries(["b", "d", "c"]) == {"e-3"}
+    assert lookup.matching_entries(["a"]) == {1, 2}
+    assert lookup.matching_entries(["a", "b"]) == {2}
+    assert lookup.matching_entries(["b"]) == {2, 3}
+    assert lookup.matching_entries(["b", "c"]) == {3}
+    assert lookup.matching_entries(["b", "d", "c"]) == {3}
     assert lookup.matching_entries(["b", "e", "c"]) is None
 
     # Check the token count for an entity
-    assert lookup.num_tokens_for_entity("e-1") == 1
-    assert lookup.num_tokens_for_entity("e-2") == 2
-    assert lookup.num_tokens_for_entity("e-3") == 3
-    assert lookup.num_tokens_for_entity("e-100") is None
+    assert lookup.num_tokens_for_entity(1) == 1
+    assert lookup.num_tokens_for_entity(2) == 2
+    assert lookup.num_tokens_for_entity(3) == 3
+    assert lookup.num_tokens_for_entity(100) is None
 
     cleanup(lookup)

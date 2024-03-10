@@ -38,11 +38,11 @@ class Node:
         """Is the node a leaf node?"""
         return len(self._children) == 0
 
-    def set_entity_id(self, entity_id: str) -> None:
+    def set_entity_id(self, entity_id: int) -> None:
         """Set the entity ID associated with the node."""
         self._entity_id = entity_id
 
-    def get_entity_id(self) -> str:
+    def get_entity_id(self) -> int:
         """Get the entity ID associated with the node."""
         return self._entity_id
 
@@ -53,7 +53,7 @@ class Tree:
     def __init__(self):
         self._root = Node(None)
 
-    def add_tokens(self, tokens: Tokens, entity_id: Optional[str] = None) -> None:
+    def add_tokens(self, tokens: Tokens, entity_id: Optional[int] = None) -> None:
         """Add tokens to the tree (and potentially an entity ID for the last node)."""
         assert_tokens_valid(tokens)
         assert len(tokens) > 0
@@ -69,7 +69,7 @@ class Tree:
         if entity_id is not None:
             current_token.set_entity_id(entity_id)
 
-    def has_tokens(self, tokens: Tokens) -> Tuple[bool, bool, Optional[str]]:
+    def has_tokens(self, tokens: Tokens) -> Tuple[bool, bool, Optional[int]]:
         """Returns whether the tree contains all of the tokens, the final token is a leaf and the entity ID."""
         assert_tokens_valid(tokens)
         assert len(tokens) > 0
@@ -83,14 +83,14 @@ class Tree:
         return True, current_node.is_leaf(), current_node.get_entity_id()
 
 
-def tree_from_entities(entities: Dict[str, Tokens]) -> Tuple[Tree, int]:
+def tree_from_entities(entities: Dict[int, Tokens]) -> Tuple[Tree, int]:
     """Returns a Tree for given dict of entities and the max number of tokens."""
 
     assert type(entities) == dict
     assert all(
         [
-            type(entity_id) == str
-            and len(entity_id) > 0
+            type(entity_id) == int
+            and entity_id >= 0
             and type(tokens) == list
             and len(tokens) > 0
             for entity_id, tokens in entities.items()
@@ -124,7 +124,7 @@ class ExactEntityMatcher(EntityMatcher):
         self._window = Window(self._max_window_width)
         self._matches = []
 
-    def next_token(self, token):
+    def next_token(self, token: str) -> None:
         """Receive the next token in the text."""
         assert_token_valid(token)
 

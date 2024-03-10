@@ -20,16 +20,16 @@ LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 
 # The key-value structure is:
 #
-# E<entity ID> = pickled list of tokens
-# T<token> = pickled list of entity IDs
-# M = maximum number of tokens for an entity (across all entities)
-# C<entity ID> = number of tokens for the entity
+# E<entity ID> = <pickled list of tokens>
+# T<token> = <pickled list of entity IDs>
+# M = <maximum number of tokens for an entity (across all entities)>
+# C<entity ID> = <number of tokens for the entity>
 
 # Key for the key-value pair for the maximum number of tokens for an entity
 MAX_TOKENS_KEY = "M"
 
 
-def entity_id_to_key(entity_id: str) -> bytes:
+def entity_id_to_key(entity_id: int) -> bytes:
     """Entity ID to key in the LMDB."""
     return f"E{entity_id}".encode("ascii")
 
@@ -39,7 +39,7 @@ def token_to_key(token: str) -> bytes:
     return f"T{token}".encode("ascii")
 
 
-def entity_id_to_token_count_key(entity_id: str) -> bytes:
+def entity_id_to_token_count_key(entity_id: int) -> bytes:
     """Entity ID to key in LMDB to retrieve the number of tokens."""
     return f"C{entity_id}".encode("ascii")
 
@@ -150,7 +150,7 @@ class LmdbLookup(Lookup):
             f"CREATE TABLE {TOKEN_TO_ENTITY_ID_TABLENAME}({TOKEN_COLUMN}, {ENTITY_ID_COLUMN});"
         )
 
-    def add(self, entity_id: str, tokens: Tokens) -> None:
+    def add(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the lookup."""
 
         assert_entity_id_valid(entity_id)
@@ -181,7 +181,7 @@ class LmdbLookup(Lookup):
             else:
                 self._token_to_count[token] = 1
 
-    def _add_to_lmdb(self, entity_id: str, tokens: Tokens) -> None:
+    def _add_to_lmdb(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the LMDB lookup."""
 
         with self._env.begin(write=True) as txn:
@@ -196,7 +196,7 @@ class LmdbLookup(Lookup):
             self._num_lmdb_adds = 0
             logger.debug(f"LMDB stats: {self._env.stat()}")
 
-    def _add_to_sqlite(self, entity_id: str, tokens: Tokens) -> None:
+    def _add_to_sqlite(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the Sqlite lookup."""
 
         # Add the token to entity ID mapping
@@ -291,7 +291,7 @@ class LmdbLookup(Lookup):
         self._env.sync()
         logger.info(f"Processed {num_tokens} tokens")
 
-    def _entity_ids_for_token_sqlite(self, token: str) -> Optional[List[str]]:
+    def _entity_ids_for_token_sqlite(self, token: str) -> Optional[List[int]]:
         """Returns the entity IDs for a token from Sqlite."""
 
         res = self._cursor.execute(
@@ -331,8 +331,10 @@ class LmdbLookup(Lookup):
         return int(value)
 
     @lru_cache(maxsize=100000)
-    def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
+    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
+
+        assert_entity_id_valid(entity_id)
 
         with self._env.begin() as txn:
             result = txn.get(entity_id_to_key(entity_id))
@@ -343,7 +345,7 @@ class LmdbLookup(Lookup):
         return unpickle_list(result)
 
     @lru_cache(maxsize=100000)
-    def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
+    def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token."""
 
         entity_ids = self.entity_ids_for_token_list(token)
@@ -353,7 +355,7 @@ class LmdbLookup(Lookup):
         return set(entity_ids)
 
     @lru_cache(maxsize=100000)
-    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
         """Get the entity IDs as a list for a given token."""
 
         with self._env.begin() as txn:
@@ -364,7 +366,7 @@ class LmdbLookup(Lookup):
 
         return unpickle_list(result)
 
-    def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
+    def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
         """Find the matching entities in the lookup given the tokens."""
 
         # Get the entities for each token
@@ -385,7 +387,7 @@ class LmdbLookup(Lookup):
 
         return entity_ids
 
-    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+    def num_tokens_for_entity(self, entity_id: int) -> Optional[int]:
         """Number of tokens for an entity."""
 
         with self._env.begin() as txn:

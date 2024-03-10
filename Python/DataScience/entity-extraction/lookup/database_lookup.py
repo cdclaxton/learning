@@ -36,25 +36,25 @@ TOKEN_SEPARATOR = " "
 MIN_ENTITIES_FOR_CACHE = 10
 
 
-def pickle_set(s: Set[str]) -> bytes:
+def pickle_set(s: Set[int]) -> bytes:
     """Pickle a set for storage in the database."""
     assert type(s) == set
     return pickle.dumps(s)
 
 
-def unpickle_set(b: bytes) -> Set[str]:
+def unpickle_set(b: bytes) -> Set[int]:
     """Unpickle a set from storage in the database."""
     assert type(b) == bytes
     return pickle.loads(b)
 
 
-def pickle_list(l: List[str]) -> bytes:
+def pickle_list(l: List[int]) -> bytes:
     """Pickle a list for storage in the database."""
     assert type(l) == list
     return pickle.dumps(l)
 
 
-def unpickle_list(b: bytes) -> List[str]:
+def unpickle_list(b: bytes) -> List[int]:
     """Unpickle a list from storage in the database."""
     assert type(b) == bytes
     return pickle.loads(b)
@@ -73,10 +73,10 @@ class DatabaseBackedLookup(Lookup):
         self._cursor: Optional[sqlite3.Cursor] = None
 
         # Number of times the add() method has been called since a database commit
-        self._num_adds = 0
+        self._num_adds: int = 0
 
         # Maximum number of tokens for a single entity
-        self._max_num_tokens = 0
+        self._max_num_tokens: int = 0
 
         # Token to number of entities count
         self._token_to_count = defaultdict(int)
@@ -167,7 +167,7 @@ class DatabaseBackedLookup(Lookup):
         # Get a cursor
         self._cursor = self._conn.cursor()
 
-    def add(self, entity_id: str, tokens: Tokens) -> None:
+    def add(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the lookup."""
 
         assert_entity_id_valid(entity_id)
@@ -260,7 +260,7 @@ class DatabaseBackedLookup(Lookup):
             f"Time taken to create the token-to-entity IDs index: {time.time() - start_time} seconds"
         )
 
-    def _add_token_to_entities(self, token: str, set_entities: Set[str]) -> None:
+    def _add_token_to_entities(self, token: str, set_entities: Set[int]) -> None:
         """Add a token to entity IDs mapping for fast lookup."""
 
         assert_token_valid(token)
@@ -320,7 +320,7 @@ class DatabaseBackedLookup(Lookup):
         self._conn.close()
 
     @lru_cache(maxsize=100000)
-    def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
+    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
 
         assert_entity_id_valid(entity_id)
@@ -346,7 +346,7 @@ class DatabaseBackedLookup(Lookup):
         return result[0][0].split(TOKEN_SEPARATOR)
 
     @lru_cache(maxsize=100)
-    def _entity_ids_for_token_slow(self, token: str) -> Optional[Set[str]]:
+    def _entity_ids_for_token_slow(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token without using the dedicated table."""
 
         res = self._cursor.execute(
@@ -368,7 +368,7 @@ class DatabaseBackedLookup(Lookup):
         return {ri[0] for ri in result}
 
     @lru_cache(maxsize=100)
-    def _entity_ids_for_token_list_slow(self, token: str) -> Optional[Set[str]]:
+    def _entity_ids_for_token_list_slow(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token without using the dedicated table."""
 
         res = self._cursor.execute(
@@ -390,7 +390,7 @@ class DatabaseBackedLookup(Lookup):
         return [ri[0] for ri in result]
 
     @lru_cache(maxsize=100)
-    def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
+    def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token."""
 
         assert_token_valid(token)
@@ -416,7 +416,7 @@ class DatabaseBackedLookup(Lookup):
         return self._entity_ids_for_token_slow(token)
 
     @lru_cache(maxsize=100)
-    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
         """Get the entity IDs as a list for a given token."""
 
         assert_token_valid(token)
@@ -469,7 +469,7 @@ class DatabaseBackedLookup(Lookup):
         )
         print(res.fetchall())
 
-    def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
+    def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
         """Find the matching entities in the lookup given the tokens."""
 
         assert type(tokens) == list
@@ -505,13 +505,13 @@ class DatabaseBackedLookup(Lookup):
 
         return num
 
-    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+    def num_tokens_for_entity(self, entity_id: int) -> Optional[int]:
         """Number of tokens for an entity."""
 
         tokens = self.tokens_for_entity(entity_id)
         if tokens is None:
             return None
-        
+
         return len(tokens)
 
     def __repr__(self):

@@ -8,27 +8,27 @@ class Lookup(ABC):
     """Abstract base class for a entity and tokens lookup."""
 
     @abstractmethod
-    def add(self, entity_id: str, tokens: Tokens) -> None:
+    def add(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the lookup."""
         pass
 
     @abstractmethod
-    def tokens_for_entity(self, entity_id: str) -> Optional[Tokens]:
+    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
         """Get tokens for an entity given its ID."""
         pass
 
     @abstractmethod
-    def entity_ids_for_token(self, token: str) -> Optional[Set[str]]:
+    def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token."""
         pass
 
     @abstractmethod
-    def entity_ids_for_token_list(self, token: str) -> Optional[List[str]]:
+    def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
         """Get the entity IDs as a list for a given token."""
         pass
 
     @abstractmethod
-    def matching_entries(self, tokens: Tokens) -> Optional[Set[str]]:
+    def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
         """Find the matching entities in the lookup given the tokens."""
         pass
 
@@ -38,6 +38,6 @@ class Lookup(ABC):
         pass
 
     @abstractmethod
-    def num_tokens_for_entity(self, entity_id: str) -> Optional[int]:
+    def num_tokens_for_entity(self, entity_id: int) -> Optional[int]:
         """Number of tokens for an entity."""
         pass

@@ -51,6 +51,7 @@ def make_generator_fns(
     n_tokens: int, prop_entity_tokens: float, n_entity_tokens_fn: Callable[[], int]
 ) -> Tuple[TextGenerator, EntityGenerator]:
     """Make a text generator and entity generator functions."""
+
     assert type(n_tokens) == int and n_tokens > 0
     assert type(prop_entity_tokens) == float and 0.0 <= prop_entity_tokens <= 1.0
 
@@ -95,7 +96,7 @@ def generate_entities(
             continue
 
         # Add the entity
-        entities[f"e-{entity_idx}"] = entity_tokens
+        entities[entity_idx] = entity_tokens
         concatenated_tokens.add(concatenated)
         entity_idx += 1
 

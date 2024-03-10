@@ -12,7 +12,7 @@ def test_token_to_entities_cache():
     cache = TokenToEntitiesCache()
 
     # Add a token and its entities to the cache
-    cache.add("t1", {"e0", "e1"})
+    cache.add("t1", {0, 1})
     assert "t1" in cache._cache
 
     # Retain token t1
@@ -24,8 +24,8 @@ def test_token_to_entities_cache():
     assert "t2" not in cache._cache
 
     # Add two tokens and their entities
-    cache.add("t1", {"e0", "e1"})
-    cache.add("t2", {"e1", "e2", "e3"})
+    cache.add("t1", {0, 1})
+    cache.add("t2", {1, 2, 3})
 
     # Retain both tokens
     cache.retain(["t1", "t2"])
@@ -39,19 +39,19 @@ def test_token_to_entities_cache():
 
     # Add two tokens and their entities
     # The cache should be:
-    # t1: e0, e1
+    # t1: 0, e1
     # t2: e1, e2, e3
     # t3: e3, e4
-    cache.add("t2", {"e1", "e2", "e3"})
-    cache.add("t3", {"e3", "e4"})
+    cache.add("t2", {1, 2, 3})
+    cache.add("t3", {3, 4})
 
     # Find entities in common
-    cache.entities_in_common(["t1"]) == {"e0", "e1"}
-    cache.entities_in_common(["t2"]) == {"e1", "e2", "e3"}
-    cache.entities_in_common(["t3"]) == {"e3", "e4"}
-    cache.entities_in_common(["t1", "t2"]) == {"e1"}
+    cache.entities_in_common(["t1"]) == {0, 1}
+    cache.entities_in_common(["t2"]) == {1, 2, 3}
+    cache.entities_in_common(["t3"]) == {3, "e4"}
+    cache.entities_in_common(["t1", "t2"]) == {1}
     cache.entities_in_common(["t1", "t3"]) == {}
-    cache.entities_in_common(["t2", "t3"]) == {"e3"}
+    cache.entities_in_common(["t2", "t3"]) == {3}
     cache.entities_in_common(["t1", "t2", "t3"]) == {}
 
     # Find entities in common where a token doesn't exist
@@ -72,11 +72,11 @@ def test_token_to_entities_three_entities_in_common():
 
     cache = TokenToEntitiesCache()
 
-    cache.add("t1", {"e0", "e1"})
-    cache.add("t2", {"e0", "e1", "e3"})
-    cache.add("t3", {"e0", "e1", "e4"})
+    cache.add("t1", {0, 1})
+    cache.add("t2", {0, 1, 3})
+    cache.add("t3", {0, 1, 4})
 
-    cache.entities_in_common(["t1", "t2", "t3"]) == {"e0", "e1"}
+    cache.entities_in_common(["t1", "t2", "t3"]) == {0, 1}
 
 
 def test_token_to_entities_cache_no_entities():
@@ -84,7 +84,7 @@ def test_token_to_entities_cache_no_entities():
     cache = TokenToEntitiesCache()
 
     # Add a token and its entities to the cache
-    cache.add("t1", {"e0", "e1"})
+    cache.add("t1", {0, 1})
     assert "t1" in cache._cache
 
     # Add a token that doesn't have any matching entities
@@ -92,7 +92,7 @@ def test_token_to_entities_cache_no_entities():
     assert "t2" in cache._cache
 
     # Find entities in common
-    cache.entities_in_common(["t1"]) == {"e0", "e1"}
+    cache.entities_in_common(["t1"]) == {0, 1}
     cache.entities_in_common(["t2"]) == {}
     cache.entities_in_common(["t1", "t2"]) == {}
 
@@ -117,10 +117,10 @@ def test_optimised_token_to_entities_cache():
 
     # Map of token to entity IDs
     token_to_entity_ids = {
-        "a": {"e0"},
-        "b": {"e0", "e1"},
-        "c": {"e0", "e2"},
-        "d": {"e3"},
+        "a": {0},
+        "b": {0, 1},
+        "c": {0, 2},
+        "d": {3},
     }
 
     def entity_getter(entity):
@@ -129,23 +129,23 @@ def test_optimised_token_to_entities_cache():
     cache = OptimisedTokenToEntitiesCache(entity_getter)
 
     # Get entities for a single token
-    cache.get(["a"]) == ({"e0"}, False)
-    cache.get(["b"]) == ({"e0", "e1"}, False)
+    cache.get(["a"]) == ({0}, False)
+    cache.get(["b"]) == ({0, 1}, False)
 
     # Check tokens [a] -> [a,b] -> [a,b,c]
     cache.clear()
-    cache.get(["a"]) == ({"e0"}, False)
-    cache.get(["a", "b"]) == ({"e0"}, True)
-    cache.get(["a", "b", "c"]) == ({"e0"}, True)
+    cache.get(["a"]) == ({0}, False)
+    cache.get(["a", "b"]) == ({0}, True)
+    cache.get(["a", "b", "c"]) == ({0}, True)
 
     # Check tokens [a] -> [a,d] -> [a,d,b]
     cache.clear()
-    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["a"]) == ({0}, False)
     cache.get(["a", "d"]) == ({}, True)
     cache.get(["a", "d", "b"]) == ({}, True)
 
     # Check tokens [a] -> [a, e] -> [a, e, b]
     cache.clear()
-    cache.get(["a"]) == ({"e0"}, False)
+    cache.get(["a"]) == ({0}, False)
     cache.get(["a", "e"]) == ({}, True)
     cache.get(["a", "e", "b"]) == ({}, True)

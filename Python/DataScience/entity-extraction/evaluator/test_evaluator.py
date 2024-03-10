@@ -60,56 +60,56 @@ def test_error_pair():
 
     # No overlap, non-adjacent
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1      A A A
-    # Entity 2              A A
+    # Entity 1      1 1 1
+    # Entity 2              1 1
     # Errors        * * *   * *
-    entity1 = EntitySpan(1, 3, "A")
-    entity2 = EntitySpan(5, 6, "A")
+    entity1 = EntitySpan(1, 3, 1)
+    entity2 = EntitySpan(5, 6, 1)
     assert error_pair(entity1, entity2) == 5
 
     # No overlap, adjacent
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1      A A A
-    # Entity 2            A A A
+    # Entity 1      1 1 1
+    # Entity 2            1 1 1
     # Errors        * * * * * *
-    entity1 = EntitySpan(1, 3, "A")
-    entity2 = EntitySpan(4, 6, "A")
+    entity1 = EntitySpan(1, 3, 1)
+    entity2 = EntitySpan(4, 6, 1)
     assert error_pair(entity1, entity2) == 6
 
     # Overlap, different entity
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1      A A A
-    # Entity 2      B B
+    # Entity 1      1 1 1
+    # Entity 2      2 2
     # Errors        * * *
-    entity1 = EntitySpan(1, 3, "A")
-    entity2 = EntitySpan(1, 2, "B")
+    entity1 = EntitySpan(1, 3, 1)
+    entity2 = EntitySpan(1, 2, 2)
     assert error_pair(entity1, entity2) == 3
 
     # Complete overlap, same entity
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1      A A A
-    # Entity 2      A A A
+    # Entity 1      1 1 1
+    # Entity 2      1 1 1
     # Errors
-    entity1 = EntitySpan(1, 3, "A")
-    entity2 = EntitySpan(1, 3, "A")
+    entity1 = EntitySpan(1, 3, 1)
+    entity2 = EntitySpan(1, 3, 1)
     assert error_pair(entity1, entity2) == 0
 
     # Partial overlap, same entity
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1      A A A
-    # Entity 2      A A
+    # Entity 1      1 1 1
+    # Entity 2      1 1
     # Errors            *
-    entity1 = EntitySpan(1, 3, "A")
-    entity2 = EntitySpan(1, 2, "A")
+    entity1 = EntitySpan(1, 3, 1)
+    entity2 = EntitySpan(1, 2, 1)
     assert error_pair(entity1, entity2) == 1
 
     # Partial overlap, same entity
     # Index       0 1 2 3 4 5 6 7 8 9 10
-    # Entity 1          A A A A A A
-    # Entity 2              A A A
+    # Entity 1          1 1 1 1 1 1
+    # Entity 2              1 1 1
     # Errors            * *       *
-    entity1 = EntitySpan(3, 8, "A")
-    entity2 = EntitySpan(5, 7, "A")
+    entity1 = EntitySpan(3, 8, 1)
+    entity2 = EntitySpan(5, 7, 1)
     assert error_pair(entity1, entity2) == 3
 
 
@@ -117,73 +117,73 @@ def test_calc_error():
     # Complete overlap
     # One ground truth entity, one actual entity
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A
-    # Actual          A A A
+    # Ground truth    1 1 1
+    # Actual          1 1 1
     # Errors
-    ground_truth = [EntitySpan(1, 3, "A")]
-    actual = [EntitySpan(1, 3, "A")]
+    ground_truth = [EntitySpan(1, 3, 1)]
+    actual = [EntitySpan(1, 3, 1)]
     assert calc_error(ground_truth, actual) == 0
 
     # Complete overlap, different entities
     # One ground truth entity, one actual entity
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A
-    # Actual          B B B
+    # Ground truth    1 1 1
+    # Actual          2 2 2
     # Errors          * * *
-    ground_truth = [EntitySpan(1, 3, "A")]
-    actual = [EntitySpan(1, 3, "B")]
+    ground_truth = [EntitySpan(1, 3, 1)]
+    actual = [EntitySpan(1, 3, 2)]
     assert calc_error(ground_truth, actual) == 3
 
     # Partial overlap, same entity
     # One ground truth entity, one actual entity
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A
-    # Actual            A A A
+    # Ground truth    1 1 1
+    # Actual            1 1 1
     # Errors          *     *
-    ground_truth = [EntitySpan(1, 3, "A")]
-    actual = [EntitySpan(2, 4, "A")]
+    ground_truth = [EntitySpan(1, 3, 1)]
+    actual = [EntitySpan(2, 4, 1)]
     assert calc_error(ground_truth, actual) == 2
 
     # Two ground truth entities, one actual entity
     #
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A     B B B
-    # Actual          A A A
+    # Ground truth    1 1 1     2 2 2
+    # Actual          1 1 1
     # Errors                    * * *
-    ground_truth = [EntitySpan(1, 3, "A"), EntitySpan(6, 8, "B")]
-    actual = [EntitySpan(1, 3, "A")]
+    ground_truth = [EntitySpan(1, 3, 1), EntitySpan(6, 8, 2)]
+    actual = [EntitySpan(1, 3, 1)]
     assert calc_error(ground_truth, actual) == 3
 
     # Two ground truth entities, one actual entity
     # Partial overlap
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A     B B B
-    # Actual            A A A
+    # Ground truth    1 1 1     2 2 2
+    # Actual            1 1 1
     # Errors          *     *   * * *
-    ground_truth = [EntitySpan(1, 3, "A"), EntitySpan(6, 8, "B")]
-    actual = [EntitySpan(2, 4, "A")]
+    ground_truth = [EntitySpan(1, 3, 1), EntitySpan(6, 8, 2)]
+    actual = [EntitySpan(2, 4, 1)]
     assert calc_error(ground_truth, actual) == 5
 
     # Two ground truth entities, two actual entities
     #
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A     B B B
-    # Actual            A A A   B B
+    # Ground truth    1 1 1     2 2 2
+    # Actual            1 1 1   2 2
     # Errors          *     *       *
-    ground_truth = [EntitySpan(1, 3, "A"), EntitySpan(6, 8, "B")]
-    actual = [EntitySpan(2, 4, "A"), EntitySpan(6, 7, "B")]
+    ground_truth = [EntitySpan(1, 3, 1), EntitySpan(6, 8, 2)]
+    actual = [EntitySpan(2, 4, 1), EntitySpan(6, 7, 2)]
     assert calc_error(ground_truth, actual) == 3
 
     # Three ground truth entities, two actual entities
     #
     # Index         0 1 2 3 4 5 6 7 8 9 10 11 12
-    # Ground truth    A A A     B B B   C  C
-    # Actual            A A A   B B
+    # Ground truth    1 1 1     2 2 2   3  3
+    # Actual            1 1 1   2 2
     # Errors          *     *       *   *  *
     ground_truth = [
-        EntitySpan(1, 3, "A"),
-        EntitySpan(6, 8, "B"),
-        EntitySpan(10, 11, "C"),
+        EntitySpan(1, 3, 1),
+        EntitySpan(6, 8, 2),
+        EntitySpan(10, 11, 3),
     ]
-    actual = [EntitySpan(2, 4, "A"), EntitySpan(6, 7, "B")]
+    actual = [EntitySpan(2, 4, 1), EntitySpan(6, 7, 2)]
     assert calc_error(ground_truth, actual) == 5

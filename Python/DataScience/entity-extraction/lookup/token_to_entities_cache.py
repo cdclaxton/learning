@@ -24,7 +24,7 @@ def one_more(original: Set[str], new: Set[str]) -> Tuple[bool, Optional[str]]:
 
 class OptimisedTokenToEntitiesCache:
 
-    def __init__(self, entity_getter: Callable[[str], Optional[Set[str]]]) -> None:
+    def __init__(self, entity_getter: Callable[[str], Optional[Set[int]]]) -> None:
         self._entity_getter = entity_getter
         self._tokens = set()
         self._entities = set()
@@ -32,10 +32,10 @@ class OptimisedTokenToEntitiesCache:
     def clear(self):
         """Clear the cache."""
 
-        self._tokens = set()
-        self._entities = set()
+        self._tokens: Set[str] = set()
+        self._entities: Set[int] = set()
 
-    def get(self, tokens: Tokens) -> Tuple[Set[str], bool]:
+    def get(self, tokens: Tokens) -> Tuple[Set[int], bool]:
         """Get the entity IDs in common for the tokens."""
 
         assert_tokens_valid(tokens)
@@ -83,7 +83,7 @@ class TokenToEntitiesCache:
     def __init__(self) -> None:
         self._cache = {}
 
-    def add(self, token: str, entity_ids: Optional[Set[str]]) -> None:
+    def add(self, token: str, entity_ids: Optional[Set[int]]) -> None:
         """Add a token and its entity IDs to the cache."""
 
         assert_token_valid(token)
@@ -115,14 +115,14 @@ class TokenToEntitiesCache:
 
         return [t for t in tokens if t not in self._cache.keys()]
 
-    def entities_in_common(self, tokens: Tokens) -> Set[str]:
+    def entities_in_common(self, tokens: Tokens) -> Set[int]:
         """Returns a set of the entity IDs in common for all tokens."""
 
         assert_tokens_valid(tokens)
         return self._entities_in_common_lru(tuple(tokens))
 
     @lru_cache(maxsize=100)
-    def _entities_in_common_lru(self, tokens: Tuple[str]) -> Set[str]:
+    def _entities_in_common_lru(self, tokens: Tuple[str]) -> Set[int]:
 
         # Check that all tokens exist in the cache
         for t in tokens:

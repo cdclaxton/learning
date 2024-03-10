@@ -25,13 +25,13 @@ TextGenerator = Callable[[int], Tokens]
 EntityGenerator = Callable[[], Tokens]
 
 # Dict of entity ID to tokens for the entity
-EntityToTokens = Dict[str, Tokens]
+EntityToTokens = Dict[int, Tokens]
 
 
-def assert_entity_id_valid(entity_id: str) -> None:
+def assert_entity_id_valid(entity_id: int) -> None:
     """Checks that the entity ID is valid."""
-    assert type(entity_id) == str, f"expected a str, got {type(entity_id)}"
-    assert len(entity_id) > 0, f"got entity ID: {entity_id}, length = {len(entity_id)}"
+    assert type(entity_id) == int, f"expected an int, got {type(entity_id)}"
+    assert entity_id >= 0, f"got entity ID: {entity_id}"
 
 
 def assert_entity_to_tokens_valid(entity_to_tokens: EntityToTokens) -> None:

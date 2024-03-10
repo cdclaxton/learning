@@ -62,15 +62,15 @@ class EntityMatcherAddRemove(EntityMatcher):
         self._matches: List[ProbabilisticMatch] = []
 
         # Entity IDs that match each token
-        self._entity_ids: List[Set[str]] = []
+        self._entity_ids: List[Set[int]] = []
 
         # Entity ID to
         # - count is the number times the entity was seen
         # - start is the token index of the first match
         # - end is the token index of the last match
-        self._entity_id_to_count: dict[str, int] = dict()
-        self._entity_id_to_start: dict[str, int] = dict()
-        self._entity_id_to_end: dict[str, int] = dict()
+        self._entity_id_to_count: dict[int, int] = dict()
+        self._entity_id_to_start: dict[int, int] = dict()
+        self._entity_id_to_end: dict[int, int] = dict()
 
     def next_token(self, token: str) -> None:
         """Receive the next token in the text."""
@@ -100,7 +100,7 @@ class EntityMatcherAddRemove(EntityMatcher):
                 self._entity_id_to_end[entity_id] = self._current_token_index
 
     def _calc_adds_removes(
-        self, entity_id: str, start: int, end: int, n_e: int
+        self, entity_id: int, start: int, end: int, n_e: int
     ) -> Tuple[int, int]:
 
         # Number of tokens in common
@@ -120,7 +120,7 @@ class EntityMatcherAddRemove(EntityMatcher):
         return n_adds, n_removes
 
     def _calc_matches_for_entity(
-        self, entity_id: str, start: int, end: int, n_e: int
+        self, entity_id: int, start: int, end: int, n_e: int
     ) -> None:
 
         # Find the number of tokens that have been added to and removed from
@@ -138,7 +138,7 @@ class EntityMatcherAddRemove(EntityMatcher):
                 )
             )
 
-    def _calc_matches_for_entity_in_subwindows(self, entity_id: str) -> None:
+    def _calc_matches_for_entity_in_subwindows(self, entity_id: int) -> None:
 
         # Get the number of tokens for the entity
         n_e = self._lookup.num_tokens_for_entity(entity_id)

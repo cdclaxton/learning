@@ -17,7 +17,3 @@ def test_spans_overlap():
     assert spans_overlap(1, 3, 2, 3)  # C, D
     assert not spans_overlap(1, 2, 5, 5)  # A, E
     assert spans_overlap(1, 2, 1, 2)  # F, A
-
-
-def test_most_likely_matches():
-    pass

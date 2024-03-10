@@ -59,12 +59,12 @@ class GenericEntityMatcher(EntityMatcher):
 
         # Entity IDs of entities that need to be checked as they match one or
         # more tokens in the text
-        self._entity_id_to_count: dict[str, int] = dict()
+        self._entity_id_to_count: dict[int, int] = dict()
 
         # Initialise the list of matches
         self._matches: List[ProbabilisticMatch] = []
 
-    def next_token(self, token) -> None:
+    def next_token(self, token: str) -> None:
         """Receive the next token in the text."""
 
         assert_token_valid(token)
@@ -82,7 +82,7 @@ class GenericEntityMatcher(EntityMatcher):
             )
 
     def _calc_matches_for_entity(
-        self, start_idx: int, end_idx: int, entity_id: str, entity_tokens: Tokens
+        self, start_idx: int, end_idx: int, entity_id: int, entity_tokens: Tokens
     ) -> None:
         """Calculate the matches in the text from start:end (inclusive) for a given entity."""
 
@@ -105,7 +105,7 @@ class GenericEntityMatcher(EntityMatcher):
                 )
             )
 
-    def _calc_matches_for_entity_in_subwindows(self, entity_id: str) -> None:
+    def _calc_matches_for_entity_in_subwindows(self, entity_id: int) -> None:
         """Calculate matches for the entity in all sub-windows."""
 
         # Get the tokens for the entity

@@ -82,9 +82,9 @@ def test_calc_adds_removes():
 
     # Make an in-memory lookup
     lookup = InMemoryLookup()
-    lookup.add("e-1", ["78", "straight", "street"])
-    lookup.add("e-2", ["78", "broad", "street"])
-    lookup.add("e-3", ["81", "straight", "street", "swindon"])
+    lookup.add(1, ["78", "straight", "street"])
+    lookup.add(2, ["78", "broad", "street"])
+    lookup.add(3, ["81", "straight", "street", "swindon"])
 
     n_e1 = 3
     n_e2 = 3
@@ -105,13 +105,13 @@ def test_calc_adds_removes():
     #               |         | e-3 | e-3       | e-3     |         |
     # Text tokens:  | address | 78  | straight  | street  | swindon |
 
-    assert matcher._calc_adds_removes("e-1", 1, 3, n_e1) == (0, 0)
-    assert matcher._calc_adds_removes("e-1", 1, 4, n_e1) == (1, 0)
-    assert matcher._calc_adds_removes("e-1", 1, 2, n_e1) == (0, 1)
+    assert matcher._calc_adds_removes(1, 1, 3, n_e1) == (0, 0)
+    assert matcher._calc_adds_removes(1, 1, 4, n_e1) == (1, 0)
+    assert matcher._calc_adds_removes(1, 1, 2, n_e1) == (0, 1)
 
-    assert matcher._calc_adds_removes("e-2", 1, 3, n_e2) == (1, 1)
-    assert matcher._calc_adds_removes("e-2", 0, 3, n_e2) == (2, 1)
+    assert matcher._calc_adds_removes(2, 1, 3, n_e2) == (1, 1)
+    assert matcher._calc_adds_removes(2, 0, 3, n_e2) == (2, 1)
 
-    assert matcher._calc_adds_removes("e-3", 1, 4, n_e3) == (1, 1)
-    assert matcher._calc_adds_removes("e-3", 0, 1, n_e3) == (2, 4)
-    assert matcher._calc_adds_removes("e-3", 0, 4, n_e3) == (2, 1)
+    assert matcher._calc_adds_removes(3, 1, 4, n_e3) == (1, 1)
+    assert matcher._calc_adds_removes(3, 0, 1, n_e3) == (2, 4)
+    assert matcher._calc_adds_removes(3, 0, 4, n_e3) == (2, 1)

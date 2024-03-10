@@ -1,13 +1,15 @@
 # Entity extraction performance evaluator
-
 import itertools
+
+from domain import assert_entity_id_valid
 
 
 class EntitySpan:
-    def __init__(self, start, end, entity_id):
+    def __init__(self, start: int, end: int, entity_id: int):
         assert type(start) == int
         assert type(end) == int
         assert end >= start
+        assert_entity_id_valid(entity_id)
 
         self.start = start  # Start index
         self.end = end  # Stop index (inclusive)

@@ -222,9 +222,8 @@ def make_test_database(
 
     # Add all entities
     for idx, ent in enumerate(entities):
-        entity_id = f"e-{idx}"
         tokens = tokenise_text(ent)
-        lookup.add(entity_id, tokens)
+        lookup.add(idx, tokens)
 
     # Finalise and close the lookup
     lookup.finalise()

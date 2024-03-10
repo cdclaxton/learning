@@ -8,7 +8,7 @@ from evaluator.evaluator import EntitySpan, calc_error
 class ProbabilisticMatch:
     """Represents a probabilistic entity match in piece of text."""
 
-    def __init__(self, start, end, entity_id, probability):
+    def __init__(self, start: int, end: int, entity_id: int, probability: float):
         assert_start_end_index_valid(start, end)
         assert_entity_id_valid(entity_id)
         assert_probability_valid(probability)

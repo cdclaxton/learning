@@ -47,14 +47,14 @@ def test_text_table_pad():
 def test_visualise_probabilistic_matches():
     text_tokens = ["A", "BB", "CCC"]
     matches = [
-        ProbabilisticMatch(0, 0, "e-1", 0.99),
-        ProbabilisticMatch(0, 1, "e-1", 0.80),
-        ProbabilisticMatch(0, 2, "e-1", 0.75),
-        ProbabilisticMatch(1, 1, "e-2", 0.60),
-        ProbabilisticMatch(1, 2, "e-2", 0.59),
-        ProbabilisticMatch(2, 2, "e-3", 0.04),
+        ProbabilisticMatch(0, 0, 1, 0.99),
+        ProbabilisticMatch(0, 1, 1, 0.80),
+        ProbabilisticMatch(0, 2, 1, 0.75),
+        ProbabilisticMatch(1, 1, 2, 0.60),
+        ProbabilisticMatch(1, 2, 2, 0.59),
+        ProbabilisticMatch(2, 2, 3, 0.04),
     ]
-    entity_id_to_tokens = {"e-1": "F G H".split(), "e-2": "J K".split(), "e-3": ["L"]}
+    entity_id_to_tokens = {1: "F G H".split(), 2: "J K".split(), 3: ["L"]}
 
     result = visualise_probabilistic_matches(text_tokens, matches, entity_id_to_tokens)
     assert type(result) == str

@@ -1,10 +1,11 @@
 import random
+from typing import List
 
 # Sequence of lower-case letters from a to z
-letters = [chr(x) for x in range(97, 123)]
+letters: List[str] = [chr(x) for x in range(97, 123)]
 
 
-def add_character(token):
+def add_character(token: List[str]) -> None:
     """Add a character to the token. Mutates the list passed in."""
 
     assert type(token) == list
@@ -15,7 +16,7 @@ def add_character(token):
     token.insert(idx, ch)
 
 
-def remove_character(token):
+def remove_character(token: List[str]) -> None:
     """Remove a character from the token. Mutates the list passed in."""
 
     assert type(token) == list
@@ -25,7 +26,7 @@ def remove_character(token):
     token.pop(idx)
 
 
-def transpose_characters(token):
+def transpose_characters(token: List[str]) -> None:
     """Transpose (switch) two adjacent characters in the token."""
 
     assert type(token) == list
@@ -42,7 +43,7 @@ def transpose_characters(token):
         token[idx], token[idx + 1] = token[idx + 1], token[idx]
 
 
-def substitute_character(token):
+def substitute_character(token: List[str]) -> None:
     """Substitute a single character in the token."""
 
     assert type(token) == list
@@ -56,7 +57,7 @@ def substitute_character(token):
         token[idx] = random.choice(letters)
 
 
-def random_mutation(token):
+def random_mutation(token: List[str]) -> None:
     """Randomly mutate a token represented as a list of characters."""
 
     assert type(token) == list
@@ -70,7 +71,7 @@ def random_mutation(token):
     fn(token)
 
 
-def random_mutation_str(token):
+def random_mutation_str(token: List[str]) -> str:
     """Randomly mutate a token represented as a string."""
 
     assert type(token) == str
@@ -79,7 +80,7 @@ def random_mutation_str(token):
     return random_mutation(ts)
 
 
-def random_mutations(token, num_mutations):
+def random_mutations(token: List[str], num_mutations: int) -> str:
     """Perform num_mutations random mutations on a token."""
 
     assert type(token) == str

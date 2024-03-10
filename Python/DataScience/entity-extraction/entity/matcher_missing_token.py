@@ -41,7 +41,7 @@ class MissingTokenEntityMatcher(EntityMatcher):
             lookup.entity_ids_for_token
         )
 
-    def next_token(self, token) -> None:
+    def next_token(self, token: str) -> None:
         """Receive the next token in the text."""
 
         assert_token_valid(token)
@@ -64,7 +64,7 @@ class MissingTokenEntityMatcher(EntityMatcher):
             assert len(tokens_to_check) >= self._min_tokens_to_check
 
             # Get the entities in common for the tokens to check
-            entity_ids, cache_used = self._token_to_entities_cache.get(tokens_to_check)
+            entity_ids, _ = self._token_to_entities_cache.get(tokens_to_check)
 
             # Walk through each of the entities in common
             for entity_id in entity_ids:

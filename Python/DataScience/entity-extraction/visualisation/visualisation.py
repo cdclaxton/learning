@@ -86,7 +86,7 @@ def format_entity(tokens: Tokens) -> str:
 def visualise_probabilistic_matches(
     text_tokens: Tokens,
     matches: List[ProbabilisticMatch],
-    entity_id_to_tokens: Dict[str, Tokens],
+    entity_id_to_tokens: Dict[int, Tokens],
 ) -> str:
     """Visualise probabilistic matches."""
 
@@ -144,7 +144,7 @@ def visualise_probabilistic_matches(
 def visualise_probabilistic_matches_over_threshold(
     text_tokens: Tokens,
     matches: List[ProbabilisticMatch],
-    entity_id_to_tokens: Dict[str, Tokens],
+    entity_id_to_tokens: Dict[int, Tokens],
     threshold: float,
 ) -> str:
     """Visualise probabilistic matches over a given threshold."""

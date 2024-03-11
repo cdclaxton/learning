@@ -1,5 +1,5 @@
+from collections import Counter
 from typing import Generator, List, Set, Tuple
-
 from loguru import logger
 from domain import Tokens, assert_probability_valid, assert_token_valid
 from entity.matcher import EntityMatcher, ProbabilisticMatch
@@ -68,7 +68,7 @@ class EntityMatcherAddRemove(EntityMatcher):
         # - count is the number times the entity was seen
         # - start is the token index of the first match
         # - end is the token index of the last match
-        self._entity_id_to_count: dict[int, int] = dict()
+        self._entity_id_to_count = Counter()
         self._entity_id_to_start: dict[int, int] = dict()
         self._entity_id_to_end: dict[int, int] = dict()
 
@@ -91,13 +91,12 @@ class EntityMatcherAddRemove(EntityMatcher):
         # Increment the count for the entities that match the token
         for entity_id in self._entity_ids[-1]:
             if entity_id not in self._entity_id_to_count:
-                self._entity_id_to_count[entity_id] = 1
                 self._entity_id_to_start[entity_id] = self._current_token_index
                 self._entity_id_to_end[entity_id] = self._current_token_index
-
             else:
-                self._entity_id_to_count[entity_id] += 1
                 self._entity_id_to_end[entity_id] = self._current_token_index
+
+        self._entity_id_to_count.update(entity_ids)
 
     def _calc_adds_removes(
         self, entity_id: int, start: int, end: int, n_e: int
@@ -185,8 +184,7 @@ class EntityMatcherAddRemove(EntityMatcher):
         """Reset the matcher."""
 
         self._tokens: Tokens = []
-        self._entity_id_to_count: dict[str, int] = dict()
         self._matches: List[ProbabilisticMatch] = []
-        self._entity_id_to_count: dict[str, int] = dict()
+        self._entity_id_to_count = Counter()
         self._entity_id_to_start: dict[str, int] = dict()
         self._entity_id_to_end: dict[str, int] = dict()

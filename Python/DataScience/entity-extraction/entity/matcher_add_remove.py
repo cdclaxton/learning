@@ -90,11 +90,8 @@ class EntityMatcherAddRemove(EntityMatcher):
 
         # Increment the count for the entities that match the token
         for entity_id in self._entity_ids[-1]:
-            if entity_id not in self._entity_id_to_count:
-                self._entity_id_to_start[entity_id] = self._current_token_index
-                self._entity_id_to_end[entity_id] = self._current_token_index
-            else:
-                self._entity_id_to_end[entity_id] = self._current_token_index
+            self._entity_id_to_start.setdefault(entity_id, self._current_token_index)
+            self._entity_id_to_end[entity_id] = self._current_token_index
 
         self._entity_id_to_count.update(entity_ids)
 

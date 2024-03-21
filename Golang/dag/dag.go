@@ -92,6 +92,7 @@ func IsDag(edges []Edge) bool {
 		var nodeN string
 		nodeN, S = element(S)
 
+		// Walk through edges that connects n -> m
 		for idx := range edgeInGraph {
 			if !edgeInGraph[idx] || edges[idx].Source != nodeN {
 				continue

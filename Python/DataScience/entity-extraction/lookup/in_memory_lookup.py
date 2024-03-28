@@ -50,6 +50,15 @@ class InMemoryLookup(Lookup):
             return sorted(list(self._token_to_entity_ids[token]))
         return None
 
+    def entity_ids_for_token_string(self, token: str) -> Optional[str]:
+        """Get the entity IDs as a string for a given token."""
+
+        assert_token_valid(token)
+        if token in self._token_to_entity_ids:
+            ids = sorted(list(self._token_to_entity_ids[token]))
+            return " ".join([str(e) for e in ids])
+        return None
+
     def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
         """Get the entity IDs for a given token."""
 

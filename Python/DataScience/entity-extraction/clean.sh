@@ -17,3 +17,7 @@ if [ -f ${sqlite_file} ]; then
     echo "Deleting temporary Sqlite database"
     rm ${sqlite_file}
 fi
+
+rm ./metrics_compiled_c_arrays.c
+rm ./*.so
+rm ./metrics_compiled_c_arrays.html

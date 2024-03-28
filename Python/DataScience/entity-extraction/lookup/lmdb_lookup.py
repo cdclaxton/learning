@@ -22,6 +22,7 @@ LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 #
 # E<entity ID> = <pickled list of tokens>
 # T<token> = <pickled list of entity IDs>
+# S<token> = <space separated string of entity IDs>
 # M = <maximum number of tokens for an entity (across all entities)>
 # C<entity ID> = <number of tokens for the entity>
 
@@ -37,6 +38,11 @@ def entity_id_to_key(entity_id: int) -> bytes:
 def token_to_key(token: str) -> bytes:
     """Token to key in the LMDB."""
     return f"T{token}".encode("ascii")
+
+
+def token_to_string_key(token: str) -> bytes:
+    """Token to key in the LMDB."""
+    return f"S{token}".encode("ascii")
 
 
 def entity_id_to_token_count_key(entity_id: int) -> bytes:
@@ -280,8 +286,12 @@ class LmdbLookup(Lookup):
                 entity_ids = self._entity_ids_for_token_sqlite(token)
                 assert entity_ids is not None
 
-                # Store the token to entity IDs in LMDB
+                # Store the token to a pickled list of entity IDs in LMDB
                 txn.put(token_to_key(token), pickle_list(entity_ids))
+
+                # Store the token to a string of entity IDs in LMDB
+                s = " ".join([str(e) for e in entity_ids])
+                txn.put(token_to_string_key(token), s.encode("ascii"))
 
                 if idx % 100 == 0:
                     logger.info(f"Processed {idx+1} of {num_tokens} tokens")
@@ -365,6 +375,18 @@ class LmdbLookup(Lookup):
             return None
 
         return unpickle_list(result)
+
+    def entity_ids_for_token_string(self, token: str) -> Optional[str]:
+        """Get the entity IDs as a string for a given token."""
+
+        with self._env.begin() as txn:
+            result = txn.get(token_to_string_key(token))
+
+        if result is None:
+            return None
+
+        # Convert the bytes returned by LMDB to a string
+        return result.decode("ascii")
 
     def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
         """Find the matching entities in the lookup given the tokens."""

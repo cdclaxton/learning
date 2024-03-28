@@ -24,6 +24,12 @@ Install the required Python libraries using:
 pip install -r requirements.txt
 ```
 
+Compile the C code:
+
+```bash
+python setup.py build_ext --inplace
+```
+
 To run the unit tests, enter:
 
 ```bash

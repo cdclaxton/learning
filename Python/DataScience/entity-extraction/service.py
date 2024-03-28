@@ -2,7 +2,7 @@
 
 from typing import List, Optional
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from domain import Tokens, assert_tokens_valid
 from entity.matcher import (
     ProbabilisticMatch,
@@ -31,7 +31,7 @@ app = FastAPI()
 
 
 class ExtractionRequest(BaseModel):
-    text: str
+    text: str = Field(description="Text to process")
     threshold: float
     min_tokens_to_check: int
 
@@ -169,6 +169,7 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
         min_window=req.min_tokens_to_check,
         max_window=max_window,
         min_probability=req.threshold,
+        max_entity_id=100,
     )
 
     # All entity matchers

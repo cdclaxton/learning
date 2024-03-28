@@ -28,6 +28,10 @@ def test_lookup():
     assert l.entity_ids_for_token("80") == {0, 1}
     assert l.entity_ids_for_token("Broad") == {1}
 
+    assert l.entity_ids_for_token_string("80") == "0 1"
+    assert l.entity_ids_for_token_string("Broad") == "1"
+    assert l.entity_ids_for_token_string("Way") is None
+
     assert l.num_tokens_for_entity(0) == 3
     assert l.num_tokens_for_entity(1) == 3
     assert l.num_tokens_for_entity(100) is None  # Doesn't exist

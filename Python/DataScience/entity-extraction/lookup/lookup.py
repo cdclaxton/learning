@@ -28,6 +28,11 @@ class Lookup(ABC):
         pass
 
     @abstractmethod
+    def entity_ids_for_token_string(self, token: str) -> Optional[str]:
+        """Get the entity IDs as a string for a given token."""
+        pass
+
+    @abstractmethod
     def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
         """Find the matching entities in the lookup given the tokens."""
         pass

@@ -441,6 +441,11 @@ class DatabaseBackedLookup(Lookup):
 
         return self._entity_ids_for_token_list_slow(token)
 
+    def entity_ids_for_token_string(self, token: str) -> Optional[str]:
+        """Get the entity IDs as a string for a given token."""
+
+        raise Exception("unimplemented")
+
     def _debug(self):
         """Create debug output (only for small databases)."""
 

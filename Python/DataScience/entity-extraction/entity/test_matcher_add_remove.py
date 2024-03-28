@@ -92,7 +92,7 @@ def test_calc_adds_removes():
 
     # Make a matcher
     likelihood = make_likelihood_add_remove_symmetric(2, 0.9, 5, 0.3)
-    matcher = EntityMatcherAddRemove(lookup, likelihood, 3, 4, 0.0)
+    matcher = EntityMatcherAddRemove(lookup, likelihood, 3, 4, 0.0, 5)
 
     # Token index:     0       1        2           3         4
     text_tokens = ["address", "78", "straight", "street", "swindon"]

@@ -21,3 +21,5 @@ fi
 rm ./metrics_compiled_c_arrays.c
 rm ./*.so
 rm ./metrics_compiled_c_arrays.html
+rm -rf ./build
+rm ./metrics/metrics

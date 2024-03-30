@@ -9,34 +9,33 @@
 
 #define MAXIMUM_ENTITY_ID_WIDTH 21
 
-int main(void)
-{
-    ResultSet r = calc("1 2 3||||1 2 3|2 3|2 3", 4, 2);
-    printResultSet(r);
+// int main(void)
+// {
+//     ResultSet r = calc("1 2 3||||1 2 3|2 3|2 3", 4, 2);
+//     print_result_set(r);
 
-    return EXIT_SUCCESS;
-}
+//     return EXIT_SUCCESS;
+// }
 
-// allocateAndInitaliseArray allocates and initialises an array with zero values.
-uint8_t *allocateAndInitaliseArray(uint32_t numElements)
+uint8_t *allocate_and_initialise_array(uint32_t num_elements)
 {
     // Allocate memory for the array
-    uint8_t *arr = (uint8_t *)calloc(numElements, sizeof(uint32_t));
+    uint8_t *arr = (uint8_t *)calloc(num_elements, sizeof(uint32_t));
     if (arr == NULL)
     {
-        printf("Failed to allocate memory with %d elements\n", numElements);
+        printf("Failed to allocate memory with %d elements\n", num_elements);
         return NULL;
     }
 
     return arr;
 }
 
-void printArray(uint8_t *arr, uint8_t numElements)
+void print_array(uint8_t *arr, uint8_t num_elements)
 {
     printf("[");
-    for (uint8_t i = 0; i < numElements; i++)
+    for (uint8_t i = 0; i < num_elements; i++)
     {
-        if (i < (numElements - 1))
+        if (i < (num_elements - 1))
         {
             printf("%d, ", arr[i]);
         }
@@ -48,47 +47,59 @@ void printArray(uint8_t *arr, uint8_t numElements)
     printf("]\n");
 }
 
-void update(uint8_t batch, uint32_t entityId, uint32_t maxEntityId,
+void update(uint8_t batch, uint32_t entity_id, uint32_t max_entity_id,
             uint8_t *counts, uint8_t *starts, uint8_t *ends)
 {
-    if (entityId >= maxEntityId)
+    if (entity_id > max_entity_id)
     {
-        printf("Entity ID %d equal to or exceeds max entity ID %d\n", entityId, maxEntityId);
+        printf("Entity ID %d exceeds max entity ID %d\n", entity_id, max_entity_id);
         exit(-1);
     }
 
-    if (counts[entityId] == 0)
+    if (counts[entity_id] == 0)
     {
         // First time the entity ID has been seen
-        counts[entityId] = 1;
-        starts[entityId] = batch;
-        ends[entityId] = batch;
+        counts[entity_id] = 1;
+        starts[entity_id] = batch;
+        ends[entity_id] = batch;
     }
     else
     {
         // Entity ID has been seen at least once before
-        counts[entityId] += 1;
-        ends[entityId] = batch;
+        counts[entity_id] += 1;
+        ends[entity_id] = batch;
     }
 }
 
-void printResultSet(ResultSet r)
+void print_entity_span(EntitySpan e)
+{
+    printf("Entity ID: %d, Count: %d, Start: %d, End: %d\n",
+           e.entity_id,
+           e.count,
+           e.start_index,
+           e.end_index);
+}
+
+void print_result_set(ResultSet r)
 {
     printf("Number of results: %d\n", r.n);
     for (uint8_t i = 0; i < r.n; i++)
     {
-        printf("Entity ID: %d, Start: %d, End: %d\n",
-               r.arr[i].entityId, r.arr[i].startIndex, r.arr[i].endIndex);
+        print_entity_span(r.arr[i]);
     }
 }
 
-ResultSet collect(uint8_t *counts, uint8_t *starts, uint8_t *ends, uint32_t maxEntityId, uint8_t minCount)
+ResultSet collect(uint8_t *counts,
+                  uint8_t *starts,
+                  uint8_t *ends,
+                  uint32_t max_entity_id,
+                  uint8_t min_count)
 {
     // Determine how many entity IDs were seen with the minimum required count
     uint32_t total = 0;
-    for (uint32_t i = 0; i < maxEntityId; i++)
+    for (uint32_t i = 0; i <= max_entity_id; i++)
     {
-        if (counts[i] >= minCount)
+        if (counts[i] >= min_count)
         {
             total += 1;
         }
@@ -115,13 +126,14 @@ ResultSet collect(uint8_t *counts, uint8_t *starts, uint8_t *ends, uint32_t maxE
 
     // Build the results
     uint32_t elementIdx = 0;
-    for (uint32_t i = 0; i < maxEntityId; i++)
+    for (uint32_t i = 0; i <= max_entity_id; i++)
     {
-        if (counts[i] >= minCount)
+        if (counts[i] >= min_count)
         {
-            r.arr[elementIdx].entityId = i;
-            r.arr[elementIdx].startIndex = starts[i];
-            r.arr[elementIdx].endIndex = ends[i];
+            r.arr[elementIdx].entity_id = i;
+            r.arr[elementIdx].count = counts[i];
+            r.arr[elementIdx].start_index = starts[i];
+            r.arr[elementIdx].end_index = ends[i];
             elementIdx += 1;
         }
     }
@@ -130,22 +142,24 @@ ResultSet collect(uint8_t *counts, uint8_t *starts, uint8_t *ends, uint32_t maxE
     return r;
 };
 
-ResultSet calc(char *str, uint32_t maxEntityId, uint8_t minCount)
+ResultSet calc(char *str,
+               uint32_t max_entity_id,
+               uint8_t min_count)
 {
     uint32_t end = 0;
     uint8_t batchIdx = 0;
     char temp[MAXIMUM_ENTITY_ID_WIDTH];
     uint8_t tempIdx = 0;
-    uint32_t entityId;
+    uint32_t entity_id;
 
     // Allocate memory for the counts
-    uint8_t *counts = allocateAndInitaliseArray(maxEntityId);
+    uint8_t *counts = allocate_and_initialise_array(max_entity_id + 1);
 
     // Allocate memory for the start indices
-    uint8_t *starts = allocateAndInitaliseArray(maxEntityId);
+    uint8_t *starts = allocate_and_initialise_array(max_entity_id + 1);
 
     // Allocate memory for the end indices
-    uint8_t *ends = allocateAndInitaliseArray(maxEntityId);
+    uint8_t *ends = allocate_and_initialise_array(max_entity_id + 1);
 
     while ((str[end]) != '\0')
     {
@@ -153,8 +167,8 @@ ResultSet calc(char *str, uint32_t maxEntityId, uint8_t minCount)
         {
             if (tempIdx > 0)
             {
-                entityId = atoi(temp);
-                update(batchIdx, entityId, maxEntityId, counts, starts, ends);
+                entity_id = atoi(temp);
+                update(batchIdx, entity_id, max_entity_id, counts, starts, ends);
             }
 
             tempIdx = 0;
@@ -177,13 +191,13 @@ ResultSet calc(char *str, uint32_t maxEntityId, uint8_t minCount)
 
     if (tempIdx > 0)
     {
-        entityId = atoi(temp);
-        update(batchIdx, entityId, maxEntityId, counts, starts, ends);
+        entity_id = atoi(temp);
+        update(batchIdx, entity_id, max_entity_id, counts, starts, ends);
     }
 
     // Collect the results that have the required minimum number of entries
     ResultSet r;
-    r = collect(counts, starts, ends, maxEntityId, minCount);
+    r = collect(counts, starts, ends, max_entity_id, min_count);
 
     // Free memory
     free(counts);

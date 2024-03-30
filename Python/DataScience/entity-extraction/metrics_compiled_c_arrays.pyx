@@ -19,10 +19,10 @@ cdef extern from "./metrics/metrics.h":
 
 class PyResult:
     def __init__(self, entity_id, count, start_index, end_index):
-        self.entityId = entity_id
+        self.entity_id = entity_id
         self.count = count
-        self.startIndex = start_index
-        self.endIndex = end_index
+        self.start_index = start_index
+        self.end_index = end_index
     
     def __str__(self):
         return f"EntitySpan(id={self.entity_id}, count={self.count}, start={self.start_index}, end={self.end_index})"

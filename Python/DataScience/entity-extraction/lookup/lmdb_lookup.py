@@ -29,6 +29,9 @@ LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 # Key for the key-value pair for the maximum number of tokens for an entity
 MAX_TOKENS_KEY = "M"
 
+# Key for the maximum entity ID
+MAX_ENTITY_ID_KEY = "N"
+
 
 def entity_id_to_key(entity_id: int) -> bytes:
     """Entity ID to key in the LMDB."""
@@ -93,6 +96,9 @@ class LmdbLookup(Lookup):
 
         # Maximum number of tokens for a single entity
         self._max_num_tokens: int = 0
+
+        # Maximum entity ID
+        self._max_entity_id: int = -1
 
         # Sqlite database connection and cursor for load mode
         self._conn: Optional[sqlite3.Connection] = None
@@ -171,6 +177,9 @@ class LmdbLookup(Lookup):
         # Update the maximum number of tokens for an entity
         self._max_num_tokens = max(self._max_num_tokens, len(tokens))
 
+        # Update the maximum entity ID
+        self._max_entity_id = max(self._max_entity_id, entity_id)
+
         # Record the tokens for the entity in the counts
         self._record_tokens(tokens)
 
@@ -236,6 +245,10 @@ class LmdbLookup(Lookup):
         logger.info(f"Writing the maximum number of tokens for an entity")
         self._write_max_num_tokens()
 
+        # Write the maximum entity ID
+        logger.info(f"Writing maximum entity ID ({self._max_entity_id})")
+        self._write_max_entity_id()
+
         # Add an index to the Sqlite token to entity ID table
         logger.info(f"Adding index to Sqlite database")
         self._cursor.execute(
@@ -285,6 +298,10 @@ class LmdbLookup(Lookup):
                 # Get the entity IDs for the token from the Sqlite table
                 entity_ids = self._entity_ids_for_token_sqlite(token)
                 assert entity_ids is not None
+
+                # Deduplicate the entity IDs (this is required for entities that
+                # have repeated tokens)
+                entity_ids = list(set(entity_ids))
 
                 # Store the token to a pickled list of entity IDs in LMDB
                 txn.put(token_to_key(token), pickle_list(entity_ids))
@@ -419,6 +436,24 @@ class LmdbLookup(Lookup):
             return None
 
         return bytes_to_count(result)
+
+    def max_entity_id(self) -> int:
+        """Maximum entity ID."""
+
+        with self._env.begin() as txn:
+            value = txn.get(MAX_ENTITY_ID_KEY.encode("ascii"))
+
+        assert value is not None
+        return int(value)
+
+    def _write_max_entity_id(self) -> None:
+        """Write the maximum entity ID to LMDB."""
+
+        with self._env.begin(write=True) as txn:
+            value = str(self._max_entity_id).encode("ascii")
+            txn.put(MAX_ENTITY_ID_KEY.encode("ascii"), value)
+
+        self._env.sync()
 
     def close(self):
         logger.info(f"Closing lookup. LMDB stats: {self._env.stat()}")

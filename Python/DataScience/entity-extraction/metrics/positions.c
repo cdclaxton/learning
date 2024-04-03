@@ -238,7 +238,7 @@ void free_sparse_position_results(SparsePositionResults *sparse_results)
 SparsePositionResults compact(DenseEntityPositions *results,
                               uint32_t max_entity_id)
 {
-    // Count how many of the dense results will be included in the spare results
+    // Count how many of the dense results will be included in the sparse results
     SparsePositionResults sparse_results;
     sparse_results.n = 0;
     for (uint32_t i = 0; i < (max_entity_id + 1); i++)
@@ -249,7 +249,7 @@ SparsePositionResults compact(DenseEntityPositions *results,
         }
     }
 
-    // Dynamicaly allocate space for the entity positions
+    // Dynamically allocate space for the entity positions
     sparse_results.results = (EntityPositions *)malloc(sparse_results.n *
                                                        sizeof(EntityPositions));
     if (sparse_results.results == NULL)

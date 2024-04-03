@@ -169,7 +169,7 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
         min_window=req.min_tokens_to_check,
         max_window=max_window,
         min_probability=req.threshold,
-        max_entity_id=100,
+        max_entity_id=max_entity_id,
     )
 
     # All entity matchers
@@ -260,6 +260,9 @@ if __name__ == "__main__":
 
     max_window = lookup.max_number_tokens_for_entity()
     logger.info(f"Maximum window size: {max_window}")
+
+    max_entity_id = lookup.max_entity_id()
+    logger.info(f"Maximum entity ID: {max_entity_id}")
 
     # Make the logistic likelihood function
     logger.info("Instantiating the likelihood function")

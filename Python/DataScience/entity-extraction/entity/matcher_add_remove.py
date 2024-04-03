@@ -16,6 +16,7 @@ def adds_removes_from_positions(
 ) -> List[Tuple[int, int, int, int]]:
 
     assert type(pos) == list
+    assert len(set(pos)) == len(pos), f"Positions are not unique: {pos}"
     assert type(n_entity_tokens) == int and n_entity_tokens > 0
     assert type(min_window) == int and min_window > 0
     assert type(max_window) == int and max_window >= min_window
@@ -41,10 +42,10 @@ def adds_removes_from_positions(
             n_c = j - i + 1
 
             # Number of tokens added
-            n_adds = n_t - n_c
+            n_adds = max(0, n_t - n_c)
 
             # Number of tokens remvoed
-            n_removes = n_entity_tokens - n_c
+            n_removes = max(0, n_entity_tokens - n_c)
 
             result.append((pos[i], pos[j], n_adds, n_removes))
 

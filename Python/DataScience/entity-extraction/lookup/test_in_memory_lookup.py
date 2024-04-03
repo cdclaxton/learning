@@ -20,6 +20,8 @@ def test_lookup():
     assert l.entity_ids_for_token_list("80") == [0]
     assert l.entity_ids_for_token_list("Road") is None
 
+    assert l.max_entity_id() == 0
+
     # Add a second entry
     l.add(1, ["80", "Broad", "Walk"])
     assert l.tokens_for_entity(0) == ["80", "Straight", "Street"]
@@ -35,6 +37,8 @@ def test_lookup():
     assert l.num_tokens_for_entity(0) == 3
     assert l.num_tokens_for_entity(1) == 3
     assert l.num_tokens_for_entity(100) is None  # Doesn't exist
+
+    assert l.max_entity_id() == 1
 
 
 def test_matching_entries():

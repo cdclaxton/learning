@@ -12,11 +12,11 @@ from lookup.lookup import Lookup
 class InMemoryLookup(Lookup):
     """Holds two lookups in memory."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._token_to_entity_ids: Dict[str, Set[int]] = {}
         self._entity_id_to_tokens: Dict[int, List[str]] = {}
 
-    def add(self, entity_id: int, tokens: Tokens):
+    def add(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the lookup."""
 
         assert_entity_id_valid(entity_id)
@@ -106,3 +106,8 @@ class InMemoryLookup(Lookup):
             return None
 
         return len(tokens)
+
+    def max_entity_id(self) -> int:
+        """Maximum entity ID."""
+
+        return sorted(list(self._entity_id_to_tokens.keys()), reverse=True)[0]

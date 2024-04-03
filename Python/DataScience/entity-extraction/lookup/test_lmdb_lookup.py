@@ -75,6 +75,9 @@ def test_full_test():
     # Check the maximum number of tokens for an entity
     assert lookup.max_number_tokens_for_entity() == 3
 
+    # Check the maximum entity ID
+    assert lookup.max_entity_id() == 3
+
     # Check the entity IDs for a given token
     assert set(lookup.entity_ids_for_token("a")) == {1, 2}
     assert set(lookup.entity_ids_for_token("b")) == {2, 3}

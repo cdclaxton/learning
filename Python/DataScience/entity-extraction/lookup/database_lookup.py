@@ -446,6 +446,11 @@ class DatabaseBackedLookup(Lookup):
 
         raise Exception("unimplemented")
 
+    def max_entity_id(self) -> int:
+        """Maximum entity ID."""
+
+        raise Exception("unimplemented")
+
     def _debug(self):
         """Create debug output (only for small databases)."""
 

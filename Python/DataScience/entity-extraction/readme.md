@@ -49,7 +49,7 @@ sudo apt-get install jq  # Linux
 To profile the code, run:
 
 ```bash
-python3 -m cProfile service.py
+python3 -m cProfile service.py > profile.txt
 ```
 
 ## Run the entity extraction web service

@@ -23,3 +23,5 @@ rm ./*.so
 rm ./metrics_compiled_c_arrays.html
 rm -rf ./build
 rm ./metrics/metrics
+rm ./positions_compiled_c.c
+rm ./positions_compiled_c.html

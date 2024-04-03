@@ -1,6 +1,7 @@
 __pycache__
 .pytest_cache
 .ipynb_checkpoints
+.vscode
 
 apache-tinkerpop-gremlin-console-3.7.1
 

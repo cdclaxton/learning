@@ -393,6 +393,7 @@ class LmdbLookup(Lookup):
 
         return unpickle_list(result)
 
+    @lru_cache(maxsize=100000)
     def entity_ids_for_token_string(self, token: str) -> Optional[str]:
         """Get the entity IDs as a string for a given token."""
 

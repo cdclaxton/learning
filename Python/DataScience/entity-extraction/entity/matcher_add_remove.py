@@ -16,7 +16,6 @@ def adds_removes_from_positions(
 ) -> List[Tuple[int, int, int, int]]:
 
     assert type(pos) == list
-    assert len(set(pos)) == len(pos), f"Positions are not unique: {pos}"
     assert type(n_entity_tokens) == int and n_entity_tokens > 0
     assert type(min_window) == int and min_window > 0
     assert type(max_window) == int and max_window >= min_window
@@ -28,15 +27,13 @@ def adds_removes_from_positions(
     for i in range(0, len(pos) - 1):
         for j in range(i + 1, len(pos)):
 
-            window_width = pos[j] - pos[i] + 1
-
-            if window_width < min_window:
-                continue
-            elif window_width > max_window:
-                break
-
             # Number of text tokens
-            n_t = window_width
+            n_t = pos[j] - pos[i] + 1
+
+            if n_t < min_window:
+                continue
+            elif n_t > max_window:
+                break
 
             # Number of tokens in common (in text and entity)
             n_c = j - i + 1
@@ -223,8 +220,10 @@ class EntityMatcherAddRemove(EntityMatcher):
 
         if len(position_results.error_message) > 0:
             raise Exception(position_results.error_message)
-        
-        logger.debug(f"Number of entities with positions to evaluate: {len(position_results.results)}")
+
+        logger.debug(
+            f"Number of entities with positions to evaluate: {len(position_results.results)}"
+        )
 
         for entity_result in position_results.results:
             entity_id = entity_result.entity_id

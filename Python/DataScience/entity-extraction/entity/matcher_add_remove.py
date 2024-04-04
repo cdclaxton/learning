@@ -223,6 +223,8 @@ class EntityMatcherAddRemove(EntityMatcher):
 
         if len(position_results.error_message) > 0:
             raise Exception(position_results.error_message)
+        
+        logger.debug(f"Number of entities with positions to evaluate: {len(position_results.results)}")
 
         for entity_result in position_results.results:
             entity_id = entity_result.entity_id

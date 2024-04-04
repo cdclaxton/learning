@@ -25,3 +25,6 @@ rm -rf ./build
 rm ./metrics/metrics
 rm ./positions_compiled_c.c
 rm ./positions_compiled_c.html
+
+rm ./adds_removes.c
+rm ./adds_removes.html

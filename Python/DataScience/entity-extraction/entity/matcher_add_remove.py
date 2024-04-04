@@ -4,49 +4,50 @@ from domain import Tokens, assert_probability_valid, assert_token_valid
 from entity.matcher import EntityMatcher, ProbabilisticMatch
 from likelihood.likelihood_add_remove import LikelihoodAddRemoveFn
 from lookup.lookup import Lookup
-from metrics_compiled_c_arrays import calc_metrics
+
+# from metrics_compiled_c_arrays import calc_metrics
 from positions_compiled_c import calc_positions
+from adds_removes import adds_removes_from_positions
 
+# def adds_removes_from_positions(
+#     pos: List[int],
+#     n_entity_tokens: int,
+#     min_window: int,
+#     max_window: int,
+# ) -> List[Tuple[int, int, int, int]]:
 
-def adds_removes_from_positions(
-    pos: List[int],
-    n_entity_tokens: int,
-    min_window: int,
-    max_window: int,
-) -> List[Tuple[int, int, int, int]]:
+#     assert type(pos) == list
+#     assert type(n_entity_tokens) == int and n_entity_tokens > 0
+#     assert type(min_window) == int and min_window > 0
+#     assert type(max_window) == int and max_window >= min_window
 
-    assert type(pos) == list
-    assert type(n_entity_tokens) == int and n_entity_tokens > 0
-    assert type(min_window) == int and min_window > 0
-    assert type(max_window) == int and max_window >= min_window
+#     result: List[Tuple[int, int, int, int]] = []
+#     if len(pos) == 1:
+#         return result
 
-    result: List[Tuple[int, int, int, int]] = []
-    if len(pos) == 1:
-        return result
+#     for i in range(0, len(pos) - 1):
+#         for j in range(i + 1, len(pos)):
 
-    for i in range(0, len(pos) - 1):
-        for j in range(i + 1, len(pos)):
+#             # Number of text tokens
+#             n_t = pos[j] - pos[i] + 1
 
-            # Number of text tokens
-            n_t = pos[j] - pos[i] + 1
+#             if n_t < min_window:
+#                 continue
+#             elif n_t > max_window:
+#                 break
 
-            if n_t < min_window:
-                continue
-            elif n_t > max_window:
-                break
+#             # Number of tokens in common (in text and entity)
+#             n_c = j - i + 1
 
-            # Number of tokens in common (in text and entity)
-            n_c = j - i + 1
+#             # Number of tokens added
+#             n_adds = max(0, n_t - n_c)
 
-            # Number of tokens added
-            n_adds = max(0, n_t - n_c)
+#             # Number of tokens remvoed
+#             n_removes = max(0, n_entity_tokens - n_c)
 
-            # Number of tokens remvoed
-            n_removes = max(0, n_entity_tokens - n_c)
+#             result.append((pos[i], pos[j], n_adds, n_removes))
 
-            result.append((pos[i], pos[j], n_adds, n_removes))
-
-    return result
+#     return result
 
 
 def calc_window_positions(

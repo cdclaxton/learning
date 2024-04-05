@@ -31,6 +31,14 @@ class PyEntityPositions:
     def __repr__(self):
         return self.__str__()
 
+    def __eq__(self, other) -> bool:
+        if type(other) != PyEntityPositions:
+            return False
+        
+        return self.entity_id == other.entity_id and \
+            self.n == other.n and \
+            self.pos == other.pos
+
 class PySparsePositionResults:
     def __init__(self, n, error_message):
         self.n = n
@@ -45,6 +53,14 @@ class PySparsePositionResults:
     
     def __repr__(self):
         return self.__str__()
+
+    def __eq__(self, other) -> bool:
+        if type(other) != PySparsePositionResults:
+            return False
+        
+        return self.n == other.n and \
+            self.error_message == other.error_message and \
+            self.results == other.results
 
 def calc_positions(s, max_entity_id, min_count):
 

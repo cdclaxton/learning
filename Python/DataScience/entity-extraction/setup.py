@@ -5,7 +5,6 @@ from Cython.Build import cythonize
 setup(
     ext_modules=cythonize(
         [
-            "metrics_compiled_c_arrays.pyx",
             "positions_compiled_c.pyx",
             "adds_removes.pyx",
         ],

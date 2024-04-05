@@ -1,5 +1,3 @@
-echo "Removing all data ..."
-
 lmdb_folder=./data/lmdb
 if [ -d ${lmdb_folder} ]; then
     echo "Deleting LMDB database"
@@ -18,13 +16,11 @@ if [ -f ${sqlite_file} ]; then
     rm ${sqlite_file}
 fi
 
-rm ./metrics_compiled_c_arrays.c
-rm ./*.so
-rm ./metrics_compiled_c_arrays.html
+rm -f ./*.so
 rm -rf ./build
-rm ./metrics/metrics
-rm ./positions_compiled_c.c
-rm ./positions_compiled_c.html
 
-rm ./adds_removes.c
-rm ./adds_removes.html
+rm -f ./positions_compiled_c.c
+rm -f ./positions_compiled_c.html
+
+rm -f ./adds_removes.c
+rm -f ./adds_removes.html

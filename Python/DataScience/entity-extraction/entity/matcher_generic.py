@@ -1,7 +1,7 @@
 from typing import Generator, List, Tuple
 from domain import (
     Tokens,
-    assert_entity_id_valid,
+    assert_internal_entity_id_valid,
     assert_probability_valid,
     assert_token_valid,
 )
@@ -88,7 +88,7 @@ class GenericEntityMatcher(EntityMatcher):
 
         assert type(start_idx) == int and start_idx >= 0
         assert type(end_idx) == int and start_idx <= end_idx < len(self._tokens)
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(entity_id)
 
         # Calculate the likelihood of the tokens given the entity
         tokens_to_check = self._tokens[start_idx : (end_idx + 1)]

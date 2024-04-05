@@ -1,4 +1,4 @@
-from service import tokenise_text
+from text.tokeniser import tokenise_text
 
 
 def test_tokenise_text():

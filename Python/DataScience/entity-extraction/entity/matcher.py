@@ -10,7 +10,7 @@ class ProbabilisticMatch:
 
     def __init__(self, start: int, end: int, entity_id: int, probability: float):
         assert_start_end_index_valid(start, end)
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(entity_id)
         assert_probability_valid(probability)
 
         self.start = start
@@ -150,7 +150,7 @@ def most_likely_matches(
 
     # Group assignment for each match
     group = 0
-    assignment = [None for _ in matches]
+    assignment: List[int|None] = [None for _ in matches]
 
     # Iterate through the matches until every one of them has been assigned to
     # a group

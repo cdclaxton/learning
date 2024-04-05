@@ -1,7 +1,7 @@
 # Entity extraction performance evaluator
 import itertools
 
-from domain import assert_entity_id_valid
+from domain import assert_internal_entity_id_valid
 
 
 class EntitySpan:
@@ -9,7 +9,7 @@ class EntitySpan:
         assert type(start) == int
         assert type(end) == int
         assert end >= start
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(entity_id)
 
         self.start = start  # Start index
         self.end = end  # Stop index (inclusive)

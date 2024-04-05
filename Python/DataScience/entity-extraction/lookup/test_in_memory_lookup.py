@@ -7,7 +7,7 @@ def test_lookup():
     l = InMemoryLookup()
 
     # Add an entry
-    l.add(0, ["80", "Straight", "Street"])
+    l.add(0, "100", ["80", "Straight", "Street"])
 
     assert l.tokens_for_entity(0) == ["80", "Straight", "Street"]
     assert l.tokens_for_entity(1) is None
@@ -23,7 +23,7 @@ def test_lookup():
     assert l.max_entity_id() == 0
 
     # Add a second entry
-    l.add(1, ["80", "Broad", "Walk"])
+    l.add(1, "200", ["80", "Broad", "Walk"])
     assert l.tokens_for_entity(0) == ["80", "Straight", "Street"]
     assert l.tokens_for_entity(1) == ["80", "Broad", "Walk"]
 
@@ -39,15 +39,18 @@ def test_lookup():
     assert l.num_tokens_for_entity(100) is None  # Doesn't exist
 
     assert l.max_entity_id() == 1
+    assert l.external_entity_id(0) == "100"
+    assert l.external_entity_id(1) == "200"
+    assert l.external_entity_id(2) is None
 
 
 def test_matching_entries():
     """Unit tests for matching_entries()."""
 
     l = InMemoryLookup()
-    l.add(0, ["80", "Straight", "Street"])
-    l.add(1, ["80", "River", "Street"])
-    l.add(2, ["80", "Broad", "Walk"])
+    l.add(0, "100", ["80", "Straight", "Street"])
+    l.add(1, "101", ["80", "River", "Street"])
+    l.add(2, "102", ["80", "Broad", "Walk"])
 
     # No matching tokens
     assert l.matching_entries(["Street", "45"]) is None

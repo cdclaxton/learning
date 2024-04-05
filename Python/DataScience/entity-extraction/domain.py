@@ -5,7 +5,7 @@ from typing import Callable, Dict, List
 Tokens = List[str]
 
 
-def assert_token_valid(token: str) -> bool:
+def assert_token_valid(token: str) -> None:
     """Checks that the token is valid."""
     assert type(token) == str, f"expected a str, got {type(token)}"
     assert len(token) > 0
@@ -28,10 +28,16 @@ EntityGenerator = Callable[[], Tokens]
 EntityToTokens = Dict[int, Tokens]
 
 
-def assert_entity_id_valid(entity_id: int) -> None:
-    """Checks that the entity ID is valid."""
+def assert_internal_entity_id_valid(entity_id: int) -> None:
+    """Checks that the internal entity ID is valid."""
     assert type(entity_id) == int, f"expected an int, got {type(entity_id)}"
     assert entity_id >= 0, f"got entity ID: {entity_id}"
+
+
+def assert_external_entity_id_valid(entity_id: str) -> None:
+    """Checks that the external entity ID is valid."""
+    assert type(entity_id) == str, f"expected a str, got {type(entity_id)}"
+    assert len(entity_id) > 0
 
 
 def assert_entity_to_tokens_valid(entity_to_tokens: EntityToTokens) -> None:
@@ -42,7 +48,7 @@ def assert_entity_to_tokens_valid(entity_to_tokens: EntityToTokens) -> None:
 
     # Check the entity IDs
     for e in entity_to_tokens.keys():
-        assert_entity_id_valid(e)
+        assert_internal_entity_id_valid(e)
 
     # Check the tokens
     for tokens in entity_to_tokens.values():

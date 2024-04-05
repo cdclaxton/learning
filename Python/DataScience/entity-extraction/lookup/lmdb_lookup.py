@@ -4,10 +4,14 @@ import lmdb
 import os
 import sqlite3
 
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 from loguru import logger
-from domain import Tokens, assert_entity_id_valid, assert_tokens_valid
-from lookup.database_lookup import pickle_list, unpickle_list
+from domain import (
+    Tokens,
+    assert_external_entity_id_valid,
+    assert_internal_entity_id_valid,
+    assert_tokens_valid,
+)
 from lookup.lookup import Lookup
 
 # Sqlite database table name and column names
@@ -21,10 +25,12 @@ LMDB_MAP_SIZE = 1000 * 1000 * 1000 * 100
 # The key-value structure is:
 #
 # E<entity ID> = <pickled list of tokens>
-# T<token> = <pickled list of entity IDs>
-# S<token> = <space separated string of entity IDs>
+# T<token> = <pickled list of internal entity IDs>
+# S<token> = <space separated string of internal entity IDs>
 # M = <maximum number of tokens for an entity (across all entities)>
-# C<entity ID> = <number of tokens for the entity>
+# N = <maximum internal entity ID>
+# C<internal entity ID> = <number of tokens for the entity>
+# I<internal entity ID> = <external entity ID>
 
 # Key for the key-value pair for the maximum number of tokens for an entity
 MAX_TOKENS_KEY = "M"
@@ -32,10 +38,37 @@ MAX_TOKENS_KEY = "M"
 # Key for the maximum entity ID
 MAX_ENTITY_ID_KEY = "N"
 
+# Key for the mapping from an internal entity ID to an external entity ID
+INT_TO_EXT_ENTITY_ID = "I"
 
-def entity_id_to_key(entity_id: int) -> bytes:
-    """Entity ID to key in the LMDB."""
-    return f"E{entity_id}".encode("ascii")
+
+def pickle_list(l: List[int]) -> bytes:
+    """Pickle a list for storage in the database."""
+    assert type(l) == list
+    return pickle.dumps(l)
+
+
+def unpickle_list(b: bytes) -> List[int]:
+    """Unpickle a list from storage in the database."""
+    assert type(b) == bytes
+    return pickle.loads(b)
+
+
+def pickle_list_str(l: List[str]) -> bytes:
+    """Pickle a list of strings for storage in the database."""
+    assert type(l) == list
+    return pickle.dumps(l)
+
+
+def unpickle_list_str(b: bytes) -> List[str]:
+    """Unpickle a list of strings from storage in the database."""
+    assert type(b) == bytes
+    return pickle.loads(b)
+
+
+def internal_entity_id_to_key(internal_entity_id: int) -> bytes:
+    """Internal entity ID to key in the LMDB."""
+    return f"E{internal_entity_id}".encode("ascii")
 
 
 def token_to_key(token: str) -> bytes:
@@ -48,9 +81,9 @@ def token_to_string_key(token: str) -> bytes:
     return f"S{token}".encode("ascii")
 
 
-def entity_id_to_token_count_key(entity_id: int) -> bytes:
-    """Entity ID to key in LMDB to retrieve the number of tokens."""
-    return f"C{entity_id}".encode("ascii")
+def internal_entity_id_to_token_count_key(internal_entity_id: int) -> bytes:
+    """Internal entity ID to key in LMDB to retrieve the number of tokens."""
+    return f"C{internal_entity_id}".encode("ascii")
 
 
 def count_to_bytes(count: int) -> bytes:
@@ -62,6 +95,11 @@ def count_to_bytes(count: int) -> bytes:
 def bytes_to_count(b: bytes) -> int:
     """Convert bytes to a token count."""
     return int.from_bytes(b)
+
+
+def internal_entity_to_external_key(internal_entity_id: int) -> bytes:
+    """Key for the mapping from an internal entity ID to an external ID."""
+    return f"I{internal_entity_id}".encode("ascii")
 
 
 class LmdbLookup(Lookup):
@@ -85,7 +123,7 @@ class LmdbLookup(Lookup):
         self._sqlite_filepath = sqlite_filepath
 
         # LMDB environment
-        self._env = None
+        self._env: Any = None
         self._num_lmdb_adds: int = 0
 
         # Set of tokens (created during load mode)
@@ -144,6 +182,9 @@ class LmdbLookup(Lookup):
             f"Initialising the Sqlite database for writing at filepath: {self._sqlite_filepath}"
         )
 
+        if self._sqlite_filepath is None:
+            raise Exception("Sqlite filepath is None")
+
         # Check that the a file with the Sqlite database filepath doesn't exist
         if os.path.exists(self._sqlite_filepath):
             raise Exception(
@@ -162,23 +203,26 @@ class LmdbLookup(Lookup):
             f"CREATE TABLE {TOKEN_TO_ENTITY_ID_TABLENAME}({TOKEN_COLUMN}, {ENTITY_ID_COLUMN});"
         )
 
-    def add(self, entity_id: int, tokens: Tokens) -> None:
+    def add(
+        self, internal_entity_id: int, external_entity_id: str, tokens: Tokens
+    ) -> None:
         """Add an entity to the lookup."""
 
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(internal_entity_id)
+        assert_external_entity_id_valid(external_entity_id)
         assert_tokens_valid(tokens)
 
         # Add the entity ID to tokens mapping to the LMDB
-        self._add_to_lmdb(entity_id, tokens)
+        self._add_to_lmdb(internal_entity_id, external_entity_id, tokens)
 
         # Add the token to entity ID to Sqlite
-        self._add_to_sqlite(entity_id, tokens)
+        self._add_to_sqlite(internal_entity_id, tokens)
 
         # Update the maximum number of tokens for an entity
         self._max_num_tokens = max(self._max_num_tokens, len(tokens))
 
         # Update the maximum entity ID
-        self._max_entity_id = max(self._max_entity_id, entity_id)
+        self._max_entity_id = max(self._max_entity_id, internal_entity_id)
 
         # Record the tokens for the entity in the counts
         self._record_tokens(tokens)
@@ -196,13 +240,28 @@ class LmdbLookup(Lookup):
             else:
                 self._token_to_count[token] = 1
 
-    def _add_to_lmdb(self, entity_id: int, tokens: Tokens) -> None:
+    def _add_to_lmdb(
+        self, internal_entity_id: int, external_entity_id: str, tokens: Tokens
+    ) -> None:
         """Add an entity to the LMDB lookup."""
 
         with self._env.begin(write=True) as txn:
-            txn.put(entity_id_to_key(entity_id), pickle_list(tokens))
+
+            # Add internal entity ID -> pickled list of strings
             txn.put(
-                entity_id_to_token_count_key(entity_id), count_to_bytes(len(tokens))
+                internal_entity_id_to_key(internal_entity_id), pickle_list_str(tokens)
+            )
+
+            # Add internal entity ID -> number of tokens
+            txn.put(
+                internal_entity_id_to_token_count_key(internal_entity_id),
+                count_to_bytes(len(tokens)),
+            )
+
+            # Add internal entity ID -> external entity ID
+            txn.put(
+                internal_entity_to_external_key(internal_entity_id),
+                external_entity_id.encode("ascii"),
             )
 
         self._num_lmdb_adds += 1
@@ -213,6 +272,11 @@ class LmdbLookup(Lookup):
 
     def _add_to_sqlite(self, entity_id: int, tokens: Tokens) -> None:
         """Add an entity to the Sqlite lookup."""
+
+        if self._conn is None:
+            raise Exception("Sqlite connection is None")
+        elif self._cursor is None:
+            raise Exception("Sqlite cursor is None")
 
         # Add the token to entity ID mapping
         for token in tokens:
@@ -232,6 +296,11 @@ class LmdbLookup(Lookup):
     def finalise(self) -> None:
 
         logger.info(f"Performing lookup finalisation")
+
+        if self._conn is None:
+            raise Exception("Sqlite connection is None")
+        elif self._cursor is None:
+            raise Exception("Sqlite cursor is None")
 
         # Commit any remaining Sqlite insert operations
         if self._num_adds > 0:
@@ -265,6 +334,10 @@ class LmdbLookup(Lookup):
 
         # Delete the temporary Sqlite store
         self._conn.close()
+
+        if self._sqlite_filepath is None:
+            raise Exception("Sqlite filepath is None")
+
         logger.info(f"Deleting temporary Sqlite database: {self._sqlite_filepath}")
         os.remove(self._sqlite_filepath)
 
@@ -321,6 +394,9 @@ class LmdbLookup(Lookup):
     def _entity_ids_for_token_sqlite(self, token: str) -> Optional[List[int]]:
         """Returns the entity IDs for a token from Sqlite."""
 
+        if self._cursor is None:
+            raise Exception("Sqlite cursor is None")
+
         res = self._cursor.execute(
             "SELECT "
             + ENTITY_ID_COLUMN
@@ -358,22 +434,22 @@ class LmdbLookup(Lookup):
         return int(value)
 
     @lru_cache(maxsize=100000)
-    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
-        """Get tokens for an entity given its ID."""
+    def tokens_for_entity(self, internal_entity_id: int) -> Optional[Tokens]:
+        """Get tokens for an entity given its internal ID."""
 
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(internal_entity_id)
 
         with self._env.begin() as txn:
-            result = txn.get(entity_id_to_key(entity_id))
+            result = txn.get(internal_entity_id_to_key(internal_entity_id))
 
         if result is None:
             return None
 
-        return unpickle_list(result)
+        return unpickle_list_str(result)
 
     @lru_cache(maxsize=100000)
     def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
-        """Get the entity IDs for a given token."""
+        """Get the internal entity IDs for a given token."""
 
         entity_ids = self.entity_ids_for_token_list(token)
         if entity_ids is None:
@@ -383,7 +459,7 @@ class LmdbLookup(Lookup):
 
     @lru_cache(maxsize=100000)
     def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
-        """Get the entity IDs as a list for a given token."""
+        """Get the internal entity IDs as a list for a given token."""
 
         with self._env.begin() as txn:
             result = txn.get(token_to_key(token))
@@ -395,7 +471,7 @@ class LmdbLookup(Lookup):
 
     @lru_cache(maxsize=100000)
     def entity_ids_for_token_string(self, token: str) -> Optional[str]:
-        """Get the entity IDs as a string for a given token."""
+        """Get the internal entity IDs as a string for a given token."""
 
         with self._env.begin() as txn:
             result = txn.get(token_to_string_key(token))
@@ -407,7 +483,7 @@ class LmdbLookup(Lookup):
         return result.decode("ascii")
 
     def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
-        """Find the matching entities in the lookup given the tokens."""
+        """Find the matching internal entities in the lookup given the tokens."""
 
         # Get the entities for each token
         for idx, t in enumerate(tokens):
@@ -427,11 +503,11 @@ class LmdbLookup(Lookup):
 
         return entity_ids
 
-    def num_tokens_for_entity(self, entity_id: int) -> Optional[int]:
-        """Number of tokens for an entity."""
+    def num_tokens_for_entity(self, internal_entity_id: int) -> Optional[int]:
+        """Number of tokens for an entity given its internal ID."""
 
         with self._env.begin() as txn:
-            result = txn.get(entity_id_to_token_count_key(entity_id))
+            result = txn.get(internal_entity_id_to_token_count_key(internal_entity_id))
 
         if result is None:
             return None
@@ -455,6 +531,17 @@ class LmdbLookup(Lookup):
             txn.put(MAX_ENTITY_ID_KEY.encode("ascii"), value)
 
         self._env.sync()
+
+    def external_entity_id(self, internal_entity_id: int) -> Optional[str]:
+        """Get the external entity ID given its internal ID."""
+
+        with self._env.begin() as txn:
+            value = txn.get(internal_entity_to_external_key(internal_entity_id))
+
+        if value is None:
+            return None
+
+        return value.decode("ascii")
 
     def close(self):
         logger.info(f"Closing lookup. LMDB stats: {self._env.stat()}")

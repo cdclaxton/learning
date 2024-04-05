@@ -9,11 +9,11 @@ def num_token_additions_removals(actual: Tokens, entity: Tokens) -> Tuple[int, i
     """Number of tokens that have been added and removed."""
 
     # Convert the lists to sets
-    actual = set(actual)
-    entity = set(entity)
+    actual_set = set(actual)
+    entity_set = set(entity)
 
-    removed = entity.difference(actual)
-    added = actual.difference(entity)
+    removed = entity_set.difference(actual_set)
+    added = actual_set.difference(entity_set)
 
     return len(added), len(removed)
 
@@ -23,8 +23,8 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
 
     def __init__(
         self,
-        likelihood_add: Callable[[int], float],
-        likelihood_remove: Callable[[int], float],
+        likelihood_add: Callable[[float], float],
+        likelihood_remove: Callable[[float], float],
         n_max: int,
     ):
         self._likelihood_add = likelihood_add
@@ -79,6 +79,8 @@ class LikelihoodFunctionAddRemove(LikelihoodFunction):
             if prob >= min_prob:
                 return mc
 
+        return min_window
+
 
 def make_likelihood_symmetric(
     x0: float, p0: float, x1: float, p1: float, n_max: int
@@ -94,8 +96,8 @@ def make_likelihood_symmetric(
 class LikelihoodAddRemoveFn:
     def __init__(
         self,
-        likelihood_add: Callable[[int], float],
-        likelihood_remove: Callable[[int], float],
+        likelihood_add: Callable[[float], float],
+        likelihood_remove: Callable[[float], float],
     ):
 
         self._likelihood_add = likelihood_add
@@ -122,10 +124,12 @@ class LikelihoodAddRemoveFn:
             if prob >= min_prob:
                 return mc
 
+        return min_window
+
 
 def make_likelihood_add_remove_symmetric(
     x0: float, p0: float, x1: float, p1: float
-) -> LikelihoodFunctionAddRemove:
+) -> LikelihoodAddRemoveFn:
     """Make a LikelihoodAddRemoveFn with a symmetric likelihood function."""
 
     fn = partial(piecewise_likelihood, x0, p0, x1, p1)

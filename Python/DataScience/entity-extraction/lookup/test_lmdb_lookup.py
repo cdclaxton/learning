@@ -1,6 +1,12 @@
 import os
 import shutil
-from lookup.lmdb_lookup import LmdbLookup, bytes_to_count, count_to_bytes
+from lookup.lmdb_lookup import (
+    LmdbLookup,
+    bytes_to_count,
+    count_to_bytes,
+    pickle_list,
+    unpickle_list,
+)
 
 
 TEST_LMDB_FOLDER = "./data/test"
@@ -38,6 +44,11 @@ def cleanup(lookup: LmdbLookup) -> None:
         shutil.rmtree(TEST_LMDB_FOLDER)
 
 
+def test_pickle_unpickle():
+    l = [1, 2, 3]
+    assert l == unpickle_list(pickle_list(l))
+
+
 def test_write_read_max_tokens():
     lookup = lmdb_for_writing()
     lookup._max_num_tokens = 10
@@ -55,10 +66,11 @@ def test_full_test():
     lookup = lmdb_for_writing()
 
     # Populate the lookup
-    dataset = {1: ["a"], 2: ["a", "b"], 3: ["b", "c", "d"]}
+    dataset = {1: ("100", ["a"]), 2: ("101", ["a", "b"]), 3: ("102", ["b", "c", "d"])}
 
-    for entity_id, tokens in dataset.items():
-        lookup.add(entity_id, tokens)
+    for internal_entity_id, external_entity_id_tokens in dataset.items():
+        external_entity_id, tokens = external_entity_id_tokens
+        lookup.add(internal_entity_id, external_entity_id, tokens)
 
     # Finalise the lookup
     lookup.finalise()
@@ -70,7 +82,10 @@ def test_full_test():
     # Check the contents of the lookup
     for entity_id in dataset:
         actual_tokens = lookup.tokens_for_entity(entity_id)
-        assert actual_tokens == dataset[entity_id]
+        assert actual_tokens == dataset[entity_id][1]
+
+        external_entity_id = lookup.external_entity_id(entity_id)
+        assert external_entity_id == dataset[entity_id][0]
 
     # Check the maximum number of tokens for an entity
     assert lookup.max_number_tokens_for_entity() == 3
@@ -105,5 +120,11 @@ def test_full_test():
     assert lookup.num_tokens_for_entity(2) == 2
     assert lookup.num_tokens_for_entity(3) == 3
     assert lookup.num_tokens_for_entity(100) is None
+
+    # Check the mapping of internal to external entity IDs
+    assert lookup.external_entity_id(1) == "100"
+    assert lookup.external_entity_id(2) == "101"
+    assert lookup.external_entity_id(3) == "102"
+    assert lookup.external_entity_id(4) is None
 
     cleanup(lookup)

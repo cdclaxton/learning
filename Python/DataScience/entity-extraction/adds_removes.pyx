@@ -8,11 +8,14 @@ def adds_removes_from_positions(
     min_window: int,
     max_window: int,
 ) -> List[Tuple[int, int, int, int]]:
+    """Calculate the number of tokens added and removed given the positions."""
 
 
     result: List[Tuple[int, int, int, int]] = []
-    if len(pos) == 1:
+    if len(pos) == 0:
         return result
+    elif len(pos) == 1:
+        result.append((pos[0], pos[0], 0, n_entity_tokens-1))
 
     for i in range(0, len(pos) - 1):
         for j in range(i + 1, len(pos)):

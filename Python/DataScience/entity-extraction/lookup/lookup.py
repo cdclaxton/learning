@@ -8,33 +8,35 @@ class Lookup(ABC):
     """Abstract base class for a entity and tokens lookup."""
 
     @abstractmethod
-    def add(self, entity_id: int, tokens: Tokens) -> None:
+    def add(
+        self, internal_entity_id: int, external_entity_id: str, tokens: Tokens
+    ) -> None:
         """Add an entity to the lookup."""
         pass
 
     @abstractmethod
-    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
-        """Get tokens for an entity given its ID."""
+    def tokens_for_entity(self, internal_entity_id: int) -> Optional[Tokens]:
+        """Get tokens for an entity given its internal ID."""
         pass
 
     @abstractmethod
     def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
-        """Get the entity IDs for a given token."""
+        """Get the internal entity IDs for a given token."""
         pass
 
     @abstractmethod
     def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
-        """Get the entity IDs as a list for a given token."""
+        """Get the internal entity IDs as a list for a given token."""
         pass
 
     @abstractmethod
     def entity_ids_for_token_string(self, token: str) -> Optional[str]:
-        """Get the entity IDs as a string for a given token."""
+        """Get the internal entity IDs as a string for a given token."""
         pass
 
     @abstractmethod
     def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
-        """Find the matching entities in the lookup given the tokens."""
+        """Find the matching internal entities in the lookup given the tokens."""
         pass
 
     @abstractmethod
@@ -43,11 +45,16 @@ class Lookup(ABC):
         pass
 
     @abstractmethod
-    def num_tokens_for_entity(self, entity_id: int) -> Optional[int]:
-        """Number of tokens for an entity."""
+    def num_tokens_for_entity(self, internal_entity_id: int) -> Optional[int]:
+        """Number of tokens for an entity given its internal ID."""
         pass
 
     @abstractmethod
     def max_entity_id(self) -> int:
-        """Maximum entity ID."""
+        """Maximum internal entity ID."""
+        pass
+
+    @abstractmethod
+    def external_entity_id(self, internal_entity_id: int) -> Optional[str]:
+        """Get the external entity ID given its internal ID."""
         pass

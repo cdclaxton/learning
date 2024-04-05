@@ -2,7 +2,8 @@ from typing import Dict, List, Optional, Set
 
 from domain import (
     Tokens,
-    assert_entity_id_valid,
+    assert_external_entity_id_valid,
+    assert_internal_entity_id_valid,
     assert_token_valid,
     assert_tokens_valid,
 )
@@ -15,32 +16,39 @@ class InMemoryLookup(Lookup):
     def __init__(self) -> None:
         self._token_to_entity_ids: Dict[str, Set[int]] = {}
         self._entity_id_to_tokens: Dict[int, List[str]] = {}
+        self._internal_to_external_id: Dict[int, str] = {}
 
-    def add(self, entity_id: int, tokens: Tokens) -> None:
+    def add(
+        self, internal_entity_id: int, external_entity_id: str, tokens: Tokens
+    ) -> None:
         """Add an entity to the lookup."""
 
-        assert_entity_id_valid(entity_id)
+        assert_internal_entity_id_valid(internal_entity_id)
+        assert_external_entity_id_valid(external_entity_id)
         assert_tokens_valid(tokens)
 
         # Store the tokens for the entry
         assert (
-            entity_id not in self._entity_id_to_tokens
-        ), f"entity {entity_id} already exists"
+            internal_entity_id not in self._entity_id_to_tokens
+        ), f"entity {internal_entity_id} already exists"
 
-        self._entity_id_to_tokens[entity_id] = tokens
+        self._entity_id_to_tokens[internal_entity_id] = tokens
 
         # Store the entity ID for the tokens
         for t in tokens:
             if t not in self._token_to_entity_ids:
                 self._token_to_entity_ids[t] = set()
 
-            self._token_to_entity_ids[t].add(entity_id)
+            self._token_to_entity_ids[t].add(internal_entity_id)
 
-    def tokens_for_entity(self, entity_id: int) -> Optional[Tokens]:
-        """Get tokens for an entity given its ID."""
+        # Store the internal to external entity ID mapping
+        self._internal_to_external_id[internal_entity_id] = external_entity_id
 
-        assert_entity_id_valid(entity_id)
-        return self._entity_id_to_tokens.get(entity_id, None)
+    def tokens_for_entity(self, internal_entity_id: int) -> Optional[Tokens]:
+        """Get tokens for an entity given its internal ID."""
+
+        assert_internal_entity_id_valid(internal_entity_id)
+        return self._entity_id_to_tokens.get(internal_entity_id, None)
 
     def entity_ids_for_token_list(self, token: str) -> Optional[List[int]]:
         """Get the entity IDs as a list for a given token."""
@@ -51,7 +59,7 @@ class InMemoryLookup(Lookup):
         return None
 
     def entity_ids_for_token_string(self, token: str) -> Optional[str]:
-        """Get the entity IDs as a string for a given token."""
+        """Get the internal entity IDs as a string for a given token."""
 
         assert_token_valid(token)
         if token in self._token_to_entity_ids:
@@ -60,13 +68,13 @@ class InMemoryLookup(Lookup):
         return None
 
     def entity_ids_for_token(self, token: str) -> Optional[Set[int]]:
-        """Get the entity IDs for a given token."""
+        """Get the internal entity IDs for a given token."""
 
         assert_token_valid(token)
         return self._token_to_entity_ids.get(token, None)
 
     def matching_entries(self, tokens: Tokens) -> Optional[Set[int]]:
-        """Find the matching entities in the lookup given the tokens."""
+        """Find the matching internal entities in the lookup given the tokens."""
 
         assert_tokens_valid(tokens)
 
@@ -111,3 +119,9 @@ class InMemoryLookup(Lookup):
         """Maximum entity ID."""
 
         return sorted(list(self._entity_id_to_tokens.keys()), reverse=True)[0]
+
+    def external_entity_id(self, internal_entity_id: int) -> Optional[str]:
+        """Get the external entity ID given its internal ID."""
+
+        assert_internal_entity_id_valid(internal_entity_id)
+        return self._internal_to_external_id.get(internal_entity_id, None)

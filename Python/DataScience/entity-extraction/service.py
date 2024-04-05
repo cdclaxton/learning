@@ -1,6 +1,6 @@
 # Runs the API service for entity extraction.
 
-from typing import List, Optional
+from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from domain import Tokens, assert_tokens_valid
@@ -10,22 +10,17 @@ from entity.matcher import (
     most_likely_matches,
 )
 from entity.matcher_add_remove import EntityMatcherAddRemove
-from entity.matcher_generic import GenericEntityMatcher
-from entity.matcher_missing_token import MissingTokenEntityMatcher
-from likelihood.likelihood import LikelihoodFunctionLogistic
 from likelihood.likelihood_add_remove import (
     make_likelihood_add_remove_symmetric,
-    make_likelihood_symmetric,
 )
-from lookup.database_lookup import DatabaseBackedLookup
-from nltk.tokenize import wordpunct_tokenize
+
 from loguru import logger
 
 import os
-import string
 import uvicorn
 
 from lookup.lmdb_lookup import LmdbLookup
+from text.tokeniser import tokenise_text
 
 app = FastAPI()
 
@@ -37,7 +32,7 @@ class ExtractionRequest(BaseModel):
 
 
 class ExtractionMatch(BaseModel):
-    entity_id: int  # Entity ID
+    entity_id: str  # External entity ID
     entity: str  # Entity tokens
     matched_text: str  # Text that matched the entity
     probability: float  # Probability of the match
@@ -52,28 +47,6 @@ class ExtractionResponse(BaseModel):
     num_matches: int
 
 
-def tokenise_text(text: str) -> Optional[Tokens]:
-    """Tokenise the text into tokens and make each token lowercase."""
-
-    if type(text) != str:
-        return None
-
-    if len(text) == 0:
-        return None
-
-    punct = set(string.punctuation)
-
-    def only_punctuation(text: str) -> bool:
-        """Is the text composed of just punctuation?"""
-        return all([t in punct for t in text])
-
-    # Tokenise the lowercase version of the text
-    tokens = wordpunct_tokenize(text.lower())
-
-    # Remove tokens that are only punctuation
-    return [t for t in tokens if not only_punctuation(t)]
-
-
 def probability_match_to_extraction_match(
     prob_match: ProbabilisticMatch, tokens: Tokens
 ) -> ExtractionMatch:
@@ -82,14 +55,20 @@ def probability_match_to_extraction_match(
     assert type(prob_match) == ProbabilisticMatch
     assert_tokens_valid(tokens)
 
-    # Get the entity from the lookup
-    entity = " ".join(lookup.tokens_for_entity(prob_match.entity_id))
+    # Get the entity's tokens from the lookup
+    entity_tokens = lookup.tokens_for_entity(prob_match.entity_id)
+    assert entity_tokens is not None
+    entity = " ".join(entity_tokens)
 
     assert prob_match.start >= 0 and prob_match.start < len(tokens)
     assert prob_match.end >= 0 and prob_match.end < len(tokens)
 
+    # Look up the external entity ID given the internal entity ID
+    external_entity_id = lookup.external_entity_id(prob_match.entity_id)
+    assert external_entity_id is not None
+
     return ExtractionMatch(
-        entity_id=prob_match.entity_id,
+        entity_id=external_entity_id,
         entity=entity,
         matched_text=" ".join(tokens[prob_match.start : prob_match.end + 1]),
         probability=prob_match.probability,
@@ -146,23 +125,7 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
     if req.min_tokens_to_check <= 0:
         return error_response("invalid minimum number of tokens to check")
 
-    # Make the entity matcher
-    # matcher = MissingTokenEntityMatcher(
-    #     lookup=lookup,
-    #     max_window_width=max_window,
-    #     likelihood_function=likelihood,
-    #     min_probability=req.threshold,
-    #     min_tokens_to_check=req.min_tokens_to_check,
-    # )
-
-    # matcher = GenericEntityMatcher(
-    #     lookup=lookup,
-    #     likelihood=likelihood_symmetric,
-    #     min_window=req.min_tokens_to_check,
-    #     max_window=max_window,
-    #     min_probability=req.threshold,
-    # )
-
+    # Instantiate the entity matcher
     matcher = EntityMatcherAddRemove(
         lookup=lookup,
         likelihood=likelihood_symmetric,
@@ -172,17 +135,16 @@ async def root(req: ExtractionRequest) -> ExtractionResponse:
         max_entity_id=max_entity_id,
     )
 
-    # All entity matchers
-    entity_matchers = {"matcher": matcher}
-
     # Tokenise the text
     tokens = tokenise_text(req.text)
+    assert tokens is not None
     logger.debug(
         f"Request: tokens={tokens}, threshold={req.threshold}, min tokens={req.min_tokens_to_check}"
     )
 
-    # Send the tokens to the entity matchers
-    feed_entity_matchers(tokens, entity_matchers)
+    # Send the tokens to the entity matcher
+    for token in tokens:
+        matcher.next_token(token)
 
     # Retain results above threshold
     matches = matcher.get_sorted_matches_above_threshold(req.threshold)
@@ -224,7 +186,10 @@ def make_test_database(
     # Add all entities
     for idx, ent in enumerate(entities):
         tokens = tokenise_text(ent)
-        lookup.add(idx, tokens)
+        assert tokens is not None
+
+        external_entity_id = str(idx + 100)
+        lookup.add(idx, external_entity_id, tokens)
 
     # Finalise and close the lookup
     lookup.finalise()
@@ -233,9 +198,7 @@ def make_test_database(
 
 if __name__ == "__main__":
 
-    # Database file
-    # database_filepath = "./data/full-database.db"
-
+    # Locations of the databases
     lmdb_folder = "./data/lmdb"
     token_to_count_file = "./data/token-to-count.pickle"
     sqlite_database = "./data/sqlite.db"

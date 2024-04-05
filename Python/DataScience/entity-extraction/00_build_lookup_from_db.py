@@ -3,7 +3,6 @@ import mysql.connector
 import sys
 
 from datetime import datetime
-from lookup.database_lookup import DatabaseBackedLookup
 from loguru import logger
 from lookup.lmdb_lookup import LmdbLookup
 

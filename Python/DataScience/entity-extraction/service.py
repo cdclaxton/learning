@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from domain import Tokens, assert_tokens_valid
 from entity.matcher import (
     ProbabilisticMatch,
-    feed_entity_matchers,
     most_likely_matches,
 )
 from entity.matcher_add_remove import EntityMatcherAddRemove

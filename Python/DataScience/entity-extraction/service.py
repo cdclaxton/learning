@@ -180,7 +180,6 @@ def make_test_database(
     assert type(entities) == list
 
     # Make a database-backed lookup
-    # lookup = DatabaseBackedLookup(database_filepath, True)
     lookup = LmdbLookup(lmdb_folder, True, sqlite_filepath, token_count_filepath)
 
     # Add all entities

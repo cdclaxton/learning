@@ -28,18 +28,21 @@ def load_lookup(lookup: Lookup, username: str, password: str):
     batch_size = 10000
 
     # Use a locally-generated entity ID
-    entity_id = 0
+    internal_entity_id = 0
 
     while True:
         result = cur.fetchone()
         if result is None:
             break
 
+        # External entity ID from the database
+        external_entity_id = str(result[0])
+
         # Extract the tokens from the database row
         tokens = [ri.replace(",", "").lower() for ri in result[1].split()]
 
         # Add the entity to the lookup
-        lookup.add(entity_id, tokens)
+        lookup.add(internal_entity_id, external_entity_id, tokens)
 
         if num_rows_processed % batch_size == 0:
             end_time_batch = datetime.now()
@@ -50,7 +53,7 @@ def load_lookup(lookup: Lookup, username: str, password: str):
             start_time_batch = datetime.now()
 
         num_rows_processed += 1
-        entity_id += 1
+        internal_entity_id += 1
 
     logger.info(f"Processed {num_rows_processed} rows")
 
@@ -73,13 +76,10 @@ if __name__ == "__main__":
     username = sys.argv[1]
     password = sys.argv[2]
 
-    # Location of the database file
-    # database_filepath = "./data/full-database.db"
-
     # Initialise the database-backed lookup for loading
     start_script = datetime.now()
-    # lookup = DatabaseBackedLookup(database_filepath, True)
 
+    # Make the lookup
     lmdb_folder = "./data/lmdb"
     sqlite_database = "./data/sqlite.db"
     token_to_count_filepath = "./data/token-to-count.pickle"

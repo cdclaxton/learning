@@ -218,7 +218,6 @@ if __name__ == "__main__":
         make_test_database(lmdb_folder, sqlite_database, token_to_count_file, entities)
 
     # Initialise a lookup for reading and initialise the matcher
-    # lookup = DatabaseBackedLookup(database_filepath, False)
     lookup = LmdbLookup(lmdb_folder, False)
 
     max_window = lookup.max_number_tokens_for_entity()
@@ -227,7 +226,7 @@ if __name__ == "__main__":
     max_entity_id = lookup.max_entity_id()
     logger.info(f"Maximum entity ID: {max_entity_id}")
 
-    # Make the logistic likelihood function
+    # Make the likelihood function
     logger.info("Instantiating the likelihood function")
     likelihood_symmetric = make_likelihood_add_remove_symmetric(0.2, 0.9, 0.5, 0.1)
 

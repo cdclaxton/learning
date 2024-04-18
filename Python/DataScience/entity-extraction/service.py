@@ -215,7 +215,7 @@ if __name__ == "__main__":
         ]
         make_test_database(lmdb_folder, sqlite_database, token_to_count_file, entities)
 
-    # Initialise a lookup for reading and initialise the matcher
+    # Initialise a lookup for reading
     lookup = LmdbLookup(lmdb_folder, False)
 
     max_window = lookup.max_number_tokens_for_entity()

@@ -257,3 +257,22 @@ Script `05_token_mutation.py` explores a generative approach to mutating tokens 
 Using the above table, it was decided that the optimal string alignment distance would be used in the likelihood function as it has the highest correlation of the methods tested.
 
 The code in script `06_likelihood_token_mutation.py` explores a way of calculating the likelihood of an entity given the tokens, where the tokens could have been mutated.
+
+## Learn the parameters of the likelihood function
+
+Suppose an entity has $N$ tokens and it is deemed that the minimum number of tokens for that entity to be considered to be in existence if it were seen in text is denoted $N_D$. For example, for an address entity $N_D$ may be set to 3. 
+
+By removing one or more tokens or adding one or more tokens, it is possible that a different entity would have a higher likelihood. The shape of the likelihood function is assumed to affect the error in detecting the actual entity that has been mutated.
+
+
+Randomly determine the number of tokens to retain from
+
+$$
+N_\text{retain} \sim U(N - N_D, N).
+$$
+
+Randomly determine the number of tokens to add from
+
+$$
+N_\text{add} \sim U(0, N_A).
+$$

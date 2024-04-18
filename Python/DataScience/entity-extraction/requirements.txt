@@ -4,9 +4,10 @@ fastapi[all]
 lmdb
 loguru
 matplotlib
-mysql-connector
+mysql-connector-python
 nltk
 numpy
 pandas
 pytest
+scipy
 strsimpy

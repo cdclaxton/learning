@@ -5,11 +5,14 @@ from typing import Callable, List, Tuple
 from domain import Tokens, assert_tokens_valid
 from lookup.lmdb_lookup import LmdbLookup
 from lookup.lookup import Lookup
-from scipy.optimize import minimize, Bounds
+from scipy import optimize
 
 
-def mutate(tokens: Tokens) -> Tokens:
+def mutate(tokens: Tokens, min_tokens: int) -> Tokens:
     """Mutate tokens by adding and removing tokens."""
+
+    assert_tokens_valid(tokens)
+    assert type(min_tokens) == int and min_tokens > 0
 
     # Make a copy of the tokens
     mutated_tokens = tokens[:]
@@ -78,7 +81,9 @@ def entity_matches(tokens: Tokens, lookup: Lookup) -> List[Tuple[int, int, int]]
 
 
 def build_dataset(
-    lookup: Lookup, n_samples: int
+    lookup: Lookup,
+    n_samples: int,
+    min_tokens: int,
 ) -> Tuple[List[Tuple[int, int]], List[List[Tuple[int, int, int]]]]:
     """Build a dataset for training."""
 
@@ -107,7 +112,7 @@ def build_dataset(
         entity_ids_token_count.append((entity_id, len(tokens)))
 
         # Mutate tokens
-        mutated_tokens = mutate(tokens)
+        mutated_tokens = mutate(tokens, min_tokens)
 
         # Find the number of adds and removes for the matching entities
         result.append(entity_matches(mutated_tokens, lookup))
@@ -208,7 +213,7 @@ def total_error(
 ) -> float:
 
     assert len(entity_ids_token_count) == len(entity_add_removes)
-    assert len(x) == len(y)
+    assert len(x) == len(y), f"differing number of points: {len(x)} vs {len(y)}"
 
     # Make the likelihood function
     likelihood_fn = build_likelihood_function(x, y)
@@ -240,14 +245,18 @@ def learn(
     # Bounds
     lower = np.zeros(len(points))
     upper = np.ones(len(points))
-    bounds = Bounds(lower, upper)
+    bounds = optimize.Bounds(lower, upper)
 
     def f(x):
         """Function to minimise."""
         return total_error(entity_ids_token_count, entity_add_removes, points, list(x))
 
-    res = minimize(f, x0, method="trust-constr", bounds=bounds, options={"disp": True})
+    # res = minimize(f, x0, method="trust-constr", bounds=bounds, options={"disp": True})
+    # return res.x
 
+    # res = optimize.shgo(f, bounds)
+    res = optimize.dual_annealing(f, bounds)
+    print(res)
     return res.x
 
 
@@ -257,12 +266,23 @@ if __name__ == "__main__":
     lmdb_folder = "./data/lmdb"
     lookup = LmdbLookup(lmdb_folder, False)
 
+    # Number of samples to generate to use in the optimisation step
+    n_samples = 2
+
+    # Minimum number of tokens for an entity to be considered as existing
+    min_tokens = 3
+
     # Build the dataset from which to learn the parameters
-    entity_ids_token_count, entity_add_removes = build_dataset(lookup, 2)
+    entity_ids_token_count, entity_add_removes = build_dataset(
+        lookup, n_samples, min_tokens
+    )
+
+    # Locations of the changes in the piecewise likelihood function
+    points = [0.3, 0.7]
 
     # Learn the parameters using optimisation
-    points = [0.3, 0.7]
     y = learn(entity_ids_token_count, entity_add_removes, points)
     print(f"y values: {y}")
 
     # 18/04/24: 0h20
+    # 18/04/24: 01h10

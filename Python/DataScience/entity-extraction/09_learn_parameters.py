@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 import sys
 
-from typing import Callable, List, Tuple
+from typing import Callable, Dict, List, Tuple
 from domain import Tokens, assert_tokens_valid
 from lookup.lmdb_lookup import LmdbLookup
 from lookup.lookup import Lookup
@@ -57,24 +57,36 @@ def num_adds_removes(tokens: Tokens, entity: Tokens) -> Tuple[int, int]:
     return n_adds, n_removes
 
 
-def entity_matches(tokens: Tokens, lookup: Lookup) -> List[Tuple[int, int, int]]:
+def entity_matches(
+    tokens: Tokens, lookup: Lookup, min_count: int
+) -> List[Tuple[int, int, int]]:
     """Returns the number of adds and removes for a given list of tokens."""
 
     assert_tokens_valid(tokens)
     assert isinstance(lookup, Lookup)
+    assert type(min_count) == int and min_count > 0
 
-    # Set of all entity IDs given the tokens
-    entity_ids = set()
+    # Dict of all entity IDs given the tokens to their count
+    entity_id_to_count: Dict[int, int] = dict()
     for token in tokens:
         entities = lookup.entity_ids_for_token(token)
-        if entities is not None:
-            entity_ids.update(entities)
+        if entities is None:
+            continue
 
-    assert len(entity_ids) > 0
+        for entity_id in entities:
+            if entity_id in entity_id_to_count:
+                entity_id_to_count[entity_id] += 1
+            else:
+                entity_id_to_count[entity_id] = 0
+
+    assert len(entity_id_to_count) > 0
 
     # Walk through each matching entity and count the number of adds and removes
     result = []
-    for entity_id in entity_ids:
+    for entity_id, count in entity_id_to_count.items():
+        if count < min_count:
+            continue
+
         entity_tokens = lookup.tokens_for_entity(entity_id)
         assert entity_tokens is not None
 
@@ -88,6 +100,7 @@ def build_dataset(
     lookup: Lookup,
     n_samples: int,
     min_tokens: int,
+    min_count: int,
 ) -> Tuple[List[Tuple[int, int]], List[List[Tuple[int, int, int]]]]:
     """Build a dataset for training."""
 
@@ -123,7 +136,7 @@ def build_dataset(
         )
 
         # Find the number of adds and removes for the matching entities
-        matches = entity_matches(mutated_tokens, lookup)
+        matches = entity_matches(mutated_tokens, lookup, min_count)
         result.append(matches)
         logger.debug(
             f"[{idx+1}/{n_samples}] Number of matches for entity {entity_id}: {len(matches)}"
@@ -295,10 +308,13 @@ if __name__ == "__main__":
         # Minimum number of tokens for an entity to be considered as existing
         min_tokens = 3
 
+        # Minimum number of tokens that an entity must match
+        min_count = 3
+
         # Build the dataset from which to learn the parameters
         logger.info(f"Building dataset with {n_samples} samples")
         entity_ids_token_count, entity_add_removes = build_dataset(
-            lookup, n_samples, min_tokens
+            lookup, n_samples, min_tokens, min_count
         )
 
         dataset = {

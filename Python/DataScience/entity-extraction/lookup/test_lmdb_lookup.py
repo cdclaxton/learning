@@ -58,7 +58,7 @@ def test_write_read_max_tokens():
 
 
 def test_token_count():
-    for i in range(0, 100):
+    for i in range(0, 255):
         assert bytes_to_count(count_to_bytes(i)) == i
 
 

@@ -89,12 +89,12 @@ def internal_entity_id_to_token_count_key(internal_entity_id: int) -> bytes:
 def count_to_bytes(count: int) -> bytes:
     """Convert the token count to bytes."""
     assert count <= 255
-    return count.to_bytes()
+    return count.to_bytes(length=2, byteorder="big")
 
 
 def bytes_to_count(b: bytes) -> int:
     """Convert bytes to a token count."""
-    return int.from_bytes(b)
+    return int.from_bytes(bytes=b, byteorder="big")
 
 
 def internal_entity_to_external_key(internal_entity_id: int) -> bytes:

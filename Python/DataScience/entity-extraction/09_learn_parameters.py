@@ -109,7 +109,7 @@ def build_dataset(
 
         # Get the tokens for the entity from the lookup
         tokens = lookup.tokens_for_entity(entity_id)
-        print(f"[{idx+1}/{n_samples}] Tokens for entity {entity_id}: {tokens}")
+        logger.debug(f"[{idx+1}/{n_samples}] Tokens for entity {entity_id}: {tokens}")
         assert tokens is not None, f"no tokens for entity with ID={entity_id}"
         assert_tokens_valid(tokens)
 
@@ -118,15 +118,15 @@ def build_dataset(
 
         # Mutate tokens
         mutated_tokens = mutate(tokens, min_tokens)
-        print(
+        logger.debug(
             f"[{idx+1}/{n_samples}] Mutated tokens for entity {entity_id}: {mutated_tokens}"
         )
 
         # Find the number of adds and removes for the matching entities
         matches = entity_matches(mutated_tokens, lookup)
         result.append(matches)
-        print(
-            f"[{idx+1}/{n_samples}] Number of matches for entity {entity_id}: {matches}"
+        logger.debug(
+            f"[{idx+1}/{n_samples}] Number of matches for entity {entity_id}: {len(matches)}"
         )
 
     return entity_ids_token_count, result

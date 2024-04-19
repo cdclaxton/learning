@@ -1,6 +1,9 @@
 # Learn the parameters of the likelihood function
 import random
 import numpy as np
+import pickle
+import sys
+
 from typing import Callable, List, Tuple
 from domain import Tokens, assert_tokens_valid
 from lookup.lmdb_lookup import LmdbLookup
@@ -181,6 +184,8 @@ def build_likelihood_function(
 
     def f(prop: float) -> float:
         """Piecewise linear function."""
+
+        # Ensure the proportion doesn't exceed 1
         prop = min(prop, 1.0)
 
         if prop < x[0]:
@@ -263,26 +268,53 @@ def learn(
 
 if __name__ == "__main__":
 
-    # Initialise a lookup for reading
-    lmdb_folder = "./data/lmdb"
-    lookup = LmdbLookup(lmdb_folder, False)
+    if len(sys.argv) != 2 or sys.argv[1] != "build" or sys.argv[1] != "learn":
+        print(f"Usage: python3 {sys.argv[0]} [build|learn]")
+        exit(-1)
 
-    # Number of samples to generate to use in the optimisation step
-    n_samples = 2
+    filepath = "./data/training-data.pickle"
 
-    # Minimum number of tokens for an entity to be considered as existing
-    min_tokens = 3
+    mode = sys.argv[1]
+    if mode == "build":
 
-    # Build the dataset from which to learn the parameters
-    logger.info(f"Building dataset with {n_samples} samples")
-    entity_ids_token_count, entity_add_removes = build_dataset(
-        lookup, n_samples, min_tokens
-    )
+        # Initialise a lookup for reading
+        lmdb_folder = "./data/lmdb"
+        lookup = LmdbLookup(lmdb_folder, False)
 
-    # Locations of the changes in the piecewise likelihood function
-    points = [0.3, 0.7]
+        # Number of samples to generate to use in the optimisation step
+        n_samples = 2
 
-    # Learn the parameters using optimisation
-    logger.info("Learning parameters")
-    y = learn(entity_ids_token_count, entity_add_removes, points)
-    print(f"y values: {y}")
+        # Minimum number of tokens for an entity to be considered as existing
+        min_tokens = 3
+
+        # Build the dataset from which to learn the parameters
+        logger.info(f"Building dataset with {n_samples} samples")
+        entity_ids_token_count, entity_add_removes = build_dataset(
+            lookup, n_samples, min_tokens
+        )
+
+        dataset = {
+            "entity_ids_token_count": entity_ids_token_count,
+            "entity_add_removes": entity_add_removes,
+        }
+
+        logger.info(f"Writing dataset to file: {filepath}")
+        with open(filepath, "wb") as fp:
+            pickle.dump(dataset, fp)
+
+    else:
+        # Load the data from file
+        logger.info(f"Loading dataset from file: {filepath}")
+        with open(filepath, "rb") as fp:
+            dataset = pickle.load(fp)
+
+        entity_ids_token_count = dataset["entity_ids_token_count"]
+        entity_add_removes = dataset["entity_add_removes"]
+
+        # Locations of the changes in the piecewise likelihood function
+        points = [0.3, 0.7]
+
+        # Learn the parameters using optimisation
+        logger.info("Learning parameters")
+        y = learn(entity_ids_token_count, entity_add_removes, points)
+        print(f"y values: {y}")

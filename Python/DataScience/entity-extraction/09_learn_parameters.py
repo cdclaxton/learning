@@ -268,7 +268,7 @@ def learn(
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 2 or sys.argv[1] != "build" or sys.argv[1] != "learn":
+    if len(sys.argv) != 2 or (sys.argv[1] != "build" and sys.argv[1] != "learn"):
         print(f"Usage: python3 {sys.argv[0]} [build|learn]")
         exit(-1)
 
@@ -308,8 +308,12 @@ if __name__ == "__main__":
         with open(filepath, "rb") as fp:
             dataset = pickle.load(fp)
 
-        entity_ids_token_count = dataset["entity_ids_token_count"]
-        entity_add_removes = dataset["entity_add_removes"]
+        entity_ids_token_count: List[Tuple[int, int]] = dataset[
+            "entity_ids_token_count"
+        ]
+        entity_add_removes: List[List[Tuple[int, int, int]]] = dataset[
+            "entity_add_removes"
+        ]
 
         # Locations of the changes in the piecewise likelihood function
         points = [0.3, 0.7]

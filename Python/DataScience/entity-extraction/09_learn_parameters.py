@@ -6,6 +6,7 @@ from domain import Tokens, assert_tokens_valid
 from lookup.lmdb_lookup import LmdbLookup
 from lookup.lookup import Lookup
 from scipy import optimize
+from loguru import logger
 
 
 def mutate(tokens: Tokens, min_tokens: int) -> Tokens:
@@ -273,6 +274,7 @@ if __name__ == "__main__":
     min_tokens = 3
 
     # Build the dataset from which to learn the parameters
+    logger.info(f"Building dataset with {n_samples} samples")
     entity_ids_token_count, entity_add_removes = build_dataset(
         lookup, n_samples, min_tokens
     )
@@ -281,8 +283,6 @@ if __name__ == "__main__":
     points = [0.3, 0.7]
 
     # Learn the parameters using optimisation
+    logger.info("Learning parameters")
     y = learn(entity_ids_token_count, entity_add_removes, points)
     print(f"y values: {y}")
-
-    # 18/04/24: 0h20
-    # 18/04/24: 01h10

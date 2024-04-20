@@ -137,6 +137,16 @@ def build_dataset(
 
         # Find the number of adds and removes for the matching entities
         matches = entity_matches(mutated_tokens, lookup, min_count)
+
+        # Ensure the entity made it through to the matches
+        found = False
+        for matched_entity_id, _, _ in matches:
+            if entity_id == matched_entity_id:
+                found = True
+
+        assert found, f"Entity {entity_id} is not included in the matches"
+
+        # Store the matches
         result.append(matches)
         logger.debug(
             f"[{idx+1}/{n_samples}] Number of matches for entity {entity_id}: {len(matches)}"

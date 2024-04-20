@@ -170,7 +170,9 @@ def calc_error(
             n_adds / n_tokens_expected_entity, n_removes / n_tokens_expected_entity
         )
 
-    assert expected_entity in likelihoods
+    assert (
+        expected_entity in likelihoods
+    ), f"Failed to find expected entity {expected_entity} in likelihoods"
     expected_entity_prob = likelihoods[expected_entity]
 
     # Number of entities with a higher likelihood than the expected entity

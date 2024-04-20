@@ -192,7 +192,7 @@ def calc_error(
         else:
             n_equal += 1
 
-    return n_higher + n_equal
+    return 2 * n_higher + n_equal
 
 
 def linear(x0, y0, x1, y1, x):
@@ -306,66 +306,125 @@ def learn(
     return res.x
 
 
+def build_dataset_from_lookup(
+    lmdb_folder: str, n_samples: int, min_tokens: int, min_count: int, filepath: str
+) -> None:
+    """Build a dataset of n_samples samples using an LMDB lookup."""
+
+    assert type(lmdb_folder) == str
+    assert type(n_samples) == int and n_samples > 0
+    assert type(min_tokens) == int and min_tokens > 0
+    assert type(min_count) == int and min_count > 0
+    assert type(filepath) == str
+
+    # Initialise a lookup for reading
+    lookup = LmdbLookup(lmdb_folder, False)
+
+    # Build the dataset from which to learn the parameters
+    logger.info(f"Building dataset with {n_samples} samples")
+    entity_ids_token_count, entity_add_removes = build_dataset(
+        lookup, n_samples, min_tokens, min_count
+    )
+
+    dataset = {
+        "entity_ids_token_count": entity_ids_token_count,
+        "entity_add_removes": entity_add_removes,
+    }
+
+    # Pickle the dataset
+    logger.info(f"Writing dataset to file: {filepath}")
+    with open(filepath, "wb") as fp:
+        pickle.dump(dataset, fp)
+
+
+def read_dataset(filepath: str):
+    """Read the dataset from a Pickle file."""
+
+    # Load the data from file
+    logger.info(f"Loading dataset from file: {filepath}")
+    with open(filepath, "rb") as fp:
+        dataset = pickle.load(fp)
+
+    entity_ids_token_count: List[Tuple[int, int]] = dataset["entity_ids_token_count"]
+    entity_add_removes: List[List[Tuple[int, int, int]]] = dataset["entity_add_removes"]
+
+    return entity_ids_token_count, entity_add_removes
+
+
 if __name__ == "__main__":
 
-    if len(sys.argv) != 2 or (sys.argv[1] != "build" and sys.argv[1] != "learn"):
-        print(f"Usage: python3 {sys.argv[0]} [build|learn]")
+    valid_modes = {"build-train", "build-eval", "learn", "eval"}
+
+    if len(sys.argv) != 2 or sys.argv[1] not in valid_modes:
+        print(f"Usage: python3 {sys.argv[0]} <mode>")
+        print("Modes:")
+        print("  build-train - build the training set")
+        print("  build-eval  - build the evaluation set")
+        print("  learn       - learn the parameters of the likelihood function")
+        print("  eval        - evaluate the performance using the evaluate set")
         exit(-1)
 
-    filepath = "./data/training-data.pickle"
+    # File paths for the training and evaluation data
+    training_filepath = "./data/training-data.pickle"
+    evaluation_filepath = "./data/evaluation-data.pickle"
+
+    # Location of the LMDB data
+    lmdb_folder = "./data/lmdb"
+
+    # Minimum number of tokens for an entity to be considered as existing
+    min_tokens = 3
+
+    # Minimum number of tokens that an entity must match
+    min_count = 3
+
+    # Locations of the changes in the piecewise likelihood function
+    points = [0.3, 0.7]
+
+    opt = [0.7, 0.5]
 
     start_time = time.time()
-    mode = sys.argv[1]
-    if mode == "build":
 
-        # Initialise a lookup for reading
-        lmdb_folder = "./data/lmdb"
-        lookup = LmdbLookup(lmdb_folder, False)
+    mode = sys.argv[1]
+    if mode == "build-train":
 
         # Number of samples to generate to use in the optimisation step
         n_samples = 2
 
-        # Minimum number of tokens for an entity to be considered as existing
-        min_tokens = 3
-
-        # Minimum number of tokens that an entity must match
-        min_count = 3
-
         # Build the dataset from which to learn the parameters
-        logger.info(f"Building dataset with {n_samples} samples")
-        entity_ids_token_count, entity_add_removes = build_dataset(
-            lookup, n_samples, min_tokens, min_count
+        build_dataset_from_lookup(
+            lmdb_folder, n_samples, min_tokens, min_count, training_filepath
         )
 
-        dataset = {
-            "entity_ids_token_count": entity_ids_token_count,
-            "entity_add_removes": entity_add_removes,
-        }
+    elif mode == "build-eval":
 
-        logger.info(f"Writing dataset to file: {filepath}")
-        with open(filepath, "wb") as fp:
-            pickle.dump(dataset, fp)
+        # Number of samples to generate to use in the evaluation step
+        n_samples = 2
 
-    else:
+        # Build the dataset from which to evaluate the parameters
+        build_dataset_from_lookup(
+            lmdb_folder, n_samples, min_tokens, min_count, evaluation_filepath
+        )
+
+    elif mode == "learn":
+
         # Load the data from file
-        logger.info(f"Loading dataset from file: {filepath}")
-        with open(filepath, "rb") as fp:
-            dataset = pickle.load(fp)
-
-        entity_ids_token_count: List[Tuple[int, int]] = dataset[
-            "entity_ids_token_count"
-        ]
-        entity_add_removes: List[List[Tuple[int, int, int]]] = dataset[
-            "entity_add_removes"
-        ]
-
-        # Locations of the changes in the piecewise likelihood function
-        points = [0.3, 0.7]
+        entity_ids_token_count, entity_add_removes = read_dataset(training_filepath)
 
         # Learn the parameters using optimisation
         logger.info("Learning parameters")
         y = learn(entity_ids_token_count, entity_add_removes, points)
         print(f"y values: {y}")
+
+    elif mode == "eval":
+
+        # Load the data from file
+        entity_ids_token_count, entity_add_removes = read_dataset(evaluation_filepath)
+
+        # Calculate the total error given the evaluation data and the parameters
+        # of the likelihood function
+        logger.info("Evaluating parameters")
+        err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
+        print(f"Total error = {err}")
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

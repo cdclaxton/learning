@@ -301,9 +301,17 @@ def learn(
     # return res.x
 
     # res = optimize.shgo(f, bounds)
-    res = optimize.dual_annealing(f, bounds)
-    print(res)
-    return res.x
+
+    # Global optimisation
+    # res = optimize.dual_annealing(f, bounds)
+    # print(res)
+    # return res.x
+
+    # Brute-force optimisation
+    rranges = [slice(0, 1, 0.1) for _ in range(len(points))]
+    res_brute = optimize.brute(f, rranges, full_output=True, finish=None)
+
+    return res_brute[0]
 
 
 def build_dataset_from_lookup(
@@ -413,7 +421,7 @@ if __name__ == "__main__":
         # Learn the parameters using optimisation
         logger.info("Learning parameters")
         y = learn(entity_ids_token_count, entity_add_removes, points)
-        print(f"y values: {y}")
+        logger.info(f"y values: {y}")
 
     elif mode == "eval":
 
@@ -424,7 +432,7 @@ if __name__ == "__main__":
         # of the likelihood function
         logger.info("Evaluating parameters")
         err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
-        print(f"Total error = {err}")
+        logger.info(f"Total error = {err}")
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

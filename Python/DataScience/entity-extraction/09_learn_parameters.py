@@ -288,6 +288,13 @@ def learn(
 
     def f(x):
         """Function to minimise."""
+
+        # The values in x can be slightly less than zero, e.g. -1.1e-16, so
+        # convert those to zero
+        for i in range(len(x)):
+            if x[i] < 0:
+                x[i] = 0
+
         return total_error(entity_ids_token_count, entity_add_removes, points, list(x))
 
     # res = minimize(f, x0, method="trust-constr", bounds=bounds, options={"disp": True})

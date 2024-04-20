@@ -77,7 +77,7 @@ def entity_matches(
             if entity_id in entity_id_to_count:
                 entity_id_to_count[entity_id] += 1
             else:
-                entity_id_to_count[entity_id] = 0
+                entity_id_to_count[entity_id] = 1
 
     assert len(entity_id_to_count) > 0
 

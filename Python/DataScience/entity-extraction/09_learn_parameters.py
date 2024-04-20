@@ -3,6 +3,7 @@ import random
 import numpy as np
 import pickle
 import sys
+import time
 
 from typing import Callable, Dict, List, Tuple
 from domain import Tokens, assert_tokens_valid
@@ -195,6 +196,12 @@ def calc_error(
 
 
 def linear(x0, y0, x1, y1, x):
+    # To avoid floating point rounding issues
+    if x == x0:
+        return y0
+    elif x == x1:
+        return y1
+
     return ((y1 - y0) / (x1 - x0)) * (x - x0) + y0
 
 
@@ -288,13 +295,6 @@ def learn(
 
     def f(x):
         """Function to minimise."""
-
-        # The values in x can be slightly less than zero, e.g. -1.1e-16, so
-        # convert those to zero
-        for i in range(len(x)):
-            if x[i] < 0:
-                x[i] = 0
-
         return total_error(entity_ids_token_count, entity_add_removes, points, list(x))
 
     # res = minimize(f, x0, method="trust-constr", bounds=bounds, options={"disp": True})
@@ -314,6 +314,7 @@ if __name__ == "__main__":
 
     filepath = "./data/training-data.pickle"
 
+    start_time = time.time()
     mode = sys.argv[1]
     if mode == "build":
 
@@ -365,3 +366,6 @@ if __name__ == "__main__":
         logger.info("Learning parameters")
         y = learn(entity_ids_token_count, entity_add_removes, points)
         print(f"y values: {y}")
+
+    end_time = time.time()
+    logger.info(f"Execution time = {end_time - start_time} seconds")

@@ -295,7 +295,9 @@ def learn(
 
     def f(x):
         """Function to minimise."""
-        return total_error(entity_ids_token_count, entity_add_removes, points, list(x))
+        e = total_error(entity_ids_token_count, entity_add_removes, points, list(x))
+        logger.debug(f"x = {x}, total error = {e}")
+        return e
 
     # res = minimize(f, x0, method="trust-constr", bounds=bounds, options={"disp": True})
     # return res.x
@@ -357,6 +359,37 @@ def read_dataset(filepath: str):
     entity_add_removes: List[List[Tuple[int, int, int]]] = dataset["entity_add_removes"]
 
     return entity_ids_token_count, entity_add_removes
+
+
+def sample_error(
+    entity_ids_token_count: List[Tuple[int, int]],
+    entity_add_removes: List[List[Tuple[int, int, int]]],
+    likelihood_fn: Callable[[float, float], float],
+) -> List[float]:
+    """Calculates the error for each sample given the likelihood function."""
+
+    n = len(entity_ids_token_count)
+
+    errors = [0.0 for _ in range(n)]
+    for i in range(n):
+        expected_entity, n_tokens_expected_entity = entity_ids_token_count[i]
+
+        errors[i] = calc_error(
+            expected_entity=expected_entity,
+            n_tokens_expected_entity=n_tokens_expected_entity,
+            entity_matches=entity_add_removes[i],
+            likelihood=likelihood_fn,
+        )
+
+    return errors
+
+
+def linear_likelihood(prop_adds: float, prop_removes: float) -> float:
+    """Straight line likelihood function."""
+
+    p_adds = linear(x0=0.0, y0=1.0, x1=1.0, y1=0.0, x=prop_adds)
+    p_removes = linear(x0=0.0, y0=1.0, x1=1.0, y1=0.0, x=prop_removes)
+    return p_adds * p_removes
 
 
 if __name__ == "__main__":
@@ -428,11 +461,23 @@ if __name__ == "__main__":
         # Load the data from file
         entity_ids_token_count, entity_add_removes = read_dataset(evaluation_filepath)
 
+        # Calculate the total error given the linear likelihood model
+        es = sample_error(entity_ids_token_count, entity_add_removes, linear_likelihood)
+        logger.info(f"Linear likelihood total error = {sum(es)}")
+
         # Calculate the total error given the evaluation data and the parameters
         # of the likelihood function
-        logger.info("Evaluating parameters")
+        points = [0.3, 0.7]
+        opt = [0.7, 0.5]
+        logger.info(f"Evaluating parameters: points={points}, opt={opt}")
         err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
-        logger.info(f"Total error = {err}")
+        logger.info(f"x={points}, y={opt}, total error = {err}")
+
+        points = [0.3, 0.7]
+        opt = [0.6, 0.5]
+        logger.info(f"Evaluating parameters: points={points}, opt={opt}")
+        err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
+        logger.info(f"x={points}, y={opt}, total error = {err}")
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

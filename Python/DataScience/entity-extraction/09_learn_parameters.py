@@ -401,7 +401,7 @@ def calc_p_value(before, after) -> Tuple[float, str]:
 
     n = len(before)
 
-    diffs = after - before
+    diffs = np.array(after) - np.array(before)
 
     # Sample means
     x_bar = statistics.mean(diffs)

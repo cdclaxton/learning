@@ -1,7 +1,9 @@
 # Learn the parameters of the likelihood function
 import random
+import math
 import numpy as np
 import pickle
+import statistics
 import sys
 import time
 
@@ -11,6 +13,7 @@ from lookup.lmdb_lookup import LmdbLookup
 from lookup.lookup import Lookup
 from scipy import optimize
 from loguru import logger
+from scipy import stats
 
 
 def mutate(tokens: Tokens, min_tokens: int) -> Tokens:
@@ -392,6 +395,36 @@ def linear_likelihood(prop_adds: float, prop_removes: float) -> float:
     return p_adds * p_removes
 
 
+def calc_p_value(before, after) -> Tuple[float, str]:
+    assert len(before) == len(after)
+    assert len(before) > 0
+
+    n = len(before)
+
+    diffs = after - before
+
+    # Sample means
+    x_bar = statistics.mean(diffs)
+
+    # Sample standard deviation
+    s_d = math.sqrt(statistics.variance(diffs))
+
+    # Number of degrees of freedom
+    df = n - 1
+
+    # t test statistic
+    t = x_bar / (s_d / math.sqrt(n))
+    p_value = stats.t.cdf(t, df)
+    print(f"p-value: {p_value}")
+    alpha = 0.05
+    if p_value < alpha:
+        msg = "Reject the null hypothesis that there is no difference"
+    else:
+        msg = "Accept the null hypothesis that there is no difference"
+
+    return (p_value, msg)
+
+
 if __name__ == "__main__":
 
     valid_modes = {"build-train", "build-eval", "learn", "eval"}
@@ -465,8 +498,7 @@ if __name__ == "__main__":
 
         evaluation_sets = [
             {
-                "description":
-                  "original",
+                "description": "original",
                 "x": [0.3, 0.7],
                 "y": [0.7, 0.5],
             },
@@ -489,6 +521,21 @@ if __name__ == "__main__":
             logger.info(
                 f"Error for '{eval_set['description']}': x = {eval_set['x']}, y = {eval_set['y']}, total error = {err}"
             )
+
+            # Determine if the difference in the error is statistically
+            # significant compared to the linear model
+
+            # Make a likelihood function given the points in the evaluation set
+            f = build_likelihood_function(eval_set["x"], eval_set["y"])
+
+            error_linear = sample_error(
+                entity_ids_token_count, entity_add_removes, linear_likelihood
+            )
+            error_set = sample_error(entity_ids_token_count, entity_add_removes, f)
+
+            p_value, msg = calc_p_value(error_linear, error_set)
+
+            logger.info(f"p-value: {p_value}, msg: {msg}")
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

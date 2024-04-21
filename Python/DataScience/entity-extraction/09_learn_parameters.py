@@ -503,9 +503,14 @@ if __name__ == "__main__":
                 "y": [0.7, 0.5],
             },
             {
-                "description": "optimised with two points",
+                "description": "optimised with two points (1)",
                 "x": [0.3, 0.7],
                 "y": [0.6, 0.5],
+            },
+            {
+                "description": "optimised with two points (2)",
+                "x": [0.25, 0.50],
+                "y": [0.4, 0.3],
             },
             {
                 "description": "optimised with three points",
@@ -522,9 +527,6 @@ if __name__ == "__main__":
                 f"Error for '{eval_set['description']}': x = {eval_set['x']}, y = {eval_set['y']}, total error = {err}"
             )
 
-            # Determine if the difference in the error is statistically
-            # significant compared to the linear model
-
             # Make a likelihood function given the points in the evaluation set
             f = build_likelihood_function(eval_set["x"], eval_set["y"])
 
@@ -533,8 +535,9 @@ if __name__ == "__main__":
             )
             error_set = sample_error(entity_ids_token_count, entity_add_removes, f)
 
+            # Determine if the difference in the error is statistically
+            # significant compared to the linear model
             p_value, msg = calc_p_value(error_linear, error_set)
-
             logger.info(f"p-value: {p_value}, msg: {msg}")
 
     end_time = time.time()

@@ -415,7 +415,6 @@ def calc_p_value(before, after) -> Tuple[float, str]:
     # t test statistic
     t = x_bar / (s_d / math.sqrt(n))
     p_value = stats.t.cdf(t, df)
-    print(f"p-value: {p_value}")
     alpha = 0.05
     if p_value < alpha:
         msg = "Reject the null hypothesis that there is no difference"
@@ -538,7 +537,7 @@ if __name__ == "__main__":
             # Determine if the difference in the error is statistically
             # significant compared to the linear model
             p_value, msg = calc_p_value(error_linear, error_set)
-            logger.info(f"p-value: {p_value}, msg: {msg}")
+            logger.info(f"p-value: {p_value}, {msg}")
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

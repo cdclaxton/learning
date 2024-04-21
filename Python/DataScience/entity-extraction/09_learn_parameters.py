@@ -421,8 +421,6 @@ if __name__ == "__main__":
     # Locations of the changes in the piecewise likelihood function
     points = [0.3, 0.7]
 
-    opt = [0.7, 0.5]
-
     start_time = time.time()
 
     mode = sys.argv[1]
@@ -463,21 +461,34 @@ if __name__ == "__main__":
 
         # Calculate the total error given the linear likelihood model
         es = sample_error(entity_ids_token_count, entity_add_removes, linear_likelihood)
-        logger.info(f"Linear likelihood total error = {sum(es)}")
+        logger.info(f"Error for linear likelihood = {sum(es)}")
 
-        # Calculate the total error given the evaluation data and the parameters
-        # of the likelihood function
-        points = [0.3, 0.7]
-        opt = [0.7, 0.5]
-        logger.info(f"Evaluating parameters: points={points}, opt={opt}")
-        err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
-        logger.info(f"x={points}, y={opt}, total error = {err}")
+        evaluation_sets = [
+            {
+                "description":
+                  "original",
+                "x": [0.3, 0.7],
+                "y": [0.7, 0.5],
+            },
+            {
+                "description": "optimised with two points",
+                "x": [0.3, 0.7],
+                "y": [0.6, 0.5],
+            },
+            {
+                "description": "optimised with three points",
+                "x": [0.25, 0.50, 0.75],
+                "y": [0.6, 0.5, 0.5],
+            },
+        ]
 
-        points = [0.3, 0.7]
-        opt = [0.6, 0.5]
-        logger.info(f"Evaluating parameters: points={points}, opt={opt}")
-        err = total_error(entity_ids_token_count, entity_add_removes, points, opt)
-        logger.info(f"x={points}, y={opt}, total error = {err}")
+        for eval_set in evaluation_sets:
+            err = total_error(
+                entity_ids_token_count, entity_add_removes, eval_set["x"], eval_set["y"]
+            )
+            logger.info(
+                f"Error for '{eval_set['description']}': x = {eval_set['x']}, y = {eval_set['y']}, total error = {err}"
+            )
 
     end_time = time.time()
     logger.info(f"Execution time = {end_time - start_time} seconds")

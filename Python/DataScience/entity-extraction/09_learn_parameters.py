@@ -319,6 +319,40 @@ def learn(
     return res_brute[0]
 
 
+def learn2(
+    entity_ids_token_count: List[Tuple[int, int]],
+    entity_add_removes: List[List[Tuple[int, int, int]]],
+    n_points: int,
+) -> Tuple[List[float], List[float]]:
+
+    assert type(n_points) == int and n_points > 0
+
+    def decreasing(x):
+        return all([x[i] > x[i + 1] for i in range(len(x) - 1)])
+
+    def increasing(x):
+        return all([x[i] < x[i + 1] for i in range(len(x) - 1)])
+
+    def f(x):
+        x_pos = x[:n_points]
+        y_pos = x[n_points:]
+
+        if not increasing(x_pos) or not decreasing(y_pos):
+            return np.inf
+
+        e = total_error(
+            entity_ids_token_count, entity_add_removes, list(x_pos), list(y_pos)
+        )
+        logger.debug(f"x = {x_pos}, y = {y_pos}, total error = {e}")
+        return e
+
+    # Brute-force optimisation
+    rranges = [slice(0, 1.1, 0.1) for _ in range(len(points) * 2)]
+    res_brute = optimize.brute(f, rranges, full_output=True, finish=None)
+
+    return res_brute[0][:n_points], res_brute[0][n_points:]
+
+
 def build_dataset_from_lookup(
     lmdb_folder: str, n_samples: int, min_tokens: int, min_count: int, filepath: str
 ) -> None:
@@ -483,8 +517,12 @@ if __name__ == "__main__":
 
         # Learn the parameters using optimisation
         logger.info("Learning parameters")
-        y = learn(entity_ids_token_count, entity_add_removes, points)
-        logger.info(f"y values: {y}")
+
+        # y = learn(entity_ids_token_count, entity_add_removes, points)
+        # logger.info(f"y values: {y}")
+
+        x, y = learn2(entity_ids_token_count, entity_add_removes, 2)
+        logger.info(f"x values: {x}, y values: {y}")
 
     elif mode == "eval":
 

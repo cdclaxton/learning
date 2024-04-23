@@ -347,7 +347,15 @@ def learn2(
         return e
 
     # Brute-force optimisation
-    rranges = [slice(0, 1.1, 0.1) for _ in range(len(points) * 2)]
+    x_delta = 0.1
+    x_pos_ranges = [slice(x_delta, 1 + x_delta, x_delta) for _ in range(len(points))]
+
+    y_delta = 0.1
+    y_pos_ranges = [slice(0, 1, y_delta) for _ in range(len(points))]
+
+    rranges = x_pos_ranges[:]
+    rranges.extend(y_pos_ranges)
+
     res_brute = optimize.brute(f, rranges, full_output=True, finish=None)
 
     return res_brute[0][:n_points], res_brute[0][n_points:]

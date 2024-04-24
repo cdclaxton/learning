@@ -562,6 +562,11 @@ if __name__ == "__main__":
                 "x": [0.25, 0.50, 0.75],
                 "y": [0.6, 0.5, 0.5],
             },
+            {
+                "description": "optimising for x and y",
+                "x": [0.3, 0.9],
+                "y": [0.7, 0.6],
+            },
         ]
 
         for eval_set in evaluation_sets:

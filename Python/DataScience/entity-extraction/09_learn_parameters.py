@@ -52,8 +52,8 @@ def num_adds_removes(tokens: Tokens, entity: Tokens) -> Tuple[int, int]:
     assert_tokens_valid(tokens)
     assert_tokens_valid(entity)
 
-    set_tokens = set(tokens)
-    set_entity = set(entity)
+    set_tokens = set(tokens)  # Set of tokens in the text
+    set_entity = set(entity)  # Set of tokens in the entity
 
     n_adds = len(set_tokens.difference(set_entity))
     n_removes = len(set_entity.difference(set_tokens))

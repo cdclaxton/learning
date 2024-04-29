@@ -66,8 +66,8 @@ def num_matches_additions(tokens: Tokens, entity: Tokens) -> tuple[int, int, int
     assert_tokens_valid(tokens)
     assert_tokens_valid(entity)
 
-    set_tokens = set(tokens)
-    set_entity = set(entity)
+    set_tokens = set(tokens)  # Set of tokens in the text
+    set_entity = set(entity)  # Set of tokens in the entity
 
     n_adds = len(set_tokens.difference(set_entity))
     n_removes = len(set_entity.difference(set_tokens))
@@ -271,7 +271,7 @@ def build_likelihood2(
 
     def likelihood(match: Match) -> float:
 
-        if match.n_entity_tokens < match.n_matches:
+        if match.n_matches < min_tokens:
             return 0.0
 
         # Calculate the proportion of tokens added and removed

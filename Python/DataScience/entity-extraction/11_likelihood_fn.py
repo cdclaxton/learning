@@ -55,31 +55,29 @@ class Match:
 
 @dataclass
 class Sample:
-    entity_id: int  # Ground truth entity ID
+    ground_truth_entity_id: int  # Ground truth entity ID
     n_tokens: int  # Number of tokens in the ground truth entity
     matches: list[Match]  # Entity matches
 
 
-def num_matches_additions(
-    ground_truth_tokens: Tokens, entity_tokens: Tokens
-) -> tuple[int, int, int]:
+def num_matches_additions(tokens: Tokens, entity: Tokens) -> tuple[int, int, int]:
     """Number of token matches, number of additions and number of removals."""
 
-    assert_tokens_valid(ground_truth_tokens)
-    assert_tokens_valid(entity_tokens)
+    assert_tokens_valid(tokens)
+    assert_tokens_valid(entity)
 
-    set_ground_truth = set(ground_truth_tokens)
-    set_entity = set(entity_tokens)
+    set_tokens = set(tokens)
+    set_entity = set(entity)
 
-    n_matches = len(set_ground_truth.intersection(set_entity))
-    n_additions = len(set_entity.difference(set_entity))
-    n_removals = len(set_entity.difference(set_entity))
+    n_adds = len(set_tokens.difference(set_entity))
+    n_removes = len(set_entity.difference(set_tokens))
+    n_matches = len(set_tokens.intersection(set_entity))
 
     assert n_matches > 0
-    assert n_additions >= 0
-    assert n_removals >= 0
+    assert n_adds >= 0
+    assert n_removes >= 0
 
-    return n_matches, n_additions, n_removals
+    return n_matches, n_adds, n_removes
 
 
 def entity_matches(tokens: Tokens, lookup: Lookup, min_tokens: int) -> list[Match]:
@@ -180,9 +178,9 @@ def calc_error(
         likelihoods[match.entity_id] = likelihood(match)
 
     assert (
-        sample.entity_id in likelihoods
-    ), f"Failed to find expected entity {sample.entity_id} in likelihoods"
-    expected_entity_prob = likelihoods[sample.entity_id]
+        sample.ground_truth_entity_id in likelihoods
+    ), f"Failed to find expected entity {sample.ground_truth_entity_id} in likelihoods"
+    expected_entity_prob = likelihoods[sample.ground_truth_entity_id]
 
     # Number of entities with a higher likelihood than the expected entity
     n_higher = 0
@@ -190,7 +188,7 @@ def calc_error(
     n_lower = 0
 
     for actual_entity, prob in likelihoods.items():
-        if actual_entity == sample.entity_id:
+        if actual_entity == sample.ground_truth_entity_id:
             continue
 
         if prob > expected_entity_prob:

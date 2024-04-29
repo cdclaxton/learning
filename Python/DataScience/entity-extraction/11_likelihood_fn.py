@@ -5,6 +5,7 @@ import random
 
 
 from dataclasses import dataclass
+import sys
 from typing import Callable
 from domain import Tokens, assert_tokens_valid
 from loguru import logger
@@ -289,6 +290,12 @@ def build_likelihood2(
 
 if __name__ == "__main__":
 
+    if len(sys.argv) != 2:
+        print(f"Usage: python3 {sys.argv[0]} <number of samples>")
+        exit(-1)
+
+    n_samples = int(sys.argv[1])
+
     min_tokens = 3
     max_additions = 3
     x = [0.3, 0.7]
@@ -300,7 +307,7 @@ if __name__ == "__main__":
 
     # Randomly select entities from the database via the lookup and mutate the
     # tokens for the entities
-    dataset = build_dataset(lookup, n=4, min_tokens=3, max_additions=3)
+    dataset = build_dataset(lookup, n=n_samples, min_tokens=3, max_additions=3)
     logger.info(f"Generated a dataset with {len(dataset)} samples")
 
     # Calculate the total error for the dataset using likelihood function 1

@@ -50,7 +50,7 @@ def mutate(tokens: list[str], min_tokens: int) -> list[str]:
     n_tokens_to_add = random.randint(0, 2)
 
     # Add tokens at random (this could be replaced with a token
-    # from the Faker library for example)
+    # from the Faker library for example)3457
     for i in range(n_tokens_to_add):
         idx = random.randint(1, len(mutated_tokens) - 1)
         mutated_tokens.insert(idx, f"--({i})--")

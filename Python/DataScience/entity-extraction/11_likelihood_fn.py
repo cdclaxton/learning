@@ -273,7 +273,7 @@ def build_likelihood2(
 
     def likelihood(match: Match) -> float:
 
-        if match.n_entity_tokens < min_tokens:
+        if match.n_entity_tokens < match.n_matches:
             return 0.0
 
         # Calculate the proportion of tokens added and removed

@@ -52,8 +52,8 @@ def num_adds_removes(tokens: Tokens, entity: Tokens) -> Tuple[int, int]:
     assert_tokens_valid(tokens)
     assert_tokens_valid(entity)
 
-    set_tokens = set(tokens)
-    set_entity = set(entity)
+    set_tokens = set(tokens)  # Set of tokens in the text
+    set_entity = set(entity)  # Set of tokens in the entity
 
     n_adds = len(set_tokens.difference(set_entity))
     n_removes = len(set_entity.difference(set_tokens))
@@ -319,6 +319,48 @@ def learn(
     return res_brute[0]
 
 
+def learn2(
+    entity_ids_token_count: List[Tuple[int, int]],
+    entity_add_removes: List[List[Tuple[int, int, int]]],
+    n_points: int,
+) -> Tuple[List[float], List[float]]:
+
+    assert type(n_points) == int and n_points > 0
+
+    def decreasing(x):
+        return all([x[i] > x[i + 1] for i in range(len(x) - 1)])
+
+    def increasing(x):
+        return all([x[i] < x[i + 1] for i in range(len(x) - 1)])
+
+    def f(x):
+        x_pos = x[:n_points]
+        y_pos = x[n_points:]
+
+        if not increasing(x_pos) or not decreasing(y_pos):
+            return np.inf
+
+        e = total_error(
+            entity_ids_token_count, entity_add_removes, list(x_pos), list(y_pos)
+        )
+        logger.debug(f"x = {x_pos}, y = {y_pos}, total error = {e}")
+        return e
+
+    # Brute-force optimisation
+    x_delta = 0.1
+    x_pos_ranges = [slice(x_delta, 1 + x_delta, x_delta) for _ in range(len(points))]
+
+    y_delta = 0.1
+    y_pos_ranges = [slice(0, 1, y_delta) for _ in range(len(points))]
+
+    rranges = x_pos_ranges[:]
+    rranges.extend(y_pos_ranges)
+
+    res_brute = optimize.brute(f, rranges, full_output=True, finish=None)
+
+    return res_brute[0][:n_points], res_brute[0][n_points:]
+
+
 def build_dataset_from_lookup(
     lmdb_folder: str, n_samples: int, min_tokens: int, min_count: int, filepath: str
 ) -> None:
@@ -483,8 +525,12 @@ if __name__ == "__main__":
 
         # Learn the parameters using optimisation
         logger.info("Learning parameters")
-        y = learn(entity_ids_token_count, entity_add_removes, points)
-        logger.info(f"y values: {y}")
+
+        # y = learn(entity_ids_token_count, entity_add_removes, points)
+        # logger.info(f"y values: {y}")
+
+        x, y = learn2(entity_ids_token_count, entity_add_removes, 2)
+        logger.info(f"x values: {x}, y values: {y}")
 
     elif mode == "eval":
 
@@ -515,6 +561,11 @@ if __name__ == "__main__":
                 "description": "optimised with three points",
                 "x": [0.25, 0.50, 0.75],
                 "y": [0.6, 0.5, 0.5],
+            },
+            {
+                "description": "optimising for x and y",
+                "x": [0.3, 0.9],
+                "y": [0.7, 0.6],
             },
         ]
 

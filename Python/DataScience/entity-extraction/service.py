@@ -226,6 +226,6 @@ if __name__ == "__main__":
 
     # Make the likelihood function
     logger.info("Instantiating the likelihood function")
-    likelihood_symmetric = make_likelihood_add_remove_symmetric(0.2, 0.9, 0.7, 0.1)
+    likelihood_symmetric = make_likelihood_add_remove_symmetric(0.3, 0.7, 0.9, 0.6)
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

@@ -340,3 +340,20 @@ Run the script `install.R`.
 ### Test 44: One sample Poisson test
 
 - Is the rate parameter of a Poisson distributed sample significantly different from a hypothesised value?
+
+### Test 45: Pairwise comparison of proportions test
+
+- Do the pairwise observed frequencies of 2+ dichotomous samples differ from each other?
+
+### Test 46: Two sample Poisson test
+
+- Null hypothesis: ratio of means of two Poisson distributions is equal to 1.
+
+### Test 47: Multiple sample proportions test
+
+- Each observation results in a success or failure
+- Is the difference between the observed number of successes from two or more samples significantly different from zero?
+
+## Trend
+
+### Test 48: Chi-Squared test for linear trend

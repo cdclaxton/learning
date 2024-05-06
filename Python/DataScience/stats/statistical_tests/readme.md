@@ -354,6 +354,185 @@ Run the script `install.R`.
 - Each observation results in a success or failure
 - Is the difference between the observed number of successes from two or more samples significantly different from zero?
 
-## Trend
-
 ### Test 48: Chi-Squared test for linear trend
+
+- Each observation results in a success or failure
+- Is the difference between the observed probability of success from 2+ samples with a linear trend significantly different from zero?
+- Based on test for zero slope in the linear regression of the proportions
+
+### Test 49: Pearson's paired chi-squared test
+
+- Are the paired observations on two variables in a contingency table independent of each other?
+
+### Test 50: Fisher's exact test
+
+- Are the paired observations on two variables in a contingency table independent of each other?
+- Often used with small sample sizes
+
+### Test 51: Cochran-Mantel-Haenszel test
+
+- Is there a relationship between two categorical variables after adjusting for control variables?
+- Null hypothesis: two nominal variables are conditionally independent
+
+### Test 52: McNemar's test
+
+- Is there a difference between paired proportions?
+- Paired version of the chi-square test where the same subject is measured twice
+- Applied to a $2 \times 2$ contingency table with a dichotomous trait
+- Matched pairs of subjects
+- Null hypothesis: no difference
+
+### Test 53: Equal means in a one-way layout with equal variances
+
+- Do 3+ independent sets of samples come from populations with the same mean?
+- Population is assumed to be normally distributed
+- Variances across samples are assumed equal
+
+### Test 54: Welch-test for more than two samples
+
+- Do 3+ independent sets of samples come from populations with the same mean?
+- Population is assumed to be normally distributed
+- Variances are not assumed to be equal
+
+### Test 55: Kruskal Wallis rank sum test
+
+- Do 3+ independent sets of samples come from populations with the same mean?
+- Sample observations are assumed to come from populations with the same shape of distribution
+- AKA one-way ANOVA on ranks
+- Non-parametric method
+
+### Test 56: Friedman's rank sum test
+
+- Are the distributions from various groups the same across repeated measures?
+- Observations are repeated on the same subjects
+- Non-parametric statistical test
+- Used to detect differences in treatments across multiple test attempts
+- Classic example: $n$ wine judges rate $k$ different wines -- are any of the $k$ wines consistently ranked higher or lower than others?
+
+### Test 57: Quade test
+
+- Are the distributions from various groups the same across repeated measures?
+- Quade test -- more powerful for a small number of treatments; Friedman test -- more powerful when the number of treatments is 5+.
+
+## Skewness
+
+### Test 58: D'Agostino test of skewness
+
+- Is the sample skewed?
+- Goodness of fit measure of departure from normality
+- Null hypothesis: data is normally distributed and so skewness should be zero
+
+## Kurtosis
+
+### Test 59: Anscombe-Glynn test of kurtosis
+
+- Does the sample exhibit more (or less) kurtosis relative to the normal distribution?
+- Useful for detecting non-normality caused by tail heaviness
+
+### Test 60: Bonett-Seier test of kurtosis
+
+- Does the sample exhibit more (or less) kurtosis calculated by Geary's measure relative to the normal distribution?
+- Used to test for heavy tails in a sample
+
+## Normal distribution
+
+### Test 61: Shapiro-Wilk test
+
+- Is the sample from a normal distribution?
+
+### Test 62: Kolmogorov-Smirnov test of normality
+
+- Is the sample from a normal distribution?
+
+### Test 63: Jarque-Bera test
+
+- Is the sample from a normal distribution?
+- Null hypothesis: sample comes from a normal distribution with an unknown mean and variance
+- Alternative hypothesis: sample does not come from a normal distribution
+
+### Test 64: D'Agostino test
+
+- Is the sample from a normal distribution?
+- Test for non-normality due to a lack of symmetry (i.e. distribution is skewed)
+
+### Test 65: Anderson-Darling test of normality
+
+- Is the sample from a normal distribution?
+- Null hypothesis: data is from a normal distribution
+
+### Test 66: Cramer-Von Mises test
+
+- Is the sample from a normal distribution?
+
+### Test 67: Lilliefors test
+
+- Is the sample from a normal distribution?
+
+### Test 68: Shapiro-Francia test
+
+- Is the sample from a normal distribution?
+
+## Multivariate normal distribution
+
+### Test 69: Mardia's test of multivariate normality
+
+- Null hypothesis: multivariate normal distribution for a sample of $k$ factors
+- A large multivariate kurtosis indicates one or more observations have a large Mahalanobis distance
+
+## Goodness of fit
+
+### Test 70: Kolomogorov-Smirnov test for goodness of fit
+
+- Is there a significant difference between the observed distribution and the specified population distribution?
+- Test statistic is most sensitive to the region near the mode of the sample distribution and less sensitive to tails
+
+### Test 71: Anderson-Darling goodness of fit test
+
+- Is there a significant difference between the observed distribution and the specified population distribution?
+- Compares fit of the observed cumulative distribution to a specific cumulative function
+- Modification of the Kolomogorov-Smirnov test (giving more weight to tails)
+- More sensitive than Kolomogorov-Smirnov test
+
+### Test 72: Two-sample Kolomogorov-Smirnov test
+
+- Do two independent random samples come from the same probability distribution?
+
+### Test 73: Anderson-Darling multiple sample goodness of fit test
+
+- Is there a significant difference between the observed distributions in $k$ distinct samples?
+- Test does not assume equal variances
+
+##
+
+### Test 74: Brunner-Munzel Test for stochastic equality
+
+- Are the scores on an ordinally scaled variable larger in one population than another?
+- Variances are not assumed to be equal
+- Distributions are non-symmetric (skewed)
+- AKA generalized Wilcoxon test
+
+## Outliers
+
+### Test 75: Dixon's Q test
+
+- Do sample data contain one (and only one) outlier?
+- Assumes a normal distribution
+- Small sample (typically less than 30 observations)
+
+### Test 76: Chi-squared test for outliers
+
+- Do sample data contain an outlier?
+- Test requires specification of the population variance
+
+### Test 77: Bonferroni outlier test
+
+- Do sample data contain an outlier?
+- Null hypothesis: largest absolute residual is not an outlier
+- Alternative hypothesis: largest absolute residual is an outlier
+
+### Test 78: Grubbs test
+
+- Do sample data contain an outlier?
+- Detect outliers from a normal distribution
+- Test is based on the largest absolute deviation from the mean of the sample
+- Minimum of 7 samples

@@ -645,3 +645,24 @@ Run the script `install.R`.
 ### Test 97: Rayleigh test of uniformity
 
 - Is the sample equally distributed with respect to angle?
+
+### Test 98: Watson's goodness of fit test
+
+- Is the sample uniformly distributed or from the Von Mises distribution?
+- von Mises distribution AKA circular normal distribution or Tikhonov distribution
+
+### Test 99: Watson's two-sample test of homogeneity
+
+- Is the sample uniformly distributed or from the Von Mises distribution?
+
+### Test 100: Rao's test for homogeneity
+
+- Is the mean direction and dispersion of two or more circular samples different?
+
+## Normal distribution
+
+### Test 101: Pearson chi square test
+
+- Is the sample from a normal distribution?
+- Null hypothesis: sample comes from a normal distribution with unknown mean and variance
+- Alternative hypothesis: doesn't come from a normal distribution

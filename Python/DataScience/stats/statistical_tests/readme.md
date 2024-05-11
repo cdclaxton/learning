@@ -536,3 +536,112 @@ Run the script `install.R`.
 - Detect outliers from a normal distribution
 - Test is based on the largest absolute deviation from the mean of the sample
 - Minimum of 7 samples
+
+## Heteroscedasticity
+
+### Test 79: Goldfeld-Quandt test for heteroscedasticity
+
+- Are the residuals in a linear regression model hetereoscedastic?
+- Null hypothesis: homoscedastic (constant variance)
+
+### Test 80: Breusch-Pagan test for heteroscedasticity
+
+- Are the residuals in a linear regression model hetereoscedastic?
+- Null hypothesis: homoscedastic (constant variance)
+
+### Test 81: Harrison-McCabe test for heteroscedasticity
+
+- Are the residuals in a linear regression model hetereoscedastic?
+- Null hypothesis: homoscedastic (constant variance)
+
+## Linearity
+
+### Test 82: Harvey-Collier test for linearity
+
+- Is the regression model correctly specified as linear?
+- Null hypothesis: regression model is linear
+- Alternative hypothesis: regression model is non-linear
+
+### Test 83: Ramsey reset test
+
+- Is the regression model correctly specified as linear?
+- Null hypothesis: regression model is linear
+- Alternative hypothesis: regression model is non-linear
+
+### Test 84: White neural network test
+
+- Is the sample of timeseries observations linear in the mean?
+- Uses a single hidden layer feed-forward neural network
+
+## Stationarity
+
+### Test 85: Augmented Dickey-Fuller test
+
+- Null hypothesis: data contains a unit root and is thus non-stationary
+
+### Test 86: Phillips-Perron test
+
+- Does the data contain a unit root?
+- Unit root => non-stationary
+
+### Test 87: Phillips-Ouliaris test
+
+- Is the sample of multivariate observations cointegrated?
+- Null hypothesis: not cointegrated
+
+### Test 88: Kwiatkowski-Phillips-Schmidt-Shin test
+
+- Is the sample of timeseries observations stationary around a deterministic trend?
+- Null hypothesis: stationary, alternative hypothesis: unit root
+- Higher power than the Augmented Dickey-Fuller and Philips-Perron unit root tests
+
+### Test 89: Elliott, Rothenberg and Stock test
+
+- Does the data contain a unit root?
+- Null hypothesis: Unit root => non-stationary
+- Higher power than the Augmented Dickey-Fuller and Philips-Perron unit root tests
+
+### Test 90: Schmidt-Phillips test
+
+- Does the data contain a unit root?
+- Null hypothesis: Unit root => non-stationary.
+
+### Test 91: Zivot and Andrews test
+
+- Does the data with an expected structural break contain a unit root?
+- Structural break may appear on intercept, trend or both
+- Null hypothesis of a unit root process
+
+## Survival analysis
+
+### Test 92: Grambsch-Therneau test of proportionality
+
+- Is the assumption of proportional hazards for a Cox regression model fit valid?
+
+### Test 93: Mantel-Haenszel log-rank test
+
+- Are there statistically significant differences between two or more survival curves?
+- Emphasises the tail of the survival curve
+
+### Test 94: Peto and Peto test
+
+- Are there statistically significant differences between two or more survival curves?
+- Emphasises the beginning of the survival curve (earlier failures receive higher weight)
+
+## Angles
+
+### Test 95: Kuiper's test of uniformity
+
+- Is the sample equally distributed with respect to angle?
+- Null hypothesis: sample is uniformly distributed on circle
+- As sensitive in the tails as at the median
+- Invariant under cyclical data transformations
+
+### Test 96: Rao's spacing test of uniformity
+
+- Is the sample equally distributed with respect to angle?
+- Null hypothesis: uniformity
+
+### Test 97: Rayleigh test of uniformity
+
+- Is the sample equally distributed with respect to angle?

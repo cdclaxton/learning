@@ -412,7 +412,7 @@ Run the script `install.R`.
 ### Test 57: Quade test
 
 - Are the distributions from various groups the same across repeated measures?
-- Quade test -- more powerful for a small number of treatments; Friedman test -- more powerful when the number of treatments is 5+.
+- Quade test is more powerful for a small number of treatments; Friedman test is more powerful when the number of treatments is 5+.
 
 ## Skewness
 
@@ -502,7 +502,7 @@ Run the script `install.R`.
 - Is there a significant difference between the observed distributions in $k$ distinct samples?
 - Test does not assume equal variances
 
-##
+## Stochastic equality
 
 ### Test 74: Brunner-Munzel Test for stochastic equality
 

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bernoulli distribution</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+    <canvas id="chart" width="500" height="300"></canvas>
+    <script>
+        // Probability of a head
+        const pHead = 0.7
+
+        // Sample stats
+        let numHeads = 0;
+        let numTrials = 0;
+
+        const canvas = document.getElementById("chart");
+        const ctx = canvas.getContext("2d");
+
+        // Draw the graph
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Heads', 'Tails'],
+                datasets: [{
+                    label: 'Outcome',
+                    data: [0,0]
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Outcome'
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                                max: 1.0
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Probability'
+                            }
+                        }
+                    ]
+                },
+                animation: {
+                    duration: 0
+                },
+                title: {
+                    display: true,
+                    text: `Bernoulli distribution (num trials=${numTrials})`
+                }
+            }
+        });        
+
+        function simulate() {
+
+            // Flip the coin
+            const isHead = Math.random() < pHead;
+            numTrials += 1;
+
+            if (isHead) {
+                numHeads += 1;
+            }
+
+            // Update the graph
+            chart.data.datasets[0].data = [numHeads/numTrials, (numTrials-numHeads)/numTrials];
+            chart.options.title.text = `Bernoulli distribution (num trials=${numTrials})`;
+            chart.update();
+        }
+        
+        // Simulation
+        const simulationIntervalMs = 100;  // milliseconds
+        const numSimulations = 100;
+        
+        const intervalId = window.setInterval(simulate, simulationIntervalMs);
+
+        function stopSimulation() {
+            clearTimeout(intervalId);
+        }
+
+        window.setTimeout(stopSimulation, simulationIntervalMs*numSimulations);
+
+    </script>
+</body>

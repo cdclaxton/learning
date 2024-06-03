@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<head>
+    <title>Demo</title>
+</head>
+<body>
+    <h1>Demo</h1>
+    <button id="getData">Get data from server</button>
+    <p id="result"></div>
+
+    <script>
+        const setText = (text) => {
+            document.getElementById("result").innerText = text;
+        }
+
+        function getDataFromServer() {
+            setText("Getting data from the server");
+            
+            fetch('/number?value=10').then(function (response) {
+                return response.json();
+            }).then(function(data) {
+                setText(data["result"]);
+            }).catch(function (err) {
+                setText("Error: " + err);
+            });
+        }
+
+        document.getElementById("getData").onclick = () => {
+            getDataFromServer();
+        };
+    </script>
+</body>

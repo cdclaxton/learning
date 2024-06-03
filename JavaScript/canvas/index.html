@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Canvas tutorial</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="tutorial" width="150" height="150"></canvas>
+    <script>
+        "use strict"
+
+        // Convert degrees to radians
+        const radians = (degrees) => (Math.PI/180) * degrees;
+
+        function draw() {
+            const canvas = document.getElementById("tutorial");
+            if (canvas.getContext) {
+                const ctx = canvas.getContext("2d");
+
+                ctx.fillStyle = "rgb(200 0 0)";
+                ctx.fillRect(10, 10, 50, 50);
+
+                ctx.fillStyle = "rgb(0 0 200 / 50%)";
+                ctx.fillRect(30, 30, 50, 50);
+
+                ctx.clearRect(70, 70, 10, 10);
+
+                // Outline of a rectangle
+                ctx.strokeRect(65, 65, 20, 20);
+
+                // Draw a triangle
+                ctx.beginPath();
+                ctx.moveTo(100, 100);
+                ctx.lineTo(120, 110);
+                ctx.lineTo(120, 90);
+                ctx.fill();
+
+                // Draw two circles
+                ctx.strokeStyle = "rgb(120 200 20)";
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(50, 100, 10, 0, Math.PI*2, true);
+                ctx.moveTo(80, 100);
+                ctx.arc(70, 100, 10, 0, Math.PI*2, true);
+                ctx.stroke();
+
+                // Draw a triangle using lines
+                ctx.strokeStyle = "#FF5566";
+                ctx.beginPath();
+                ctx.moveTo(100, 10);
+                ctx.lineTo(120, 25);
+                ctx.lineTo(80, 25);
+                ctx.lineTo(100, 10);
+                ctx.closePath();
+                ctx.stroke();
+
+                // Filled arc
+                ctx.fillStyle = "orange";
+                ctx.beginPath();
+                ctx.arc(20, 130, 20, radians(-90), radians(-45), false);
+                ctx.moveTo(20, 110);
+                ctx.lineTo(20, 130);
+                const deltaX = 20*Math.cos(radians(45));
+                const deltaY = 20*Math.sin(radians(45));
+                ctx.lineTo(20+deltaX, 130-deltaY);
+                ctx.fill();
+
+                // Rectangle
+                ctx.beginPath();
+                ctx.rect(50, 130, 40, 15);
+                ctx.stroke();
+
+                // Text
+                ctx.fillStyle = "white";
+                ctx.font = "12px serif";
+                ctx.fillText("Hello World", 10, 50);
+            }
+        }
+        window.addEventListener("load", draw);
+    </script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Breakout</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        const paddle = {
+            width: 50,
+            height: 20,
+            x: 0,  // top-left corner
+            y: 0   // top-left corner
+        };
+
+        class Brick {
+            // Static fields
+            static width = 50;
+            static height = 20;
+
+            constructor(x, y) {
+                this.x = x;  // top-left
+                this.y = y;  // top-left
+                this.present = true;
+            }
+
+            hit() {
+                this.present = false;
+            }
+        }
+
+        class BrickArray {
+            static brickSpace = 20;  // number of pixels between bricks
+            static minBrickMargin = 30;  // 
+
+            // Number of bricks in the x direction 
+            static numX = Math.floor((canvas.width - 2*BrickArray.minBrickMargin + BrickArray.brickSpace) / 
+                (Brick.width + BrickArray.brickSpace));
+
+            // Number of bricks in the y direction
+            static numY = 4;
+
+            constructor() {
+                this.bricks = [];
+
+                for (let i=0; i<BrickArray.numX; i++) {
+                    for (let j=0; j<BrickArray.numY; j++) {
+                        const x = BrickArray.minBrickMargin + i*(Brick.width + BrickArray.brickSpace);
+                        const y = BrickArray.minBrickMargin + j*(Brick.height + BrickArray.brickSpace);
+                        this.bricks.push(new Brick(x, y));
+                    }
+                }
+            }
+        }
+
+        const brickArray = new BrickArray();
+
+        // Are the rectangle and circle overlapping?
+        // circleX, circleY = centre point of the circle
+        // rectX, rectY = centre point of the rectangle
+        function rectangleCircleCollision(circleX, circleY, circleRadius,
+            rectX, rectY, rectWidth, rectHeight)
+        {
+            const circleDistanceX = Math.abs(circleX - rectX);
+            const circleDistanceY = Math.abs(circleY - rectY);
+
+            if ((circleDistanceX > (rectWidth/2 + circleRadius)) || 
+                (circleDistanceY > (rectHeight/2 + circleRadius))) {
+                return false;
+            }
+
+            if ((circleDistanceX <= (rectWidth/2)) || 
+                (circleDistanceY <= (rectHeight/2))) {
+                return true;
+            }
+
+            const cornerDistanceSq = Math.pow(circleDistanceX - rectWidth/2, 2) +
+                Math.pow(circleDistanceY - rectHeight/2, 2);
+            
+            return cornerDistanceSq <= Math.pow(circleRadius, 2);
+        }
+
+        class Ball {
+            static radius = 30;
+
+            constructor() {
+                // Centre coordinates of the circle
+                this.x = canvas.width / 2;
+                this.y = canvas.height / 2;
+
+                // Velocity
+                this.speedX = 200;
+                this.speedY = -200;
+            }
+
+            // Update the position of the ball given the elapsed time in seconds
+            update(timeDifference) {
+                this.x += timeDifference * this.speedX;
+                this.y += timeDifference * this.speedY;
+
+                if (this.x - Ball.radius <= 0) {
+                    this.x = Ball.radius;
+                    this.speedX = -this.speedX;
+                } else if (this.x >= canvas.width - Ball.radius) {
+                    this.x = canvas.width - Ball.radius;
+                    this.speedX = -this.speedX;
+                }
+
+                if (this.y <= Ball.radius) {
+                    this.y = Ball.radius;
+                    this.speedY = -this.speedY;
+                }
+            }
+
+            touchingRectangle(x, y, width, height) {
+                return rectangleCircleCollision(this.x, this.y, Ball.radius,
+                    x+width/2,  y+height/2, width, height)
+            }
+        }
+        
+        const ball = new Ball();
+
+        // Last animation time
+        let lastTime = (new Date()) / 1000;
+
+        // Game state
+        let gameOverLose = false;
+        let gameOverWin = false;
+
+        function init() {
+            // Initialise the paddle position
+            paddle.x = (canvas.width / 2) - (paddle.width / 2);
+            paddle.y = canvas.height - paddle.height - 10;
+            
+            // Start animation
+            window.requestAnimationFrame(draw);
+        }
+
+        function draw() {
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);         
+
+            if (gameOverLose) {
+                ctx.fillStyle = "blue";
+                ctx.font = "48px serif";
+                ctx.textAlign = "center";
+                ctx.fillText("Game Over!", canvas.width/2,
+                    canvas.height/2);
+                return;
+
+            } else if (gameOverWin) {
+                ctx.fillStyle = "blue";
+                ctx.font = "48px serif";
+                ctx.textAlign = "center";
+                ctx.fillText("You win!", canvas.width/2,
+                    canvas.height/2);   
+                return;             
+            }
+
+            // Move the ball
+            const currentTime = (new Date()) / 1000;
+            ball.update(currentTime - lastTime);
+
+            // Check whether a brick has been hit by the ball
+            for (let i=0; i<brickArray.bricks.length; i++) {
+                const brick = brickArray.bricks[i];
+                if (!brick.present) {
+                    continue;
+                }
+
+                if (ball.touchingRectangle(brick.x, brick.y, Brick.width, Brick.height)) {
+                    brickArray.bricks[i].hit();
+                    ball.speedY = -ball.speedY;
+                }
+            }
+
+            // Draw the paddle
+            ctx.fillStyle = "rgb(0 0 200)";
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+            // Draw the brick array
+            ctx.fillStyle = "rgb(90 30 150)";
+            gameOverWin = true;
+            for (let i=0; i<brickArray.bricks.length; i++) {
+                const brick = brickArray.bricks[i];
+                if (brick.present) {
+                    ctx.fillRect(brick.x, brick.y, Brick.width, Brick.height);
+                    gameOverWin = false;
+                }
+            }
+
+            // Draw the ball
+            ctx.fillStyle = "rgb(250 10 10)";
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, Ball.radius, 0, Math.PI*2, true);
+            ctx.fill();            
+
+            // Check whether the ball has gone below the paddle
+            if (ball.y + Ball.radius >= paddle.y + 10) {
+                gameOverLose = true;
+            } else if (ball.touchingRectangle(paddle.x, paddle.y, 
+                paddle.width, paddle.height)) {
+                // Ball is touching the paddle, so it bounces off
+                ball.speedY = -ball.speedY;
+            }
+
+            lastTime = currentTime;
+            window.requestAnimationFrame(draw);
+        }
+
+        // Detect the mouse's x position as this allows the player to move the
+        // paddle
+        canvas.addEventListener("mousemove", (e) => {
+            const x = e.clientX - (paddle.width/2);
+            if (x <= 0) {
+                paddle.x = 0;
+            } else if (x >= canvas.width - paddle.width) {
+                paddle.x = canvas.width - paddle.width;
+            } else {
+                paddle.x = x;
+            }
+        });
+
+        init();
+    </script>
+</body>

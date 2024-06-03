@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Chaos</title>
+    <style>
+        body {
+            background-color: #D9D5D2;
+            font-family: Verdana, sans-serif;
+        }
+        
+        h1 {
+            color: #3F403F;
+            border-bottom: 4px solid #3F403F;
+            text-shadow: 2px 2px 3px #708C87;
+            margin: 20px;
+        }
+
+        h2 {
+            color: #3F403F;
+            margin: 20px;
+        }
+
+        div.paragraph {
+            color: #0D0D0D;
+            font-size: 0.875em;
+            background-color: #8AA6A3;
+            border-left: 10px solid #3F403F;
+            border-radius: 5px;
+            margin: 20px;
+            padding: 1px 10px;
+        }
+
+        canvas {
+            width: 600px !important;
+            height: 400px !important;
+            margin: auto;
+        }
+
+        #presets {
+            margin: 20px;
+        }
+
+        #controls {
+            margin: 20px;
+        }
+
+        button {
+            background-color: #8AA6A3;
+            font-family: Verdana, sans-serif;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition-duration: 0.4s;
+        }
+
+        button:hover {
+            background-color: #3F403F;
+            color: white;
+        }
+
+        input[type=text] {
+            padding: 5px;
+            border-radius: 4px;
+            font-family: Verdana, sans-serif;
+        }
+
+        label {
+            padding: 5px;
+            font-family: Verdana, sans-serif;
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+</head>
+<body>
+    <h1>Chaos</h1>
+
+    <div class="paragraph">
+    <p>The equation plotted below is: x[i] = r x[i-1] (1 - x[i-1]).</p>
+    <p>Try changing the initial value x[0] and the scaling constant r.</p>
+    </div>
+
+    <div id="presets">
+        <p>Presets:</p>
+        <button id="preset1">x0=0.101, r=3.2</button>
+        <button id="preset2">x0=0.101, r=3.5</button>
+        <button id="preset3">x0=0.101, r=3.835</button>
+    </div>
+
+    <div id="controls">
+        <label for="startingValueBox">x0:</label>
+        <input type="text" value="0.1" id="startingValueBox" />
+        
+        <label for="rBox">r:</label>
+        <input type="text" value="2.9" id="rBox"/>
+    </div>
+
+    <div class="canvasContainer">
+        <canvas id="canvas" width="600" height="400"></canvas>
+    </div>
+
+    <h2>Bifurcation diagram</h2>
+
+    <div class="paragraph">
+    <p>The bifurcation diagram shows the values of the equation after a burn-in of 1000 samples.</p>
+    </div>
+
+    <div class="canvasContainer">
+        <canvas id="canvasBifurcation" width="600" height="400"></canvas>
+    </div>
+
+    <script>
+
+        // Canvas for the equation plotting
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Canvas for the bifurification diagram
+        const canvasBifurcation = document.getElementById("canvasBifurcation");
+        const ctxBifurcation = canvasBifurcation.getContext("2d");       
+
+        const rBoxName = "rBox";
+        const startingValueBoxName = "startingValueBox";
+
+        let max_i = 100;
+
+        // Draw the bifurcation graph
+        const chartBifurcation = new Chart(ctxBifurcation, {
+            type: 'scatter',
+            data: {
+                labels: [0],
+                datasets: [{
+                    label: "Points",
+                    data: [0],
+                    fill: false,
+                    borderColor: '#3F403F'
+                }]
+            },
+            options: {
+                elements: {
+                    point: {
+                        radius: 1,
+                    }
+                },
+                responsive: true,
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'r',
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'x'
+                            }
+                        }
+                    ]
+                },
+                animation: {
+                    duration: 0
+                }
+            }            
+        });
+
+        // Draw the equation plotting graph
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [0, 1, 2],
+                datasets: [{
+                    label: "Points",
+                    data: [0],
+                    fill: false,
+                    borderColor: '#3F403F'
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [
+                        {
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'i',
+                            }
+                        }
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'x[i]'
+                            }
+                        }
+                    ]
+                },
+                animation: {
+                    duration: 0
+                }
+            }            
+        });        
+
+        const calc = (r, x0, max_i) => {
+            let values = [x0];
+            for (let i=1; i<max_i; i++) {
+                values[i] = r * values[i-1] * (1 - values[i-1]);
+            }
+        
+            return values;
+        }
+
+        const make_labels = (max_i) => {
+            let values = [];
+            for (let i=0; i<max_i; i++) {
+                values.push(i);
+            }
+            return values;
+        }
+
+        // Run experiment
+        function runExperiment() {
+        
+            // Get the value of r from the text box as a string
+            const rString = document.getElementById("rBox").value;
+            
+            // Convert the value to a float
+            const r = parseFloat(rString);
+
+            // Get the starting value x[0] from the text box as a string
+            const x0String = document.getElementById("startingValueBox").value;
+            const x0 = parseFloat(x0String);
+
+            // Calculate the samples
+            const x = calc(r, x0, max_i);
+
+            // Update the chart
+            chart.data.labels = make_labels(max_i);
+            chart.data.datasets[0].data = x;
+            chart.update();
+        }
+
+        
+
+        // If the value of r changes, then re-run the experiment
+        document.getElementById(rBoxName).oninput = () => runExperiment();
+        document.getElementById(startingValueBoxName).oninput = () => runExperiment();
+
+        function setPreset(x0, r) {
+            document.getElementById(startingValueBoxName).value = x0;
+            document.getElementById(rBoxName).value = r;
+            runExperiment();
+        }
+
+        // Alter the boxes if a preset is selected
+        document.getElementById("preset1").onclick = () => setPreset(0.101, 3.2);
+        document.getElementById("preset2").onclick = () => setPreset(0.101, 3.5);
+        document.getElementById("preset3").onclick = () => setPreset(0.101, 3.835);
+
+        // Calculate points for the bifurification diagram
+        function bifurcationPoints(x0, rMin, rMax, rStep) {
+            const data = [];
+
+            for (let r = rMin; r <= rMax; r += rStep) {
+                // Calculate the first 2000 points
+                const points = calc(r, x0, 2000);
+
+                // Find the unique points after the burn-in period
+                const uniquePoints = new Set();
+                for (let i=1000; i<2000; i++) {
+                    uniquePoints.add(points[i]);
+                }
+
+                for (const point of uniquePoints) {
+                    data.push({
+                        x: r,
+                        y: point
+                    })
+                }
+            }
+
+            return data
+        }
+
+        function makeBifurcationPlot() {
+            const points = bifurcationPoints(0.1, 2, 4, 0.01);
+            chartBifurcation.data.datasets[0].data = points;
+            chartBifurcation.update();
+        }
+
+        window.onload = () => {
+            runExperiment();
+            makeBifurcationPlot();
+        }
+
+    </script>
+</body>

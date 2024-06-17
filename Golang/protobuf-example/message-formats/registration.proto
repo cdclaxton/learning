@@ -1,0 +1,11 @@
+syntax = "proto3";
+package example;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./messages";
+
+message Registration {
+    int32 id = 1; // Unique ID of the sender
+    google.protobuf.Timestamp time = 2;
+}

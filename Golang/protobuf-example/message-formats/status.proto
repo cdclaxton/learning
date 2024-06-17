@@ -1,0 +1,17 @@
+syntax = "proto3";
+package example;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "./messages";
+
+enum StatusType {
+    STATUS_OK = 0;
+    STATUS_FAILURE = 1;
+}
+
+message Status {
+    google.protobuf.Timestamp time = 1;  // Message time
+    int32 sender = 2;  // ID of the sender
+    StatusType status = 3;
+}

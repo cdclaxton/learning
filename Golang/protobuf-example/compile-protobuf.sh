@@ -1,0 +1,1 @@
+./protoc/bin/protoc -I=. --go_out=. ./message-formats/*.proto

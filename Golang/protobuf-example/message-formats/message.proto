@@ -1,0 +1,17 @@
+syntax = "proto3";
+package example;
+
+import "google/protobuf/timestamp.proto";
+import "message-formats/registration.proto";
+import "message-formats/status.proto";
+
+option go_package = "./messages";
+
+message Message {
+    google.protobuf.Timestamp time = 1;  // Message time
+    int32 sender = 2;  // ID of the sender
+    oneof content {
+        Registration registration = 4;
+        Status status = 5;
+    }
+}

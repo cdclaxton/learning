@@ -309,10 +309,13 @@ FilteredItems calc(char *str,
     {
         if (str[end] == ' ' || str[end] == '|')
         {
-            entity_id = atoi(temp);
-            update_item(&ht,
-                        entity_id,
-                        batch_idx);
+            if (temp_idx > 0)
+            {
+                entity_id = atoi(temp);
+                update_item(&ht,
+                            entity_id,
+                            batch_idx);
+            }
 
             temp_idx = 0;
             temp[0] = '\0';

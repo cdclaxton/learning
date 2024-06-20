@@ -1,0 +1,8 @@
+{
+    "name": "Bob",
+    "age": 23,
+    "details": {
+        "eye-colour": "blue",
+        "number-of-legs": 2
+    }
+}

@@ -35,12 +35,16 @@ Build the executable:
 In one terminal run:
 
 ```bash
-./app server
+./app server localhost:5000
 ```
 
 and in another terminal run:
 
 ```bash
-./app client
+./app client localhost:5000
 
 ```
+
+To run the server on a Windows machine, in Git Bash run `ifconfig` and note the IP address of the machine under `Wireless LAN adapter WiFi -> IPv4 address`. Run the server using `./app server 0.0.0.0:5000` and on another machine run `./app client <IP>:5000`.
+
+On a Mac, click `System Settings -> Wi-Fi -> Details ...` and the see the `IP address` field.

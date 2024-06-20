@@ -14,3 +14,5 @@ Python/DataScience/entity-extraction/data/*.db
 Python/DataScience/entity-extraction/data/*.pickle
 Python/DataScience/entity-extraction/data/lmdb/
 /Python/DesignPatterns/lmdb_store/db
+
+node_modules/

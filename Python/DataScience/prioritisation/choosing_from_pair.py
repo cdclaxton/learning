@@ -106,22 +106,28 @@ if __name__ == "__main__":
     num_pairs_to_check = [1, 2, 3, 5, 10]
     num_samples_per_num_pairs = 50
 
-    lambda_min = 1e-4
-    lambda_max = 100
-
+    # lambda_min = 1e-4
+    # lambda_max = 100
     # plot_exponential_distributions(lambda_min, lambda_max)
 
+    sigma_min = 1e-5
+    sigma_max = 0.5
+
     results = []
+    experiment_idx = 0
+    total_experiments = len(num_pairs_to_check) * num_samples_per_num_pairs
 
     for num_pairs in num_pairs_to_check:
         for _ in range(num_samples_per_num_pairs):
 
+            print(f"Running experiment {experiment_idx}/{total_experiments}")
+
             # Generate a true leaderboard
-            lam = stats.uniform.rvs(loc=lambda_min, scale=lambda_max - lambda_min)
-            true_leaderboard = generate_true_leaderboard(lam, num_leads)
+            true_leaderboard = generate_true_leaderboard(1.0, num_leads)
 
             # Generate the actual leaderboard by perturbing the true leaderboard
-            actual_leaderboard = generate_actual_leaderboard(true_leaderboard, 0.7)
+            sigma = stats.uniform.rvs(loc=sigma_min, scale=sigma_max-sigma_min)
+            actual_leaderboard = generate_actual_leaderboard(true_leaderboard, sigma)
 
             # Randomly select the pairs the user would review
             pairs = select_pairs_of_leads(num_leads, num_pairs)
@@ -132,6 +138,7 @@ if __name__ == "__main__":
             )
 
             results.append((num_pairs, actual_correct, estimated_correct))
+            experiment_idx += 1
 
     x = np.array([r[0] for r in results]) + stats.norm.rvs(0, 0.1, size=len(results))
     y = [r[1] - r[2] for r in results]

@@ -120,13 +120,13 @@ if __name__ == "__main__":
     for num_pairs in num_pairs_to_check:
         for _ in range(num_samples_per_num_pairs):
 
-            print(f"Running experiment {experiment_idx}/{total_experiments}")
+            print(f"Running experiment {experiment_idx+1}/{total_experiments}")
 
             # Generate a true leaderboard
             true_leaderboard = generate_true_leaderboard(1.0, num_leads)
 
             # Generate the actual leaderboard by perturbing the true leaderboard
-            sigma = stats.uniform.rvs(loc=sigma_min, scale=sigma_max-sigma_min)
+            sigma = stats.uniform.rvs(loc=sigma_min, scale=sigma_max - sigma_min)
             actual_leaderboard = generate_actual_leaderboard(true_leaderboard, sigma)
 
             # Randomly select the pairs the user would review
@@ -143,6 +143,17 @@ if __name__ == "__main__":
     x = np.array([r[0] for r in results]) + stats.norm.rvs(0, 0.1, size=len(results))
     y = [r[1] - r[2] for r in results]
     plt.plot(x, y, ".", alpha=0.1)
-    plt.xlabel("Number of pairs")
+    plt.xlabel("Number of pairs reviewed")
     plt.ylabel("Error")
+    plt.show()
+
+    std_devs = []
+    for n in num_pairs_to_check:
+        errors = [r[1] - r[2] for r in results if r[0] == n]
+        std_devs.append(np.std(errors))
+
+    plt.plot(num_pairs_to_check, std_devs)
+    plt.xlabel("Number of pairs reviewed")
+    plt.ylabel("Standard deviation of the error")
+    plt.ylim([0, max(std_devs)+0.1])
     plt.show()

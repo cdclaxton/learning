@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+import time
 from scipy import stats
 
 
@@ -102,6 +103,8 @@ def plot_exponential_distributions(lambda_min, lambda_max):
 
 if __name__ == "__main__":
 
+    start_time = time.time()
+
     num_leads = 100
     num_pairs_to_check = [1, 2, 3, 5, 10]
     num_samples_per_num_pairs = 50
@@ -140,6 +143,8 @@ if __name__ == "__main__":
             results.append((num_pairs, actual_correct, estimated_correct))
             experiment_idx += 1
 
+    print(f"Time taken: {time.time() - start_time} seconds")
+
     x = np.array([r[0] for r in results]) + stats.norm.rvs(0, 0.1, size=len(results))
     y = [r[1] - r[2] for r in results]
     plt.plot(x, y, ".", alpha=0.1)
@@ -155,5 +160,5 @@ if __name__ == "__main__":
     plt.plot(num_pairs_to_check, std_devs)
     plt.xlabel("Number of pairs reviewed")
     plt.ylabel("Standard deviation of the error")
-    plt.ylim([0, max(std_devs)+0.1])
+    plt.ylim([0, max(std_devs) + 0.1])
     plt.show()

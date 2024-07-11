@@ -46,7 +46,7 @@ $$
 
 * $p(\theta_A)$ and $p(\theta_B)$ are the prior distributions
 * Interested in $\delta = \theta_A - \theta_B$
-* Posterior distribution for $\theta_A$ is $\text{Beta}(\alpha$_A + s_A, \beta_A + f_A)$ and similarly for $\theta_B$
+* Posterior distribution for $\theta_A$ is $\text{Beta}(\alpha_A + s_A, \beta_A + f_A)$ and similarly for $\theta_B$
 * See `independent_beta_estimation.R`
 * Conversion rate uplift:
 
@@ -94,7 +94,7 @@ $$
     * $H_1: \theta \neq \theta_B$ -- success probabilities are not identical
     * $H_+: \theta_B > \theta_A$
     * $H_-: \theta_A > \theta_B$
-* By comparing the hypotheses, it can be determined:
+* By comparing the hypotheses it can be determined:
     * If there is a difference in the success probabilities (using $H_1$ and $H_0$)
     * If group B has a higher success probability than group A or whether the probabilities are the same ($H_+$ and $H_0$)
     * If group A has a higher success probability than group B or whether the probabilities are the same ($H_-$ and $H_0$)

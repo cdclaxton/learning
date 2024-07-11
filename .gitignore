@@ -15,4 +15,6 @@ Python/DataScience/entity-extraction/data/*.pickle
 Python/DataScience/entity-extraction/data/lmdb/
 /Python/DesignPatterns/lmdb_store/db
 
+Rplots.pdf
+
 node_modules/

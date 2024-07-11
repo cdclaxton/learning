@@ -14,8 +14,9 @@ sudo apt-get upgrade
 ```bash
 # Install R
 sudo apt-get install gdebi-core
-export R_VERSION=4.2.2
-cd /mnt/chromeos/MyFiles/Downloads/
+
+export R_VERSION=4.4.1
+cd ~
 curl -O https://cdn.rstudio.com/r/debian-11/pkgs/r-${R_VERSION}_1_amd64.deb
 sudo gdebi r-${R_VERSION}_1_amd64.deb
 
@@ -36,6 +37,8 @@ sudo apt-get install jags
 Start R and then install the required packages:
 
 ```R
+sudo apt-get install libudunits2-dev libxml2-dev libfontconfig1-dev jags
+
 # rjags
 Sys.setenv(LD_RUN_PATH="/usr/lib/x86_64-linux-gnu/JAGS/modules-4")
 install.packages('rjags', dependencies=TRUE, repos='http://cran.rstudio.com/')
@@ -43,6 +46,17 @@ install.packages('rjags', dependencies=TRUE, repos='http://cran.rstudio.com/')
 install.packages('jsonlite', dependencies=TRUE, repos='http://cran.rstudio.com/')
 install.packages('functional', dependencies=TRUE, repos='http://cran.rstudio.com/')
 install.packages('languageserver', dependencies=TRUE, repos='http://cran.rstudio.com/')
+install.packages('rjags', dependencies=TRUE, repos='http://cran.rstudio.com/')
+```
+
+Alternatively:
+
+```bash
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'
+# Add to /etc/apt/sources.list:
+# deb http://cloud.r-project.org/bin/linux/debian bookworm-cran40/
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install r-base r-base-dev
 ```
 
 ## Python

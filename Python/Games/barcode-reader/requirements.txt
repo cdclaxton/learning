@@ -1,3 +1,5 @@
+loguru
 opencv-python
 pyzbar
 playsound==1.2.2
+pytest

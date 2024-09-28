@@ -1,5 +1,7 @@
 from hypothesis import assume, example, given, settings, strategies as st
 from math import isnan
+import re
+import string
 
 
 @settings(max_examples=500)  # explicitly set the number of cases to run
@@ -58,3 +60,24 @@ def test_person(person: Person):
     person.has_birthday()
     new_age = person.age
     assert new_age > current_age
+
+
+def extract_vrn(s: str) -> list[str]:
+    pattern = re.compile(r"[A-Z]{2}[0-9]{2}\s[A-Z]{3}")
+    return pattern.findall(s)
+
+
+@st.composite
+def vrn_generator(draw):
+    letters1 = draw(st.text(alphabet=string.ascii_uppercase, min_size=2, max_size=2))
+    number1 = draw(st.integers(min_value=0, max_value=9))
+    number2 = draw(st.integers(min_value=0, max_value=9))
+    letters2 = draw(st.text(alphabet=string.ascii_uppercase, min_size=3, max_size=3))
+    return f"{letters1}{number1}{number2} {letters2}"
+
+
+@given(t1=st.text(), t2=st.text(), vrn=vrn_generator())
+def test_extract_vrn(t1, t2, vrn):
+    t = f"{t1} {vrn} {t2}"
+    results = extract_vrn(t)
+    assert vrn in results

@@ -61,7 +61,7 @@ Generated files consist of three main components:
 
 ### Grammar
 
-* A grammar is a et of the rules that describe the language syntax
+* A grammar is a set of the rules that describe the language syntax
 * `grammar <name>` -- filename must be `<name>.g4`
 * Parser rules start with lowercase letters
 * Lexer rules starts with uppercase letters
@@ -131,48 +131,50 @@ fragment ID_LETTER : 'a'..'z'|'A'..'Z'|'_' ;
 fragment DIGIT : '0'..'9' ;
 ```
 
+## Start a new project
+
+```
+go mod init github.com/cdclaxton/<name>
+go get github.com/antlr4-go/antlr/v4
+java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser <grammar>.g4
+```
+
 ## Hello, World! example
 
 ```bash
 cd hello-world
-go mod init github.com/cdclaxton/hello-world
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Hello.g4
+go run main.go
 ```
 
 ## ArrayInit example
 
 ```bash
 cd array-init
-go mod init github.com/cdclaxton/array-init
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser ArrayInit.g4
+go run main.go
 ```
 
 ## Expr example
 
 ```bash
 cd expr
-go mod init github.com/cdclaxton/expr
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Expr.g4
+go run main.go
 ```
 
 ## CSV example
 
 ```bash
 cd csv
-go mod init github.com/cdclaxton/csv
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Csv.g4
+go run main.go
 ```
 
 ## Cymbol function call graph
 
 ```bash
 cd cymbol-call-graph
-go mod init github.com/cdclaxton/cymbol-call-graph
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Cymbol.g4
 go run main.go
 ```
@@ -180,11 +182,7 @@ go run main.go
 ## Validating program symbol usage
 
 ```bash
-mkdir validate-symbol-usage
 cd validate-symbol-usage/
-go mod init github.com/cdclaxton/validate-symbol-usage
-go get github.com/antlr4-go/antlr/v4
-cp ../cymbol-call-graph/Cymbol.g4 .
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Cymbol.g4
 ```
 
@@ -192,20 +190,26 @@ java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Cymbol.g4
 
 ```bash
 cd calculator
-go mod init github.com/cdclaxton/calculator
-go get github.com/antlr4-go/antlr/v4
 java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Calc.g4
 ```
 
-```bash
-go run main.go 
+## Calculator 2
 
-# NUMBER ("1")
-# ADD ("+")
-# NUMBER ("2")
-# MUL ("*")
-# NUMBER ("3")
-# Result: 7
+This calculator has the standard operations as well as negation and parentheses.
+
+```bash
+./build-and-run.sh
+```
+
+## Consequence
+
+```bash
+mkdir consequence
+cd consequence
+go mod init github.com/cdclaxton/consequence
+go get github.com/antlr4-go/antlr/v4
+
+./build-and-run.sh
 ```
 
 ## Debugging

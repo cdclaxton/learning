@@ -72,6 +72,5 @@ func main() {
 	fmt.Printf("Number of days difference = %v\n", t2.Sub(t1).Hours()/24)
 	fmt.Printf("Number of hours difference = %v\n", t2.Sub(t1).Hours())
 	fmt.Printf("Number of minutes difference = %v\n", t2.Sub(t1).Minutes())
-
-	//
+	fmt.Printf("Number of seconds difference = %v\n", t2.Sub(t1).Seconds())
 }

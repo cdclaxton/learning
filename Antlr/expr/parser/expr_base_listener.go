@@ -27,12 +27,6 @@ func (s *BaseExprListener) EnterProg(ctx *ProgContext) {}
 // ExitProg is called when production prog is exited.
 func (s *BaseExprListener) ExitProg(ctx *ProgContext) {}
 
-// EnterPrintExpr is called when production printExpr is entered.
-func (s *BaseExprListener) EnterPrintExpr(ctx *PrintExprContext) {}
-
-// ExitPrintExpr is called when production printExpr is exited.
-func (s *BaseExprListener) ExitPrintExpr(ctx *PrintExprContext) {}
-
 // EnterAssign is called when production assign is entered.
 func (s *BaseExprListener) EnterAssign(ctx *AssignContext) {}
 

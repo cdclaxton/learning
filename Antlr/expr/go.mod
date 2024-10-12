@@ -1,8 +1,9 @@
 module github.com/cdclaxton/expr
 
-go 1.21.0
+go 1.22
 
-require (
-	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
-	golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc // indirect
-)
+toolchain go1.22.8
+
+require github.com/antlr4-go/antlr/v4 v4.13.1
+
+require golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect

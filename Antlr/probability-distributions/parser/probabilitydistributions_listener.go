@@ -17,6 +17,9 @@ type ProbabilityDistributionsListener interface {
 	// EnterBlank is called when entering the blank production.
 	EnterBlank(c *BlankContext)
 
+	// EnterParens is called when entering the parens production.
+	EnterParens(c *ParensContext)
+
 	// EnterExprDist is called when entering the exprDist production.
 	EnterExprDist(c *ExprDistContext)
 
@@ -28,6 +31,9 @@ type ProbabilityDistributionsListener interface {
 
 	// EnterId is called when entering the id production.
 	EnterId(c *IdContext)
+
+	// EnterNoisyMax is called when entering the NoisyMax production.
+	EnterNoisyMax(c *NoisyMaxContext)
 
 	// EnterDist is called when entering the dist production.
 	EnterDist(c *DistContext)
@@ -44,6 +50,9 @@ type ProbabilityDistributionsListener interface {
 	// ExitBlank is called when exiting the blank production.
 	ExitBlank(c *BlankContext)
 
+	// ExitParens is called when exiting the parens production.
+	ExitParens(c *ParensContext)
+
 	// ExitExprDist is called when exiting the exprDist production.
 	ExitExprDist(c *ExprDistContext)
 
@@ -55,6 +64,9 @@ type ProbabilityDistributionsListener interface {
 
 	// ExitId is called when exiting the id production.
 	ExitId(c *IdContext)
+
+	// ExitNoisyMax is called when exiting the NoisyMax production.
+	ExitNoisyMax(c *NoisyMaxContext)
 
 	// ExitDist is called when exiting the dist production.
 	ExitDist(c *DistContext)

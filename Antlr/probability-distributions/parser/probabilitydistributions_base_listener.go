@@ -39,6 +39,12 @@ func (s *BaseProbabilityDistributionsListener) EnterBlank(ctx *BlankContext) {}
 // ExitBlank is called when production blank is exited.
 func (s *BaseProbabilityDistributionsListener) ExitBlank(ctx *BlankContext) {}
 
+// EnterParens is called when production parens is entered.
+func (s *BaseProbabilityDistributionsListener) EnterParens(ctx *ParensContext) {}
+
+// ExitParens is called when production parens is exited.
+func (s *BaseProbabilityDistributionsListener) ExitParens(ctx *ParensContext) {}
+
 // EnterExprDist is called when production exprDist is entered.
 func (s *BaseProbabilityDistributionsListener) EnterExprDist(ctx *ExprDistContext) {}
 
@@ -62,6 +68,12 @@ func (s *BaseProbabilityDistributionsListener) EnterId(ctx *IdContext) {}
 
 // ExitId is called when production id is exited.
 func (s *BaseProbabilityDistributionsListener) ExitId(ctx *IdContext) {}
+
+// EnterNoisyMax is called when production NoisyMax is entered.
+func (s *BaseProbabilityDistributionsListener) EnterNoisyMax(ctx *NoisyMaxContext) {}
+
+// ExitNoisyMax is called when production NoisyMax is exited.
+func (s *BaseProbabilityDistributionsListener) ExitNoisyMax(ctx *NoisyMaxContext) {}
 
 // EnterDist is called when production dist is entered.
 func (s *BaseProbabilityDistributionsListener) EnterDist(ctx *DistContext) {}

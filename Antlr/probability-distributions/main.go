@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
+	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/cdclaxton/probabilitydistributions/parser"
@@ -11,6 +14,37 @@ import (
 
 // Distribution represents a discrete probability distribution.
 type Distribution map[int]float64
+
+// CumulativeProbability of the distribution for value x.
+func (d Distribution) CumulativeProbability(x int) float64 {
+	cumProb := 0.0
+
+	for value, prob := range d {
+		if value <= x {
+			cumProb += prob
+		}
+	}
+
+	return cumProb
+}
+
+func (d Distribution) Format() string {
+	var sb strings.Builder
+
+	sb.WriteString("{")
+
+	values := uniqueValues(d)
+	for idx, value := range values {
+		sb.WriteString(fmt.Sprintf("%d:%f", value, d[value]))
+		if idx < len(values)-1 {
+			sb.WriteString(", ")
+		}
+	}
+
+	sb.WriteString("}")
+
+	return sb.String()
+}
 
 type InterpreterListener struct {
 	*parser.BaseProbabilityDistributionsListener
@@ -107,6 +141,11 @@ func (i *InterpreterListener) ExitMulDiv(ctx *parser.MulDivContext) {
 	}
 }
 
+func (i *InterpreterListener) ExitNoisyMax(ctx *parser.NoisyMaxContext) {
+	right, left := i.pop(), i.pop()
+	i.push(NoisyMax(right, left))
+}
+
 // toFloat64 converts a string to a float64 value, but panics if the string
 // cannot be converted.
 func toFloat64(s string) float64 {
@@ -179,95 +218,37 @@ func distributionsInTolerance(actual, expected map[string]Distribution,
 	return true
 }
 
-func calculate(program string, name string, expected map[string]Distribution) {
-	result := run(program)
-	if distributionsInTolerance(result, expected, 1e-6) {
-		fmt.Printf("✓ Correct - %s\n", name)
-	} else {
-		fmt.Printf("⨯ Incorrect - %s - Expected %v, got %v\n", name, expected,
-			result)
-	}
-}
-
-type testCase struct {
-	program        string
-	description    string
-	expectedMemory map[string]Distribution
-}
-
 func main() {
+
+	if len(os.Args) != 2 {
+		fmt.Printf("Usage: %s <program file>\n", os.Args[0])
+		os.Exit(1)
+	}
+
 	fmt.Println("=== Probability Distribution Calculator ===")
 
-	testCases := []testCase{
-		{
-			program:     "a = {1:1.0}\n",
-			description: "Single distribution, one element",
-			expectedMemory: map[string]Distribution{
-				"a": {1: 1.0},
-			},
-		},
-		{
-			program:     "a = {1:0.8, 2:0.2}\n",
-			description: "Single distribution, two elements",
-			expectedMemory: map[string]Distribution{
-				"a": {1: 0.8, 2: 0.2},
-			},
-		},
-		{
-			program:     "a = {1:1.0}\nb = a\n",
-			description: "Copy a distribution",
-			expectedMemory: map[string]Distribution{
-				"a": {1: 1.0},
-				"b": {1: 1.0},
-			},
-		},
-		{
-			program:     "a = {1:1.0}\na = {2:1.0}\n",
-			description: "Redefine a distribution",
-			expectedMemory: map[string]Distribution{
-				"a": {2: 1.0},
-			},
-		},
-		{
-			program:     "a = {1:1.0}\nb = {3:1.0}\nc = a + b\n",
-			description: "Add two distributions",
-			expectedMemory: map[string]Distribution{
-				"a": {1: 1.0},
-				"b": {3: 1.0},
-				"c": {4: 1.0},
-			},
-		},
-		{
-			program:     "a = {5:0.2, 6:0.8}\nb = {3:1.0}\nc = a - b\n",
-			description: "Subtract two distributions",
-			expectedMemory: map[string]Distribution{
-				"a": {5: 0.2, 6: 0.8},
-				"b": {3: 1.0},
-				"c": {2: 0.2, 3: 0.8},
-			},
-		},
-		{
-			program:     "a = {5:0.2, 6:0.8}\nb = {3:1.0}\nc = a * b\n",
-			description: "Multiply two distributions",
-			expectedMemory: map[string]Distribution{
-				"a": {5: 0.2, 6: 0.8},
-				"b": {3: 1.0},
-				"c": {15: 0.2, 18: 0.8},
-			},
-		},
-		{
-			program:     "a = {10:0.2, 6:0.8}\nb = {2:1.0}\nc = a / b\n",
-			description: "Divide two distributions",
-			expectedMemory: map[string]Distribution{
-				"a": {10: 0.2, 6: 0.8},
-				"b": {2: 1.0},
-				"c": {5: 0.2, 3: 0.8},
-			},
-		},
+	// Read the program from file
+	contents, err := os.ReadFile(os.Args[1])
+	if err != nil {
+		panic(err)
 	}
+	program := string(contents)
+	for idx, line := range strings.Split(program, "\n") {
+		fmt.Printf("%d | %s\n", idx+1, line)
+	}
+	fmt.Println()
 
-	for _, testCase := range testCases {
-		calculate(testCase.program, testCase.description,
-			testCase.expectedMemory)
+	// Run the program
+	result := run(program)
+
+	// Show the results
+	variables := make([]string, 0, len(result))
+	for variable := range result {
+		variables = append(variables, variable)
+	}
+	sort.Strings(variables)
+
+	for _, variable := range variables {
+		fmt.Printf("%s: %s\n", variable, result[variable].Format())
 	}
 }

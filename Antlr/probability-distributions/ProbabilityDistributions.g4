@@ -11,8 +11,10 @@ stat : ID '=' expr NEWLINE   # assign
 // Expression
 expr : expr (op=('*'|'/')) expr    # MulDiv
      | expr (op=('+'|'-')) expr    # AddSub
+     | expr '|' expr               # NoisyMax
      | dist                        # exprDist
      | ID                          # id
+     | '(' expr ')'                # parens     
      ; 
 
 dist : '{' element (',' element)* '}' ;
@@ -30,3 +32,4 @@ MUL : '*' ;
 DIV : '/' ;
 ADD : '+' ;
 SUB : '-' ;
+OR  : '|' ;

@@ -48,6 +48,8 @@ func calculateMeanTimeDiffInHours(samples []time.Time) float64 {
 
 func main() {
 
+	fmt.Printf("Current time: %v\n", time.Now().Format(time.RFC3339))
+
 	// Parse a date from its ISO-8601 string representation
 	layout := "2006-01-02T15:04:05.000Z"
 	str := "2014-11-12T11:45:26.371Z"
@@ -73,4 +75,18 @@ func main() {
 	fmt.Printf("Number of hours difference = %v\n", t2.Sub(t1).Hours())
 	fmt.Printf("Number of minutes difference = %v\n", t2.Sub(t1).Minutes())
 	fmt.Printf("Number of seconds difference = %v\n", t2.Sub(t1).Seconds())
+
+	// Truncate a datetime
+	tNow := time.Now()
+	tTruncated := time.Date(tNow.Year(), tNow.Month(), tNow.Day(), 0, 0, 0, 0, tNow.Location())
+	fmt.Printf("Truncated date: %v\n", tTruncated)
+
+	// Change the location of a date
+	dateStr := "2024-10-16T08:57:21+05:00"
+	t3, err := time.Parse(time.RFC3339, dateStr)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("Date string: %s\n", dateStr)
+	fmt.Printf("Date in current location: %s\n", t3.In(time.Now().Location()))
 }

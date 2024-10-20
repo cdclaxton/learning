@@ -9,12 +9,12 @@ stat : ID '=' expr NEWLINE   # assign
      ;
 
 // Expression
- expr : expr (op=('*'|'/')) expr   # MulDiv
-      | expr (op=('+'|'-')) expr   # AddSub
-      | INT                        # int 
-      | ID                         # id
-      | '(' expr ')'               # parens
-      ;
+expr : expr (op=('*'|'/')) expr   # MulDiv
+     | expr (op=('+'|'-')) expr   # AddSub
+     | INT                        # int 
+     | ID                         # id
+     | '(' expr ')'               # parens
+     ;
 
 // Lexer rules
 ID : [a-zA-Z]+ ;       // identifier

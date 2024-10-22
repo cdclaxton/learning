@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -146,6 +145,16 @@ func (i *InterpreterListener) ExitNoisyMax(ctx *parser.NoisyMaxContext) {
 	i.push(NoisyMax(right, left))
 }
 
+func (i *InterpreterListener) ExitPrint(ctx *parser.PrintContext) {
+	variableName := ctx.ID().GetText()
+	dist, ok := i.memory[variableName]
+	if !ok {
+		fmt.Printf("Error: Unknown variable '%s'\n", variableName)
+	} else {
+		fmt.Printf("%s = %s\n", variableName, dist.Format())
+	}
+}
+
 // toFloat64 converts a string to a float64 value, but panics if the string
 // cannot be converted.
 func toFloat64(s string) float64 {
@@ -218,6 +227,11 @@ func distributionsInTolerance(actual, expected map[string]Distribution,
 	return true
 }
 
+const logo = `
+	█        |      █        Probability Distribution
+	█ █    --+--  █ █              Calculator
+	█ █ █    |    █ █ █`
+
 func main() {
 
 	if len(os.Args) != 2 {
@@ -225,7 +239,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("=== Probability Distribution Calculator ===")
+	fmt.Println(logo)
 
 	// Read the program from file
 	contents, err := os.ReadFile(os.Args[1])
@@ -233,22 +247,13 @@ func main() {
 		panic(err)
 	}
 	program := string(contents)
+
+	fmt.Println("\nProgram:")
 	for idx, line := range strings.Split(program, "\n") {
 		fmt.Printf("%d | %s\n", idx+1, line)
 	}
 	fmt.Println()
 
 	// Run the program
-	result := run(program)
-
-	// Show the results
-	variables := make([]string, 0, len(result))
-	for variable := range result {
-		variables = append(variables, variable)
-	}
-	sort.Strings(variables)
-
-	for _, variable := range variables {
-		fmt.Printf("%s: %s\n", variable, result[variable].Format())
-	}
+	run(program)
 }

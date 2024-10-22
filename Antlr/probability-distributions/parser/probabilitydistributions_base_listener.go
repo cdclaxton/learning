@@ -33,6 +33,12 @@ func (s *BaseProbabilityDistributionsListener) EnterAssign(ctx *AssignContext) {
 // ExitAssign is called when production assign is exited.
 func (s *BaseProbabilityDistributionsListener) ExitAssign(ctx *AssignContext) {}
 
+// EnterPrint is called when production print is entered.
+func (s *BaseProbabilityDistributionsListener) EnterPrint(ctx *PrintContext) {}
+
+// ExitPrint is called when production print is exited.
+func (s *BaseProbabilityDistributionsListener) ExitPrint(ctx *PrintContext) {}
+
 // EnterBlank is called when production blank is entered.
 func (s *BaseProbabilityDistributionsListener) EnterBlank(ctx *BlankContext) {}
 

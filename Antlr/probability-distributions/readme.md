@@ -11,6 +11,7 @@ b = {3: 0.1, 4: 0.9}
 c = {3: 0.5, 4: 0.5}
 d = (a + b) | c
 e = {4: 0.1, 6: 0.9} | d
+e
 ```
 
 Variables must be composed of lowercase and upper case letters, e.g. `a`.
@@ -23,6 +24,8 @@ operators, but in a distribution sense. Parentheses allow the usual precedence
 rules to be overridden.
 
 The operator `|` is an extension of a Noisy OR to a Noisy Max.
+
+A variable on a line on its own prints the associated distribution.
 
 To build and run the above program:
 

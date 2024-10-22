@@ -14,6 +14,9 @@ type ProbabilityDistributionsListener interface {
 	// EnterAssign is called when entering the assign production.
 	EnterAssign(c *AssignContext)
 
+	// EnterPrint is called when entering the print production.
+	EnterPrint(c *PrintContext)
+
 	// EnterBlank is called when entering the blank production.
 	EnterBlank(c *BlankContext)
 
@@ -46,6 +49,9 @@ type ProbabilityDistributionsListener interface {
 
 	// ExitAssign is called when exiting the assign production.
 	ExitAssign(c *AssignContext)
+
+	// ExitPrint is called when exiting the print production.
+	ExitPrint(c *PrintContext)
 
 	// ExitBlank is called when exiting the blank production.
 	ExitBlank(c *BlankContext)

@@ -45,31 +45,32 @@ func probabilitydistributionsParserInit() {
 	}
 	staticData.PredictionContextCache = antlr.NewPredictionContextCache()
 	staticData.serializedATN = []int32{
-		4, 1, 17, 62, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
+		4, 1, 17, 64, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 2, 4, 7,
 		4, 1, 0, 4, 0, 12, 8, 0, 11, 0, 12, 0, 13, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		1, 1, 3, 1, 22, 8, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 3, 2, 31,
-		8, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 5, 2, 42, 8,
-		2, 10, 2, 12, 2, 45, 9, 2, 1, 3, 1, 3, 1, 3, 1, 3, 5, 3, 51, 8, 3, 10,
-		3, 12, 3, 54, 9, 3, 1, 3, 1, 3, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4, 0, 1, 4,
-		5, 0, 2, 4, 6, 8, 0, 2, 1, 0, 13, 14, 1, 0, 15, 16, 64, 0, 11, 1, 0, 0,
-		0, 2, 21, 1, 0, 0, 0, 4, 30, 1, 0, 0, 0, 6, 46, 1, 0, 0, 0, 8, 57, 1, 0,
-		0, 0, 10, 12, 3, 2, 1, 0, 11, 10, 1, 0, 0, 0, 12, 13, 1, 0, 0, 0, 13, 11,
-		1, 0, 0, 0, 13, 14, 1, 0, 0, 0, 14, 1, 1, 0, 0, 0, 15, 16, 5, 8, 0, 0,
-		16, 17, 5, 1, 0, 0, 17, 18, 3, 4, 2, 0, 18, 19, 5, 11, 0, 0, 19, 22, 1,
-		0, 0, 0, 20, 22, 5, 11, 0, 0, 21, 15, 1, 0, 0, 0, 21, 20, 1, 0, 0, 0, 22,
-		3, 1, 0, 0, 0, 23, 24, 6, 2, -1, 0, 24, 31, 3, 6, 3, 0, 25, 31, 5, 8, 0,
-		0, 26, 27, 5, 2, 0, 0, 27, 28, 3, 4, 2, 0, 28, 29, 5, 3, 0, 0, 29, 31,
-		1, 0, 0, 0, 30, 23, 1, 0, 0, 0, 30, 25, 1, 0, 0, 0, 30, 26, 1, 0, 0, 0,
-		31, 43, 1, 0, 0, 0, 32, 33, 10, 6, 0, 0, 33, 34, 7, 0, 0, 0, 34, 42, 3,
-		4, 2, 7, 35, 36, 10, 5, 0, 0, 36, 37, 7, 1, 0, 0, 37, 42, 3, 4, 2, 6, 38,
-		39, 10, 4, 0, 0, 39, 40, 5, 17, 0, 0, 40, 42, 3, 4, 2, 5, 41, 32, 1, 0,
-		0, 0, 41, 35, 1, 0, 0, 0, 41, 38, 1, 0, 0, 0, 42, 45, 1, 0, 0, 0, 43, 41,
-		1, 0, 0, 0, 43, 44, 1, 0, 0, 0, 44, 5, 1, 0, 0, 0, 45, 43, 1, 0, 0, 0,
-		46, 47, 5, 4, 0, 0, 47, 52, 3, 8, 4, 0, 48, 49, 5, 5, 0, 0, 49, 51, 3,
-		8, 4, 0, 50, 48, 1, 0, 0, 0, 51, 54, 1, 0, 0, 0, 52, 50, 1, 0, 0, 0, 52,
-		53, 1, 0, 0, 0, 53, 55, 1, 0, 0, 0, 54, 52, 1, 0, 0, 0, 55, 56, 5, 6, 0,
-		0, 56, 7, 1, 0, 0, 0, 57, 58, 5, 9, 0, 0, 58, 59, 5, 7, 0, 0, 59, 60, 5,
-		10, 0, 0, 60, 9, 1, 0, 0, 0, 6, 13, 21, 30, 41, 43, 52,
+		1, 1, 1, 1, 1, 1, 3, 1, 24, 8, 1, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1,
+		2, 3, 2, 33, 8, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2,
+		5, 2, 44, 8, 2, 10, 2, 12, 2, 47, 9, 2, 1, 3, 1, 3, 1, 3, 1, 3, 5, 3, 53,
+		8, 3, 10, 3, 12, 3, 56, 9, 3, 1, 3, 1, 3, 1, 4, 1, 4, 1, 4, 1, 4, 1, 4,
+		0, 1, 4, 5, 0, 2, 4, 6, 8, 0, 2, 1, 0, 13, 14, 1, 0, 15, 16, 67, 0, 11,
+		1, 0, 0, 0, 2, 23, 1, 0, 0, 0, 4, 32, 1, 0, 0, 0, 6, 48, 1, 0, 0, 0, 8,
+		59, 1, 0, 0, 0, 10, 12, 3, 2, 1, 0, 11, 10, 1, 0, 0, 0, 12, 13, 1, 0, 0,
+		0, 13, 11, 1, 0, 0, 0, 13, 14, 1, 0, 0, 0, 14, 1, 1, 0, 0, 0, 15, 16, 5,
+		8, 0, 0, 16, 17, 5, 1, 0, 0, 17, 18, 3, 4, 2, 0, 18, 19, 5, 11, 0, 0, 19,
+		24, 1, 0, 0, 0, 20, 21, 5, 8, 0, 0, 21, 24, 5, 11, 0, 0, 22, 24, 5, 11,
+		0, 0, 23, 15, 1, 0, 0, 0, 23, 20, 1, 0, 0, 0, 23, 22, 1, 0, 0, 0, 24, 3,
+		1, 0, 0, 0, 25, 26, 6, 2, -1, 0, 26, 33, 3, 6, 3, 0, 27, 33, 5, 8, 0, 0,
+		28, 29, 5, 2, 0, 0, 29, 30, 3, 4, 2, 0, 30, 31, 5, 3, 0, 0, 31, 33, 1,
+		0, 0, 0, 32, 25, 1, 0, 0, 0, 32, 27, 1, 0, 0, 0, 32, 28, 1, 0, 0, 0, 33,
+		45, 1, 0, 0, 0, 34, 35, 10, 6, 0, 0, 35, 36, 7, 0, 0, 0, 36, 44, 3, 4,
+		2, 7, 37, 38, 10, 5, 0, 0, 38, 39, 7, 1, 0, 0, 39, 44, 3, 4, 2, 6, 40,
+		41, 10, 4, 0, 0, 41, 42, 5, 17, 0, 0, 42, 44, 3, 4, 2, 5, 43, 34, 1, 0,
+		0, 0, 43, 37, 1, 0, 0, 0, 43, 40, 1, 0, 0, 0, 44, 47, 1, 0, 0, 0, 45, 43,
+		1, 0, 0, 0, 45, 46, 1, 0, 0, 0, 46, 5, 1, 0, 0, 0, 47, 45, 1, 0, 0, 0,
+		48, 49, 5, 4, 0, 0, 49, 54, 3, 8, 4, 0, 50, 51, 5, 5, 0, 0, 51, 53, 3,
+		8, 4, 0, 52, 50, 1, 0, 0, 0, 53, 56, 1, 0, 0, 0, 54, 52, 1, 0, 0, 0, 54,
+		55, 1, 0, 0, 0, 55, 57, 1, 0, 0, 0, 56, 54, 1, 0, 0, 0, 57, 58, 5, 6, 0,
+		0, 58, 7, 1, 0, 0, 0, 59, 60, 5, 9, 0, 0, 60, 61, 5, 7, 0, 0, 61, 62, 5,
+		10, 0, 0, 62, 9, 1, 0, 0, 0, 6, 13, 23, 32, 43, 45, 54,
 	}
 	deserializer := antlr.NewATNDeserializer(nil)
 	staticData.atn = deserializer.Deserialize(staticData.serializedATN)
@@ -338,6 +339,44 @@ func (s *StatContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) s
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
+type PrintContext struct {
+	StatContext
+}
+
+func NewPrintContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *PrintContext {
+	var p = new(PrintContext)
+
+	InitEmptyStatContext(&p.StatContext)
+	p.parser = parser
+	p.CopyAll(ctx.(*StatContext))
+
+	return p
+}
+
+func (s *PrintContext) GetRuleContext() antlr.RuleContext {
+	return s
+}
+
+func (s *PrintContext) ID() antlr.TerminalNode {
+	return s.GetToken(ProbabilityDistributionsParserID, 0)
+}
+
+func (s *PrintContext) NEWLINE() antlr.TerminalNode {
+	return s.GetToken(ProbabilityDistributionsParserNEWLINE, 0)
+}
+
+func (s *PrintContext) EnterRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(ProbabilityDistributionsListener); ok {
+		listenerT.EnterPrint(s)
+	}
+}
+
+func (s *PrintContext) ExitRule(listener antlr.ParseTreeListener) {
+	if listenerT, ok := listener.(ProbabilityDistributionsListener); ok {
+		listenerT.ExitPrint(s)
+	}
+}
+
 type BlankContext struct {
 	StatContext
 }
@@ -429,14 +468,14 @@ func (s *AssignContext) ExitRule(listener antlr.ParseTreeListener) {
 func (p *ProbabilityDistributionsParser) Stat() (localctx IStatContext) {
 	localctx = NewStatContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 2, ProbabilityDistributionsParserRULE_stat)
-	p.SetState(21)
+	p.SetState(23)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
 	}
 
-	switch p.GetTokenStream().LA(1) {
-	case ProbabilityDistributionsParserID:
+	switch p.GetInterpreter().AdaptivePredict(p.BaseParser, p.GetTokenStream(), 1, p.GetParserRuleContext()) {
+	case 1:
 		localctx = NewAssignContext(p, localctx)
 		p.EnterOuterAlt(localctx, 1)
 		{
@@ -468,11 +507,19 @@ func (p *ProbabilityDistributionsParser) Stat() (localctx IStatContext) {
 			}
 		}
 
-	case ProbabilityDistributionsParserNEWLINE:
-		localctx = NewBlankContext(p, localctx)
+	case 2:
+		localctx = NewPrintContext(p, localctx)
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(20)
+			p.Match(ProbabilityDistributionsParserID)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
+		}
+		{
+			p.SetState(21)
 			p.Match(ProbabilityDistributionsParserNEWLINE)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -480,8 +527,19 @@ func (p *ProbabilityDistributionsParser) Stat() (localctx IStatContext) {
 			}
 		}
 
-	default:
-		p.SetError(antlr.NewNoViableAltException(p, nil, nil, nil, nil, nil))
+	case 3:
+		localctx = NewBlankContext(p, localctx)
+		p.EnterOuterAlt(localctx, 3)
+		{
+			p.SetState(22)
+			p.Match(ProbabilityDistributionsParserNEWLINE)
+			if p.HasError() {
+				// Recognition error - abort rule
+				goto errorExit
+			}
+		}
+
+	case antlr.ATNInvalidAltNumber:
 		goto errorExit
 	}
 
@@ -939,7 +997,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 	var _alt int
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(30)
+	p.SetState(32)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -952,7 +1010,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 		_prevctx = localctx
 
 		{
-			p.SetState(24)
+			p.SetState(26)
 			p.Dist()
 		}
 
@@ -961,7 +1019,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 		p.SetParserRuleContext(localctx)
 		_prevctx = localctx
 		{
-			p.SetState(25)
+			p.SetState(27)
 			p.Match(ProbabilityDistributionsParserID)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -974,7 +1032,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 		p.SetParserRuleContext(localctx)
 		_prevctx = localctx
 		{
-			p.SetState(26)
+			p.SetState(28)
 			p.Match(ProbabilityDistributionsParserT__1)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -982,11 +1040,11 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 			}
 		}
 		{
-			p.SetState(27)
+			p.SetState(29)
 			p.expr(0)
 		}
 		{
-			p.SetState(28)
+			p.SetState(30)
 			p.Match(ProbabilityDistributionsParserT__2)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -999,7 +1057,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 		goto errorExit
 	}
 	p.GetParserRuleContext().SetStop(p.GetTokenStream().LT(-1))
-	p.SetState(43)
+	p.SetState(45)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1014,7 +1072,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 				p.TriggerExitRuleEvent()
 			}
 			_prevctx = localctx
-			p.SetState(41)
+			p.SetState(43)
 			p.GetErrorHandler().Sync(p)
 			if p.HasError() {
 				goto errorExit
@@ -1024,7 +1082,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 			case 1:
 				localctx = NewMulDivContext(p, NewExprContext(p, _parentctx, _parentState))
 				p.PushNewRecursionContext(localctx, _startState, ProbabilityDistributionsParserRULE_expr)
-				p.SetState(32)
+				p.SetState(34)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 6)) {
 					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 6)", ""))
@@ -1032,7 +1090,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 				}
 
 				{
-					p.SetState(33)
+					p.SetState(35)
 
 					var _lt = p.GetTokenStream().LT(1)
 
@@ -1051,14 +1109,14 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 				}
 
 				{
-					p.SetState(34)
+					p.SetState(36)
 					p.expr(7)
 				}
 
 			case 2:
 				localctx = NewAddSubContext(p, NewExprContext(p, _parentctx, _parentState))
 				p.PushNewRecursionContext(localctx, _startState, ProbabilityDistributionsParserRULE_expr)
-				p.SetState(35)
+				p.SetState(37)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 5)) {
 					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 5)", ""))
@@ -1066,7 +1124,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 				}
 
 				{
-					p.SetState(36)
+					p.SetState(38)
 
 					var _lt = p.GetTokenStream().LT(1)
 
@@ -1085,21 +1143,21 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 				}
 
 				{
-					p.SetState(37)
+					p.SetState(39)
 					p.expr(6)
 				}
 
 			case 3:
 				localctx = NewNoisyMaxContext(p, NewExprContext(p, _parentctx, _parentState))
 				p.PushNewRecursionContext(localctx, _startState, ProbabilityDistributionsParserRULE_expr)
-				p.SetState(38)
+				p.SetState(40)
 
 				if !(p.Precpred(p.GetParserRuleContext(), 4)) {
 					p.SetError(antlr.NewFailedPredicateException(p, "p.Precpred(p.GetParserRuleContext(), 4)", ""))
 					goto errorExit
 				}
 				{
-					p.SetState(39)
+					p.SetState(41)
 					p.Match(ProbabilityDistributionsParserOR)
 					if p.HasError() {
 						// Recognition error - abort rule
@@ -1107,7 +1165,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 					}
 				}
 				{
-					p.SetState(40)
+					p.SetState(42)
 					p.expr(5)
 				}
 
@@ -1116,7 +1174,7 @@ func (p *ProbabilityDistributionsParser) expr(_p int) (localctx IExprContext) {
 			}
 
 		}
-		p.SetState(45)
+		p.SetState(47)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -1255,7 +1313,7 @@ func (p *ProbabilityDistributionsParser) Dist() (localctx IDistContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(46)
+		p.SetState(48)
 		p.Match(ProbabilityDistributionsParserT__3)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -1263,10 +1321,10 @@ func (p *ProbabilityDistributionsParser) Dist() (localctx IDistContext) {
 		}
 	}
 	{
-		p.SetState(47)
+		p.SetState(49)
 		p.Element()
 	}
-	p.SetState(52)
+	p.SetState(54)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
 		goto errorExit
@@ -1275,7 +1333,7 @@ func (p *ProbabilityDistributionsParser) Dist() (localctx IDistContext) {
 
 	for _la == ProbabilityDistributionsParserT__4 {
 		{
-			p.SetState(48)
+			p.SetState(50)
 			p.Match(ProbabilityDistributionsParserT__4)
 			if p.HasError() {
 				// Recognition error - abort rule
@@ -1283,11 +1341,11 @@ func (p *ProbabilityDistributionsParser) Dist() (localctx IDistContext) {
 			}
 		}
 		{
-			p.SetState(49)
+			p.SetState(51)
 			p.Element()
 		}
 
-		p.SetState(54)
+		p.SetState(56)
 		p.GetErrorHandler().Sync(p)
 		if p.HasError() {
 			goto errorExit
@@ -1295,7 +1353,7 @@ func (p *ProbabilityDistributionsParser) Dist() (localctx IDistContext) {
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(55)
+		p.SetState(57)
 		p.Match(ProbabilityDistributionsParserT__5)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -1396,7 +1454,7 @@ func (p *ProbabilityDistributionsParser) Element() (localctx IElementContext) {
 	p.EnterRule(localctx, 8, ProbabilityDistributionsParserRULE_element)
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(57)
+		p.SetState(59)
 		p.Match(ProbabilityDistributionsParserINT)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -1404,7 +1462,7 @@ func (p *ProbabilityDistributionsParser) Element() (localctx IElementContext) {
 		}
 	}
 	{
-		p.SetState(58)
+		p.SetState(60)
 		p.Match(ProbabilityDistributionsParserT__6)
 		if p.HasError() {
 			// Recognition error - abort rule
@@ -1412,7 +1470,7 @@ func (p *ProbabilityDistributionsParser) Element() (localctx IElementContext) {
 		}
 	}
 	{
-		p.SetState(59)
+		p.SetState(61)
 		p.Match(ProbabilityDistributionsParserFLOAT)
 		if p.HasError() {
 			// Recognition error - abort rule

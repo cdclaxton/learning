@@ -1,0 +1,85 @@
+<mxfile host="Chrome" modified="2024-11-04T10:55:57.344Z" agent="Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" etag="PA7jS4HQLzIl5xmOWf5b" version="21.2.7" type="device">
+  <diagram id="3nj9MZciTHvnNX_kDcAv" name="Page-1">
+    <mxGraphModel dx="678" dy="426" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hJBTrNGShJmxr9BXUneX-5" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-1" target="hJBTrNGShJmxr9BXUneX-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-1" value="Job Queue" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;direction=south;" parent="1" vertex="1">
+          <mxGeometry x="690" y="80" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-12" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-3" target="hJBTrNGShJmxr9BXUneX-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-3" value="Result queue" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;direction=south;" parent="1" vertex="1">
+          <mxGeometry x="690" y="170" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-4" target="hJBTrNGShJmxr9BXUneX-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-4" value="Translation worker process&lt;br&gt;&lt;b&gt;TranslationWorker&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="890" y="110" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-7" value="&lt;b&gt;multiprocessing.Queue &lt;/b&gt;of&amp;nbsp;&amp;nbsp;&lt;b&gt;Job&amp;nbsp;&lt;/b&gt;classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="685" y="40" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-9" value="This queue is used to update that a job is in progress or has completed (both failed and completed states)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="680" y="330" width="175" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-11" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-10" target="hJBTrNGShJmxr9BXUneX-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-21" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-10" target="hJBTrNGShJmxr9BXUneX-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-22" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-10" target="hJBTrNGShJmxr9BXUneX-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-10" value="Manager process&lt;br&gt;&lt;b&gt;JobManager&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="440" y="110" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-13" value="Defined in &lt;b&gt;worker.py&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="900" y="200" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-14" value="Defined in &lt;b&gt;manager.py&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="450" y="200" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-15" value="&lt;b&gt;multiprocessing.Queue &lt;/b&gt;of&amp;nbsp;&amp;nbsp;&lt;b&gt;Job&amp;nbsp;&lt;/b&gt;classes" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="685" y="240" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-16" value="multiprocessing.Manager dict of job ID string to Job object" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="90" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-17" value="Lock for the Manager dict" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="170" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-19" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-18" target="hJBTrNGShJmxr9BXUneX-16" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-20" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="hJBTrNGShJmxr9BXUneX-18" target="hJBTrNGShJmxr9BXUneX-17" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-18" value="Flask API" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="10" y="110" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="hJBTrNGShJmxr9BXUneX-23" value="Defined in &lt;b&gt;server.py&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="20" y="200" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="2S_Rw_6k95lHf7z5oT_W-1" value="&lt;font color=&quot;#0066cc&quot;&gt;Job status: &lt;b&gt;NEW&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="285" y="50" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2S_Rw_6k95lHf7z5oT_W-2" value="&lt;font color=&quot;#0066cc&quot;&gt;Job status: &lt;b&gt;PENDING&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="730" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2S_Rw_6k95lHf7z5oT_W-3" value="&lt;font color=&quot;#0066cc&quot;&gt;Job status: &lt;b&gt;IN PROGESS&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="945" y="70" width="95" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2S_Rw_6k95lHf7z5oT_W-4" value="&lt;font color=&quot;#0066cc&quot;&gt;Job status: &lt;b&gt;COMPLETE or FAILED&lt;/b&gt;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="695" y="280" width="130" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

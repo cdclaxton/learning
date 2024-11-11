@@ -30,7 +30,7 @@ NODE_OTHER = "other"
 
 # Permitted connections between nodes given their type
 allowed_connection_types = {
-    NODE_STORE: [NODE_CHAIN, NODE_OTHER],
+    NODE_STORE: [NODE_CHAIN, NODE_OTHER, NODE_STORE],
     NODE_CHAIN: [NODE_STORE, NODE_LOCAL_DISTRIBUTOR, NODE_OTHER],
     NODE_LOCAL_DISTRIBUTOR: [NODE_CHAIN, NODE_IN_COUNTRY_DISTRIBUTOR, NODE_OTHER],
     NODE_IN_COUNTRY_DISTRIBUTOR: [
@@ -47,6 +47,17 @@ allowed_connection_types = {
         NODE_OTHER,
     ],
 }
+
+
+def bernoulli(p):
+    """Bernoulli distribution where the probability of a 1 is p."""
+
+    dist = stats.bernoulli(p)
+
+    def f():
+        return dist.rvs()
+
+    return f
 
 
 def discrete_uniform(min_value, max_value):
@@ -229,6 +240,10 @@ if __name__ == "__main__":
     n_producers_gen = discrete_uniform(1, 2)
     n_additional_gen = discrete_uniform(10, 50)
 
+    # Probability that two stores are connected
+    p_two_stores_connected = continuous_uniform(0.1, 0.3)()
+    stores_connected = bernoulli(p_two_stores_connected)
+
     # Initialise the graph
     graph = Graph(allowed_connection_types)
 
@@ -241,6 +256,14 @@ if __name__ == "__main__":
     n_stores = round(n_chains * mean_n_stores_per_chain_gen())
     for store_index in range(n_stores):
         store_node = graph.add_node(f"S {store_index}", NODE_STORE)
+
+    # Connect the stores depending on the probability that any two stores are
+    # connected
+    store_nodes = graph.nodes_of_type(NODE_STORE)
+    for i in range(len(store_nodes) - 1):
+        if stores_connected() == 1:
+            j = random.choice(list(range(i + 1, len(store_nodes))))
+            graph.add_edge(store_nodes[i], store_nodes[j])
 
     # Connect the stores and the chains
     connect_nodes(graph, NODE_STORE, NODE_CHAIN)

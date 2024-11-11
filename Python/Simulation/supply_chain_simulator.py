@@ -12,6 +12,7 @@
 # Each of those nodes can be connected by any number of 'other' nodes, which
 # model other types of businesses.
 
+
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
@@ -230,19 +231,16 @@ def connect_nodes(graph: Graph, node_type1: str, node_type2: str):
         graph.add_edge(src, dst)
 
 
-if __name__ == "__main__":
-
-    # Node-type specific distributions
-    n_chains_gen = discrete_uniform(2, 4)
-    mean_n_stores_per_chain_gen = continuous_uniform(2, 4)
-    n_local_distributors_gen = discrete_uniform(1, 2)
-    n_in_country_distributors_gen = discrete_uniform(2, 4)
-    n_producers_gen = discrete_uniform(1, 2)
-    n_additional_gen = discrete_uniform(10, 50)
-
-    # Probability that two stores are connected
-    p_two_stores_connected = continuous_uniform(0.1, 0.3)()
-    stores_connected = bernoulli(p_two_stores_connected)
+def generate_graph(
+    n_chains_gen,
+    mean_n_stores_per_chain_gen,
+    n_local_distributors_gen,
+    n_in_country_distributors_gen,
+    n_producers_gen,
+    n_additional_gen,
+    stores_connected,
+):
+    """Generate a random graph."""
 
     # Initialise the graph
     graph = Graph(allowed_connection_types)
@@ -300,6 +298,34 @@ if __name__ == "__main__":
 
     # Check the graph is consistent
     graph.assert_is_consistent()
+
+    return graph
+
+
+if __name__ == "__main__":
+
+    # Node-type specific distributions
+    n_chains_gen = discrete_uniform(2, 4)
+    mean_n_stores_per_chain_gen = continuous_uniform(2, 4)
+    n_local_distributors_gen = discrete_uniform(1, 2)
+    n_in_country_distributors_gen = discrete_uniform(2, 4)
+    n_producers_gen = discrete_uniform(1, 2)
+    n_additional_gen = discrete_uniform(10, 50)
+
+    # Probability that two stores are connected
+    p_two_stores_connected = continuous_uniform(0.1, 0.3)()
+    stores_connected = bernoulli(p_two_stores_connected)
+
+    # Generate a random graph
+    graph = generate_graph(
+        n_chains_gen,
+        mean_n_stores_per_chain_gen,
+        n_local_distributors_gen,
+        n_in_country_distributors_gen,
+        n_producers_gen,
+        n_additional_gen,
+        stores_connected,
+    )
 
     # Plot the graph
     graph.draw()

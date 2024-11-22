@@ -3,3 +3,4 @@ networkx
 numpy
 scipy
 seaborn
+z3-solver

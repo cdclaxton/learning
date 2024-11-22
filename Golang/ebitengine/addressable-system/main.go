@@ -19,6 +19,7 @@ const (
 var assets embed.FS
 
 var Background = mustLoadImage("assets/alarm-panel.png")
+var LedOn = mustLoadImage("assets/led-on.png")
 
 func mustLoadImage(name string) *ebiten.Image {
 	f, err := assets.Open(name)
@@ -37,11 +38,15 @@ func mustLoadImage(name string) *ebiten.Image {
 
 type Game struct {
 	background *Sprite
+	alarmPanel *AlarmPanel
 }
 
 func NewGame() *Game {
+	panel := NewAlarmPanel()
+
 	return &Game{
 		background: NewSprite(Background, 0, 0),
+		alarmPanel: panel,
 	}
 }
 
@@ -51,6 +56,7 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.background.Draw(screen)
+	g.alarmPanel.fireLed.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (int, int) {

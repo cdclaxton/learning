@@ -20,5 +20,7 @@ func NewSprite(sprite *ebiten.Image, topLeftX int, topLeftY int) *Sprite {
 
 func (s *Sprite) Draw(screen *ebiten.Image) {
 	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(s.topLeftX), float64(s.topLeftY))
+
 	screen.DrawImage(s.sprite, op)
 }

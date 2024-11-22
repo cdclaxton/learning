@@ -1,18 +1,28 @@
 grammar Expr;
-import LexerRulesExpr;
 
 // The start rule (begin parsing here)
 prog : stat+ ;
 
-stat : expr NEWLINE          # printExpr
-     | ID '=' expr NEWLINE   # assign
+// Statement
+stat : ID '=' expr NEWLINE   # assign
      | NEWLINE               # blank
      ;
 
-expr : expr ('*'|'/') expr   # MulDiv
-     | expr ('+'|'-') expr   # AddSub
-     | INT                   # int 
-     | ID                    # id
-     | '(' expr ')'          # parens
+// Expression
+expr : expr (op=('*'|'/')) expr   # MulDiv
+     | expr (op=('+'|'-')) expr   # AddSub
+     | INT                        # int 
+     | ID                         # id
+     | '(' expr ')'               # parens
      ;
-    
+
+// Lexer rules
+ID : [a-zA-Z]+ ;       // identifier
+INT : [0-9]+ ;         // integers
+NEWLINE : '\r'? '\n' ; // newlines (end of statement signal)
+WS : [ \t]+ -> skip ;  // ignore whitespace
+
+MUL : '*' ;
+DIV : '/' ;
+ADD : '+' ;
+SUB : '-' ;

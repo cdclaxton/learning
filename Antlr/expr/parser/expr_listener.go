@@ -11,9 +11,6 @@ type ExprListener interface {
 	// EnterProg is called when entering the prog production.
 	EnterProg(c *ProgContext)
 
-	// EnterPrintExpr is called when entering the printExpr production.
-	EnterPrintExpr(c *PrintExprContext)
-
 	// EnterAssign is called when entering the assign production.
 	EnterAssign(c *AssignContext)
 
@@ -37,9 +34,6 @@ type ExprListener interface {
 
 	// ExitProg is called when exiting the prog production.
 	ExitProg(c *ProgContext)
-
-	// ExitPrintExpr is called when exiting the printExpr production.
-	ExitPrintExpr(c *PrintExprContext)
 
 	// ExitAssign is called when exiting the assign production.
 	ExitAssign(c *AssignContext)

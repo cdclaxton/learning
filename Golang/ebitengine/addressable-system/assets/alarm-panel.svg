@@ -81,7 +81,7 @@
        style="fill:#666666;stroke:#666666;stroke-width:0.665;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-dasharray:none"
        d="M 5.2916666,79.374999 H 206.375"
        id="path5278" /><rect
-       style="opacity:1;fill:#bebdc0;fill-opacity:1;stroke-width:0.665001;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:0"
+       style="opacity:1;fill:#bebdc0;fill-opacity:1;stroke-width:0.265;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;stroke:#7f7f7f"
        id="rect5338"
        width="121.70833"
        height="72.760414"

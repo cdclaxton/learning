@@ -27,8 +27,10 @@ if (n.changepoints == 0) {
 } else if (n.changepoints == 1) {
   changepoints <- round(runif(1, 1, num.time.steps))
 } else {
-  changepoints <- sort(c(round(runif(1, min=1, max=num.timesteps)),
-                         round(runif(1, min=1, max=num.timesteps))))
+  changepoints <- sort(c(
+    round(runif(1, min = 1, max = num.timesteps)),
+    round(runif(1, min = 1, max = num.timesteps))
+  ))
 }
 
 # Generate the data for each of the time steps (this could be optimised)
@@ -51,8 +53,8 @@ for (i in 1:num.time.steps) {
 }
 
 # Plot the data
-plot(d, xlab = "Time index", ylab = "Value", pch=18, col="blue")
-if (n.changepoints > 0) abline(v=changepoints, col="gray60")
+plot(d, xlab = "Time index", ylab = "Value", pch = 18, col = "blue")
+if (n.changepoints > 0) abline(v = changepoints, col = "gray60")
 
 # ------------------------------------------------------------------------------
 # Perform inference
@@ -92,8 +94,8 @@ model {
   # Generate the data
   for (i in 1:N) {
 
-    l[i] <- lambda[1] + 
-      ((i > j && n > 1) * s[1] * lambda[2]) + 
+    l[i] <- lambda[1] +
+      ((i > j && n > 1) * s[1] * lambda[2]) +
       ((i > k && n > 2) * s[2] * lambda[3])
 
     d[i] ~ dpois(l[i])
@@ -106,18 +108,26 @@ writeLines(model.string, con = "temp_model.txt")
 inits <- list()
 
 # Data
-data <- list(alpha = c(0.8, 0.2, 0.1),
-             d = d,
-             N = length(d))
+data <- list(
+  alpha = c(0.8, 0.2, 0.1),
+  d = d,
+  N = length(d)
+)
 
 # Build the JAGS model
-model <- jags.model(file = "temp_model.txt", data = data,
-                    n.chains = 1, n.adapt = 500)
+model <- jags.model(
+  file = "temp_model.txt", data = data,
+  n.chains = 1, n.adapt = 500
+)
 update(model, n.iter = 500)
-samples <- coda.samples(model, 
-                        variable.names = c("n", "lambda", "j", "k", "lambda.region1", "lambda.region2", "lambda.region3"),
-                        n.iter = 1000)
-#plot(samples)
+samples <- coda.samples(model,
+  variable.names = c(
+    "n", "lambda", "j", "k",
+    "lambda.region1", "lambda.region2", "lambda.region3"
+  ),
+  n.iter = 1000
+)
+# plot(samples)
 
 m <- as.matrix(samples)
 head(m)
@@ -128,7 +138,7 @@ getmode <- function(v) {
   uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 
-n.mle <- getmode(m[,"n"])
+n.mle <- getmode(m[, "n"])
 cat("MLE of the number of regions = ", n.mle)
 
 # ------------------------------------------------------------------------------
@@ -136,9 +146,9 @@ cat("MLE of the number of regions = ", n.mle)
 # ------------------------------------------------------------------------------
 
 # Find the probability that there is a changepoint at each time step
-c1.rounded <- round(m[,"j"])
-c2.rounded <- round(m[,"k"])
-n <- m[,"n"]
+c1.rounded <- round(m[, "j"])
+c2.rounded <- round(m[, "k"])
+n <- m[, "n"]
 
 prob.changepoint1 <- rep(NA, num.time.steps)
 prob.changepoint2 <- rep(NA, num.time.steps)
@@ -147,11 +157,10 @@ prob.changepoint1.mle <- rep(NA, num.time.steps)
 prob.changepoint2.mle <- rep(NA, num.time.steps)
 
 for (i in 1:num.time.steps) {
-  
   # Probability that a changepoint occurred at time index i
   prob.changepoint1[i] <- length(which(c1.rounded == i)) / length(n)
   prob.changepoint2[i] <- length(which(c2.rounded == i)) / length(n)
-  
+
   # Probability that a changepoint occurred at time index i given the MLE
   # of n
   l.mle <- length(which(n == n.mle))
@@ -160,15 +169,17 @@ for (i in 1:num.time.steps) {
 }
 
 # Plot
-par(mar=c(5,4,4,5)+.1)
-plot(d, xlab = "Time index", ylab = "Value", pch=18, col="blue")
-#lines(x, col="purple", lty=2)
-abline(v=changepoints, col="gray60")
-par(new=TRUE)
-plot(prob.changepoint1, type="l", lty=2, col="green", xaxt="n",yaxt="n",xlab="",ylab="", ylim=c(0,1))
-lines(prob.changepoint1.mle, type="l", lty=1, col="green")
-lines(prob.changepoint2, type="l", lty=2, col="red")
-lines(prob.changepoint2.mle, type="l", lty=1, col="red")
+par(mar = c(5, 4, 4, 5) + .1)
+plot(d, xlab = "Time index", ylab = "Value", pch = 18, col = "blue")
+# lines(x, col="purple", lty=2)
+abline(v = changepoints, col = "gray60")
+par(new = TRUE)
+plot(prob.changepoint1,
+  type = "l", lty = 2, col = "green",
+  xaxt = "n", yaxt = "n", xlab = "", ylab = "", ylim = c(0, 1)
+)
+lines(prob.changepoint1.mle, type = "l", lty = 1, col = "green")
+lines(prob.changepoint2, type = "l", lty = 2, col = "red")
+lines(prob.changepoint2.mle, type = "l", lty = 1, col = "red")
 axis(4)
-mtext("Prob. of changepoint",side=4,line=3)
-
+mtext("Prob. of changepoint", side = 4, line = 3)

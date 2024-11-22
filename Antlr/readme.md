@@ -179,13 +179,6 @@ java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Cymbol.g4
 go run main.go
 ```
 
-## Validating program symbol usage
-
-```bash
-cd validate-symbol-usage/
-java -jar ../antlr-4.13.1-complete.jar -Dlanguage=Go -o parser Cymbol.g4
-```
-
 ## Calculator example
 
 ```bash

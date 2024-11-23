@@ -57,6 +57,12 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	g.background.Draw(screen)
 	g.alarmPanel.fireLed.Draw(screen)
+	g.alarmPanel.powerFailureLed.Draw(screen)
+	g.alarmPanel.fireZone1Led.Draw(screen)
+	g.alarmPanel.fireZone2Led.Draw(screen)
+	g.alarmPanel.fireZone3Led.Draw(screen)
+	g.alarmPanel.fireZone4Led.Draw(screen)
+	g.alarmPanel.fireZone5Led.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (int, int) {

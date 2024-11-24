@@ -30,11 +30,11 @@ type AlarmPanel struct {
 	fireInZone5Led *Sprite // Break glass
 
 	// Buttons
-	lampTestButton   *Sprite
-	soundAlarmButton *Sprite
-	stopAlarmButton  *Sprite
-	exitButton       *Sprite
-	enterButton      *Sprite
+	lampTestButton   *Button
+	soundAlarmButton *Button
+	stopAlarmButton  *Button
+	exitButton       *Button
+	enterButton      *Button
 }
 
 func NewAlarmPanel() *AlarmPanel {
@@ -45,6 +45,13 @@ func NewAlarmPanel() *AlarmPanel {
 	fireInZoneLeds[3] = NewSprite(LedOn, 241.890, 445.984)
 	fireInZoneLeds[4] = NewSprite(LedOn, 283.465, 445.984)
 
+	// Buttons
+	lampTestButton := NewButton(ebiten.KeyL, NewSprite(ButtonPressed, 86, 480))
+	soundAlarmButton := NewButton(ebiten.KeyA, NewSprite(ButtonPressed, 148.661, 480))
+	stopAlarmButton := NewButton(ebiten.KeyS, NewSprite(ButtonPressed, 212, 480))
+	exitButton := NewButton(ebiten.KeyX, NewSprite(ButtonPressed, 369.661, 457.102))
+	enterButton := NewButton(ebiten.KeyE, NewSprite(ButtonPressed, 404.661, 457.102))
+
 	return &AlarmPanel{
 		fireLed:               NewSprite(LedOn, 64, 365),
 		powerFailureLed:       NewSprite(LedOn, 64, 390),
@@ -52,11 +59,11 @@ func NewAlarmPanel() *AlarmPanel {
 		freeSmokeDetectorSlot: 1,
 		fireInZoneLeds:        fireInZoneLeds,
 		fireInZone5Led:        NewSprite(LedOn, 325.039, 445.984),
-		lampTestButton:        NewSprite(ButtonPressed, 86, 480),
-		soundAlarmButton:      NewSprite(ButtonPressed, 148.661, 480),
-		stopAlarmButton:       NewSprite(ButtonPressed, 212, 480),
-		exitButton:            NewSprite(ButtonPressed, 369.661, 457.102),
-		enterButton:           NewSprite(ButtonPressed, 404.661, 457.102),
+		lampTestButton:        lampTestButton,
+		soundAlarmButton:      soundAlarmButton,
+		stopAlarmButton:       stopAlarmButton,
+		exitButton:            exitButton,
+		enterButton:           enterButton,
 	}
 }
 
@@ -78,14 +85,64 @@ func (a *AlarmPanel) AddSmokeDetector(slot int, detector *SmokeDetector) {
 	a.smokeDetectors[slot] = detector
 }
 
-func (a *AlarmPanel) Update() {
+// anySensorTriggered returns true if any of the smoke detectors has been
+// triggered or the break glass has been broken
+func (a *AlarmPanel) anySensorTriggered() bool {
+
+	if a.breakGlass.IsBroken() {
+		return true
+	}
+
+	triggered := false
 
 	for i := 1; i <= maxSmokeDetectorSlots; i++ {
+		if a.smokeDetectors[i] != nil && a.smokeDetectors[i].IsDirectlyTriggered() {
+			triggered = true
+			break
+		}
+	}
 
+	return triggered
+}
+
+func (a *AlarmPanel) Update() {
+
+	// Update the buttons
+	a.lampTestButton.Update()
+	a.soundAlarmButton.Update()
+	a.stopAlarmButton.Update()
+	a.exitButton.Update()
+	a.enterButton.Update()
+
+	if a.anySensorTriggered() {
+		for i := 1; i <= maxSmokeDetectorSlots; i++ {
+			if a.smokeDetectors[i] != nil && !a.smokeDetectors[i].IsTriggered() {
+				a.smokeDetectors[i].Trigger(false)
+			}
+		}
+	}
+
+	// Reset the detectors if the stop alarm button is pressed
+	if a.stopAlarmButton.JustPressed() {
+
+		// Reset the smoke alarms
+		for i := 1; i <= maxSmokeDetectorSlots; i++ {
+			if a.smokeDetectors[i] != nil {
+				a.smokeDetectors[i].Reset()
+			}
+		}
+
+		// Reset the break glass
+		a.breakGlass.Reset()
 	}
 }
 
 func (a *AlarmPanel) Draw(screen *ebiten.Image) {
+
+	// Fire LED
+	if a.anySensorTriggered() {
+		a.fireLed.Draw(screen)
+	}
 
 	// Power failure LED
 	if !a.powerSwitch.PowerOn() {
@@ -99,7 +156,27 @@ func (a *AlarmPanel) Draw(screen *ebiten.Image) {
 		}
 	}
 
+	// Detect if the break glass is broken
 	if a.breakGlass.IsBroken() {
 		a.fireInZone5Led.Draw(screen)
 	}
+
+	if a.lampTestButton.Pressed() {
+
+		a.fireLed.Draw(screen)
+		a.powerFailureLed.Draw(screen)
+
+		for i := 1; i <= maxSmokeDetectorSlots; i++ {
+			a.fireInZoneLeds[i].Draw(screen)
+		}
+
+		a.fireInZone5Led.Draw(screen)
+	}
+
+	// Draw the buttons
+	a.lampTestButton.Draw(screen)
+	a.soundAlarmButton.Draw(screen)
+	a.stopAlarmButton.Draw(screen)
+	a.exitButton.Draw(screen)
+	a.enterButton.Draw(screen)
 }

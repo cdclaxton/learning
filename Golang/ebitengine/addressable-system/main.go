@@ -21,7 +21,7 @@ var assets embed.FS
 var Background = mustLoadImage("assets/alarm-panel.png")
 var LedOn = mustLoadImage("assets/led-on.png")
 var ButtonPressed = mustLoadImage("assets/button-pressed.png")
-var Key = mustLoadImage("assets/key.png")
+var PowerKey = mustLoadImage("assets/key.png")
 
 var SmokeDetectorOff = mustLoadImage("assets/smoke-alarm.png")
 var SmokeDetectorLedOn = mustLoadImage("assets/smoke-alarm-led-on.png")

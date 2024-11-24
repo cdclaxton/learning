@@ -15,8 +15,8 @@ func TestSmokeAlarm(t *testing.T) {
 	alarm.Reset()
 	assert.Equal(t, SmokeDetectorNormalLedOff, alarm.state)
 
-	alarm.Trigger()
-	assert.Equal(t, SmokeAlarmActivated, alarm.state)
+	alarm.Trigger(true)
+	assert.Equal(t, SmokeDetectorActivated1, alarm.state)
 
 	alarm.Reset()
 	assert.Equal(t, SmokeDetectorNormalLedOff, alarm.state)

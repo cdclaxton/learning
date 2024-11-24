@@ -15,7 +15,7 @@ type PowerSwitch struct {
 func NewPowerSwitch() *PowerSwitch {
 	return &PowerSwitch{
 		powerOn: true,
-		sprite:  NewCentredSprite(Key, 560.0, 370.0),
+		sprite:  NewCentredSprite(PowerKey, 560.0, 370.0),
 	}
 }
 

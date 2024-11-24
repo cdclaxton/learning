@@ -66,7 +66,12 @@ func NewSmokeDetector(location string, x float64, y float64, key ebiten.Key) *Sm
 // Trigger the smoke detector, which will cause the light to flash.
 func (s *SmokeDetector) Trigger(direct bool) {
 	s.state = SmokeDetectorActivated1
+	s.flashTimer.Reset()
 	s.directlyTriggered = direct
+}
+
+func (s *SmokeDetector) IsTriggered() bool {
+	return s.state == SmokeDetectorActivated1 || s.state == SmokeDetectorActivated2
 }
 
 // IsDirectlyTriggered returns true if the detector was directly triggered, i.e.
@@ -78,6 +83,7 @@ func (s *SmokeDetector) IsDirectlyTriggered() bool {
 // Reset the smoke detector to its unactivated state.
 func (s *SmokeDetector) Reset() {
 	s.state = SmokeDetectorNormalLedOff
+	s.directlyTriggered = false
 }
 
 // Update the smoke detector in the game loop.

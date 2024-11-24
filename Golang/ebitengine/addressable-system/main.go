@@ -54,16 +54,26 @@ type Game struct {
 	smokeAlarm2 *SmokeDetector
 	smokeAlarm3 *SmokeDetector
 	smokeAlarm4 *SmokeDetector
+
+	sounder *Sounder
 }
 
 func NewGame() *Game {
 
+	// Make the power switch
 	powerSwitch := NewPowerSwitch()
+
+	// Make the break glass
 	breakGlass := NewBreakGlass()
+
+	// Make the smoke alarms
 	smokeAlarm1 := NewSmokeDetector("Lounge", 100.0, 20.0, ebiten.Key1)
 	smokeAlarm2 := NewSmokeDetector("Bedroom 1", 300.0, 20.0, ebiten.Key2)
 	smokeAlarm3 := NewSmokeDetector("Bedroom 2", 500.0, 20.0, ebiten.Key3)
 	smokeAlarm4 := NewSmokeDetector("Landing", 700.0, 20.0, ebiten.Key4)
+
+	// Make the sounder
+	sounder := NewSounder()
 
 	// Make the alarm panel
 	panel := NewAlarmPanel()
@@ -73,6 +83,7 @@ func NewGame() *Game {
 	panel.AddSmokeDetector(2, smokeAlarm2)
 	panel.AddSmokeDetector(3, smokeAlarm3)
 	panel.AddSmokeDetector(4, smokeAlarm4)
+	panel.SetSounder(sounder)
 
 	return &Game{
 		background:  NewSprite(Background, 0, 0),
@@ -83,6 +94,7 @@ func NewGame() *Game {
 		smokeAlarm2: smokeAlarm2,
 		smokeAlarm3: smokeAlarm3,
 		smokeAlarm4: smokeAlarm4,
+		sounder:     sounder,
 	}
 }
 

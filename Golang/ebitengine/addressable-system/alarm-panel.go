@@ -35,6 +35,9 @@ type AlarmPanel struct {
 	stopAlarmButton  *Button
 	exitButton       *Button
 	enterButton      *Button
+
+	// Sounder
+	sounder *Sounder
 }
 
 func NewAlarmPanel() *AlarmPanel {
@@ -74,6 +77,10 @@ func (a *AlarmPanel) SetPowerSwitch(powerSwitch *PowerSwitch) {
 
 func (a *AlarmPanel) SetBreakGlass(breakGlass *BreakGlass) {
 	a.breakGlass = breakGlass
+}
+
+func (a *AlarmPanel) SetSounder(sounder *Sounder) {
+	a.sounder = sounder
 }
 
 // AddSmokeDetector to the alarm panel in the required slot.

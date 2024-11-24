@@ -9,11 +9,11 @@ import (
 func TestPowerSwitch(t *testing.T) {
 	power := NewPowerSwitch()
 
-	assert.True(t, power.PowerOn)
+	assert.True(t, power.powerOn)
 
 	power.ChangeState()
-	assert.False(t, power.PowerOn)
+	assert.False(t, power.powerOn)
 
 	power.ChangeState()
-	assert.True(t, power.PowerOn)
+	assert.True(t, power.powerOn)
 }

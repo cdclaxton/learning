@@ -115,6 +115,9 @@ func (g *Game) Update() error {
 	// Update the alarm panel
 	g.alarmPanel.Update()
 
+	// Update the sounder
+	g.sounder.Update()
+
 	return nil
 }
 

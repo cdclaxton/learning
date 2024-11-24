@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"sync/atomic"
 	"time"
 
 	"github.com/ebitengine/oto/v3"
@@ -19,6 +20,12 @@ type Sounder struct {
 	alarmSoundDecoder *mp3.Decoder
 	enterSoundDecoder *mp3.Decoder
 	exitSoundDecoder  *mp3.Decoder
+
+	ringAlarm    bool
+	exitMessage  bool
+	enterMessage bool
+
+	makingSound atomic.Bool
 }
 
 func NewSounder() *Sounder {
@@ -38,16 +45,48 @@ func NewSounder() *Sounder {
 	}
 }
 
+func (a *Sounder) RingAlarm() {
+	a.ringAlarm = true
+}
+
+func (a *Sounder) StopAlarm() {
+	a.ringAlarm = false
+}
+
+func (a *Sounder) PlayExitMessage() {
+	a.enterMessage = false
+	a.exitMessage = true
+}
+
+func (a *Sounder) PlayEnterMessage() {
+	a.enterMessage = true
+	a.exitMessage = false
+}
+
+func (a *Sounder) Update() {
+	if !a.makingSound.Load() {
+		if a.enterMessage {
+			a.playEnterSound()
+		} else if a.exitMessage {
+			a.playExitSound()
+		} else if a.ringAlarm {
+			a.playAlarm()
+		}
+	}
+}
+
 func (a *Sounder) playAlarm() {
 	a.PlaySound(a.alarmSoundDecoder)
 }
 
 func (a *Sounder) playEnterSound() {
 	a.PlaySound(a.enterSoundDecoder)
+	a.enterMessage = false
 }
 
 func (a *Sounder) playExitSound() {
 	a.PlaySound(a.exitSoundDecoder)
+	a.exitMessage = false
 }
 
 func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
@@ -57,7 +96,9 @@ func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
 	}
 
 	player := a.otoCtx.NewPlayer(decoder)
-	go func() {
+	go func(b *atomic.Bool) {
+
+		b.Store(true)
 		player.Play()
 
 		for player.IsPlaying() {
@@ -68,7 +109,9 @@ func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
 		if err != nil {
 			panic(err)
 		}
-	}()
+
+		b.Store(false)
+	}(&a.makingSound)
 }
 
 func loadSound(filepath string) *mp3.Decoder {
@@ -93,7 +136,7 @@ func loadSound(filepath string) *mp3.Decoder {
 func makeAudioPlayer() *oto.Context {
 
 	op := &oto.NewContextOptions{}
-	op.SampleRate = 44100
+	op.SampleRate = 24000
 	op.ChannelCount = 2                 // 1 = mono, 2 = stereo
 	op.Format = oto.FormatSignedInt16LE // Format of the source
 

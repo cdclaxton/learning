@@ -121,12 +121,14 @@ func (a *AlarmPanel) Update() {
 	a.exitButton.Update()
 	a.enterButton.Update()
 
-	if a.anySensorTriggered() {
+	if a.anySensorTriggered() || a.soundAlarmButton.JustPressed() {
 		for i := 1; i <= maxSmokeDetectorSlots; i++ {
 			if a.smokeDetectors[i] != nil && !a.smokeDetectors[i].IsTriggered() {
 				a.smokeDetectors[i].Trigger(false)
 			}
 		}
+
+		a.sounder.RingAlarm()
 	}
 
 	// Reset the detectors if the stop alarm button is pressed
@@ -141,6 +143,17 @@ func (a *AlarmPanel) Update() {
 
 		// Reset the break glass
 		a.breakGlass.Reset()
+
+		// Stop the alarm sounder
+		a.sounder.StopAlarm()
+	}
+
+	if a.exitButton.JustPressed() {
+		a.sounder.PlayExitMessage()
+	}
+
+	if a.enterButton.JustPressed() {
+		a.sounder.PlayEnterMessage()
 	}
 }
 

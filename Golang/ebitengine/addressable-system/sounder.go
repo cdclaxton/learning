@@ -25,7 +25,8 @@ type Sounder struct {
 	exitMessage  bool
 	enterMessage bool
 
-	makingSound atomic.Bool
+	makingSound           atomic.Bool
+	shouldStopMakingSound atomic.Bool
 }
 
 func NewSounder() *Sounder {
@@ -51,6 +52,7 @@ func (a *Sounder) RingAlarm() {
 
 func (a *Sounder) StopAlarm() {
 	a.ringAlarm = false
+	a.shouldStopMakingSound.Store(true)
 }
 
 func (a *Sounder) PlayExitMessage() {
@@ -65,6 +67,8 @@ func (a *Sounder) PlayEnterMessage() {
 
 func (a *Sounder) Update() {
 	if !a.makingSound.Load() {
+		a.shouldStopMakingSound.Store(false)
+
 		if a.enterMessage {
 			a.playEnterSound()
 		} else if a.exitMessage {
@@ -96,12 +100,17 @@ func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
 	}
 
 	player := a.otoCtx.NewPlayer(decoder)
-	go func(b *atomic.Bool) {
+	go func(makingSound *atomic.Bool, mustStop *atomic.Bool) {
 
-		b.Store(true)
+		makingSound.Store(true)
 		player.Play()
 
 		for player.IsPlaying() {
+			if mustStop.Load() {
+				player.Pause()
+				break
+			}
+
 			time.Sleep(time.Millisecond)
 		}
 
@@ -110,8 +119,8 @@ func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
 			panic(err)
 		}
 
-		b.Store(false)
-	}(&a.makingSound)
+		makingSound.Store(false)
+	}(&a.makingSound, &a.shouldStopMakingSound)
 }
 
 func loadSound(filepath string) *mp3.Decoder {

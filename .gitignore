@@ -24,3 +24,4 @@ Rplots.pdf
 node_modules/
 
 *.wasm
+wasm_exec.js

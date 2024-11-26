@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
-	"os"
 	"sync/atomic"
 	"time"
 
@@ -125,9 +125,9 @@ func (a *Sounder) PlaySound(decoder *mp3.Decoder) {
 
 func loadSound(filepath string) *mp3.Decoder {
 	// Read the MP3 file into memory
-	fileBytes, err := os.ReadFile(filepath)
+	fileBytes, err := assets.ReadFile(filepath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to read file: %w", err))
 	}
 
 	// Convert the bytes to a reader object

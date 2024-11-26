@@ -22,3 +22,5 @@ Rplots.pdf
 .Rhistory
 
 node_modules/
+
+*.wasm

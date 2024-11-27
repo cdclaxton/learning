@@ -49,11 +49,11 @@ func NewAlarmPanel() *AlarmPanel {
 	fireInZoneLeds[4] = NewSprite(LedOn, 283.465, 445.984)
 
 	// Buttons
-	lampTestButton := NewButton(ebiten.KeyL, NewSprite(ButtonPressed, 86, 480))
-	soundAlarmButton := NewButton(ebiten.KeyA, NewSprite(ButtonPressed, 148.661, 480))
-	stopAlarmButton := NewButton(ebiten.KeyS, NewSprite(ButtonPressed, 212, 480))
-	exitButton := NewButton(ebiten.KeyX, NewSprite(ButtonPressed, 369.661, 457.102))
-	enterButton := NewButton(ebiten.KeyE, NewSprite(ButtonPressed, 404.661, 457.102))
+	lampTestButton := NewButton("Lamp test", ebiten.KeyL, NewSprite(ButtonPressed, 86, 480), NewBox(84, 480, 104, 498))
+	soundAlarmButton := NewButton("Sound alarm", ebiten.KeyA, NewSprite(ButtonPressed, 148.661, 480), NewBox(148, 479, 170, 498))
+	stopAlarmButton := NewButton("Stop alarm", ebiten.KeyS, NewSprite(ButtonPressed, 212, 480), NewBox(212, 480, 233, 498))
+	exitButton := NewButton("Exit", ebiten.KeyX, NewSprite(ButtonPressed, 369.661, 457.102), NewBox(370, 457, 391, 474))
+	enterButton := NewButton("Enter", ebiten.KeyE, NewSprite(ButtonPressed, 404.661, 457.102), NewBox(404, 457, 425, 475))
 
 	return &AlarmPanel{
 		fireLed:               NewSprite(LedOn, 64, 365),

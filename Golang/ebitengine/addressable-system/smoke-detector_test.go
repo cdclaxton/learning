@@ -8,7 +8,7 @@ import (
 )
 
 func TestSmokeAlarm(t *testing.T) {
-	alarm := NewSmokeDetector("lounge", 100, 20, ebiten.Key0)
+	alarm := NewSmokeDetector("lounge", 100, 20, ebiten.Key0, nil)
 	assert.Equal(t, "lounge", alarm.location)
 	assert.Equal(t, SmokeDetectorNormalLedOff, alarm.state)
 

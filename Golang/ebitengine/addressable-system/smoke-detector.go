@@ -32,6 +32,8 @@ type SmokeDetector struct {
 	ledOffTimer *Timer
 	ledOnTimer  *Timer
 	flashTimer  *Timer
+
+	clickBox *Box // Mouse button click detection box
 }
 
 // randomTimeInMilliseconds returns a random time in milliseconds in the range
@@ -41,7 +43,7 @@ func randomTimeInMilliseconds(min int, max int) time.Duration {
 	return time.Duration(i) * time.Millisecond
 }
 
-func NewSmokeDetector(location string, x float64, y float64, key ebiten.Key) *SmokeDetector {
+func NewSmokeDetector(location string, x float64, y float64, key ebiten.Key, clickBox *Box) *SmokeDetector {
 
 	// Add noise to the timers to simulate manufacturing tolerances
 	ledOffTimer := NewTimer(randomTimeInMilliseconds(1000, 1010))
@@ -60,6 +62,7 @@ func NewSmokeDetector(location string, x float64, y float64, key ebiten.Key) *Sm
 		ledOffTimer:       ledOffTimer,
 		ledOnTimer:        ledOnTimer,
 		flashTimer:        flashTimer,
+		clickBox:          clickBox,
 	}
 }
 
@@ -119,7 +122,13 @@ func (s *SmokeDetector) Update() {
 		}
 	}
 
+	// Detect if the smoke detector has been triggered by a key press
 	if ebiten.IsKeyPressed(s.triggerKey) && inpututil.IsKeyJustPressed(s.triggerKey) {
+		s.Trigger(true)
+	}
+
+	// Detect if the smoke detector has been triggered by the mouse
+	if MouseClickedInBox(s.clickBox) {
 		s.Trigger(true)
 	}
 }

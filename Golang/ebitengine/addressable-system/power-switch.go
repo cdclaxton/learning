@@ -8,14 +8,16 @@ import (
 )
 
 type PowerSwitch struct {
-	powerOn bool
-	sprite  *CentredSprite
+	powerOn  bool
+	sprite   *CentredSprite
+	clickBox *Box // Mouse button click detection box
 }
 
 func NewPowerSwitch() *PowerSwitch {
 	return &PowerSwitch{
-		powerOn: true,
-		sprite:  NewCentredSprite(PowerKey, 560.0, 370.0),
+		powerOn:  true,
+		sprite:   NewCentredSprite(PowerKey, 560.0, 370.0),
+		clickBox: NewBox(512, 322, 610, 419),
 	}
 }
 
@@ -32,7 +34,14 @@ func (p *PowerSwitch) ChangeState() {
 
 // Update the power switch in the game loop.
 func (p *PowerSwitch) Update() {
+
+	// Detect if the power switch has been triggered by a key press
 	if ebiten.IsKeyPressed(ebiten.KeyP) && inpututil.IsKeyJustPressed(ebiten.KeyP) {
+		p.ChangeState()
+	}
+
+	// Detect if the power switch has been triggered by the mouse
+	if MouseClickedInBox(p.clickBox) {
 		p.ChangeState()
 	}
 }

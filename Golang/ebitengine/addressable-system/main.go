@@ -67,10 +67,10 @@ func NewGame() *Game {
 	breakGlass := NewBreakGlass()
 
 	// Make the smoke alarms
-	smokeAlarm1 := NewSmokeDetector("Lounge", 100.0, 20.0, ebiten.Key1)
-	smokeAlarm2 := NewSmokeDetector("Bedroom 1", 300.0, 20.0, ebiten.Key2)
-	smokeAlarm3 := NewSmokeDetector("Bedroom 2", 500.0, 20.0, ebiten.Key3)
-	smokeAlarm4 := NewSmokeDetector("Landing", 700.0, 20.0, ebiten.Key4)
+	smokeAlarm1 := NewSmokeDetector("Lounge", 100.0, 20.0, ebiten.Key1, NewBox(0, 0, 200, 300))
+	smokeAlarm2 := NewSmokeDetector("Bedroom 1", 300.0, 20.0, ebiten.Key2, NewBox(201, 0, 400, 300))
+	smokeAlarm3 := NewSmokeDetector("Bedroom 2", 500.0, 20.0, ebiten.Key3, NewBox(401, 0, 600, 300))
+	smokeAlarm4 := NewSmokeDetector("Landing", 700.0, 20.0, ebiten.Key4, NewBox(601, 0, 800, 300))
 
 	// Make the sounder
 	sounder := NewSounder()

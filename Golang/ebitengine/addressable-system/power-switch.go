@@ -41,7 +41,7 @@ func (p *PowerSwitch) Update() {
 	}
 
 	// Detect if the power switch has been triggered by the mouse
-	if MouseClickedInBox(p.clickBox) {
+	if MouseButtonJustPressedInBox(p.clickBox) {
 		p.ChangeState()
 	}
 }

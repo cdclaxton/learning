@@ -128,7 +128,7 @@ func (s *SmokeDetector) Update() {
 	}
 
 	// Detect if the smoke detector has been triggered by the mouse
-	if MouseClickedInBox(s.clickBox) {
+	if MouseButtonJustPressedInBox(s.clickBox) {
 		s.Trigger(true)
 	}
 }

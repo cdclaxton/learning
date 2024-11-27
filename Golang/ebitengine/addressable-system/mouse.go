@@ -34,9 +34,9 @@ func (b *Box) InBox(x int, y int) bool {
 		y >= b.TopLeft.Y && y <= b.BottomRight.Y
 }
 
-// MouseClickedInBox returns true if the mouse was left-clicked inside the box
-// just on this frame.
-func MouseClickedInBox(box *Box) bool {
+// MouseButtonJustPressedInBox returns true if the mouse was left-clicked inside
+// the box just on this frame.
+func MouseButtonJustPressedInBox(box *Box) bool {
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
 		x, y := ebiten.CursorPosition()
 		return box.InBox(x, y)

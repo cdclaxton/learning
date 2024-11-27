@@ -39,10 +39,14 @@ func (b *Button) Update() {
 	if MousePressedInBox(b.clickBox) {
 		b.pressed = true
 		checkKeys = false
+	} else {
+		b.pressed = false
 	}
-	if MouseClickedInBox(b.clickBox) {
+	if MouseButtonJustPressedInBox(b.clickBox) {
 		b.justPressed = true
-		return
+		checkKeys = false
+	} else {
+		b.justPressed = false
 	}
 
 	if !checkKeys {

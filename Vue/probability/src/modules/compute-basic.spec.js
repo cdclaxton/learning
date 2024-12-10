@@ -1,6 +1,6 @@
 import { expect, test, describe } from 'vitest'
 import { Distribution } from './probability'
-import { addDistributions, objectToDistribution } from './compute-add'
+import { addDistributions, multiplyDistributions, objectToDistribution } from './compute-basic'
 
 describe('objectToDistribution', () => {
   test('distribution with one value', () => {
@@ -28,7 +28,7 @@ describe('objectToDistribution', () => {
   })
 })
 
-describe('sum of two distributions', () => {
+describe('sum of distributions', () => {
   let tolerance = 1e-5
 
   test('no distributions', () => {
@@ -62,5 +62,44 @@ describe('sum of two distributions', () => {
     // 2+5 = 7, prob = 0.8*0.2
     let expected = new Distribution([2, 3, 6, 7], [0.2 * 0.8, 0.8 * 0.8, 0.2 * 0.2, 0.8 * 0.2])
     expect(addDistributions(dist1, dist2).equals(expected).success).toBe(true)
+  })
+})
+
+describe('product of distributions', () => {
+  let tolerance = 1e-5
+
+  test('no distributions', () => {
+    expect(() => multiplyDistributions()).toThrowError('no distributions')
+  })
+
+  test('one distribution', () => {
+    let dist1 = new Distribution([0.5, 3], [0.2, 0.8])
+    expect(multiplyDistributions(dist1).equals(dist1, tolerance).success).toBe(true)
+  })
+
+  test('distributions of zeros', () => {
+    let dist1 = new Distribution([0], [1.0])
+    expect(multiplyDistributions(dist1).equals(dist1, tolerance).success).toBe(true)
+    expect(multiplyDistributions(dist1, dist1).equals(dist1, tolerance).success).toBe(true)
+    expect(multiplyDistributions(dist1, dist1, dist1).equals(dist1, tolerance).success).toBe(true)
+  })
+
+  test('distributions with all mass on one value', () => {
+    let dist1 = new Distribution([1], [1.0])
+    let dist2 = new Distribution([2], [1.0])
+    expect(multiplyDistributions(dist1, dist2).equals(new Distribution([2], [1.0])).success).toBe(
+      true,
+    )
+  })
+
+  test('two distributions', () => {
+    let dist1 = new Distribution([1, 2], [0.2, 0.8])
+    let dist2 = new Distribution([1, 5], [0.8, 0.2])
+    // 1*1 = 1, prob = 0.2*0.8
+    // 1*5 = 5, prob = 0.2*0.2
+    // 2*1 = 2, prob = 0.8*0.8
+    // 2*5 = 10, prob = 0.8*0.2
+    let expected = new Distribution([1, 2, 5, 10], [0.2 * 0.8, 0.8 * 0.8, 0.2 * 0.2, 0.8 * 0.2])
+    expect(multiplyDistributions(dist1, dist2).equals(expected).success).toBe(true)
   })
 })

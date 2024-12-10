@@ -21,11 +21,9 @@ export function objectToDistribution(obj) {
 }
 
 /**
- * Calculate the distribution of the sum of one or more distributions.
- * @param  {...Distribution} dists Distributions
- * @returns {Distribution}
+ * Perform a commutative operation on distributions.
  */
-export function addDistributions(...dists) {
+function commutativeOpOnDistributions(op, ...dists) {
   if (dists.length == 0) {
     throw new Error('no distributions')
   }
@@ -46,7 +44,7 @@ export function addDistributions(...dists) {
   let result = {}
   for (let ai in a.values) {
     for (let bi in b.values) {
-      let element = a.values[ai] + b.values[bi]
+      let element = op(a.values[ai], b.values[bi])
       let prob = a.probabilities[ai] * b.probabilities[bi]
 
       if (!(element in result)) {
@@ -58,4 +56,24 @@ export function addDistributions(...dists) {
   }
 
   return objectToDistribution(result)
+}
+
+/**
+ * Calculate the distribution of the sum of one or more distributions.
+ * @param  {...Distribution} dists Distributions
+ * @returns {Distribution}
+ */
+export function addDistributions(...dists) {
+  const op = (a, b) => a + b
+  return commutativeOpOnDistributions(op, ...dists)
+}
+
+/**
+ * Calculate the distribution of the product of one or more distributions.
+ * @param  {...any} dists
+ * @returns
+ */
+export function multiplyDistributions(...dists) {
+  const op = (a, b) => a * b
+  return commutativeOpOnDistributions(op, ...dists)
 }

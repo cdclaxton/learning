@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Images</title>
+        <style>
+            .rect-rounded {
+                width: 200px;
+                border-radius: 10px;
+            }
+
+            .square {
+                width: 140px;
+                height: 140px;
+                object-fit: cover;
+            }
+
+            .circle {
+                width:140px;
+                height: 140px;
+                object-fit: cover;
+                border-radius: 100px;
+            }
+
+            .simple-search-box {
+                font-size: 14px;
+                padding: 8px;
+                border-radius: 10px;
+                border-width: 1px;
+            }
+
+            .google-search {
+                font-size: 14px;
+                padding: 8px;
+                border-radius: 20px;
+                border-width: 0px;
+                box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.15);
+                padding-right: 40px;
+                margin-top: 10px;
+            }
+
+            .twitter {
+                margin-top: 10px;
+                padding: 5px;
+                width: 350px;
+                box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.15);
+                border-radius: 10px;
+            }
+
+            .twitter-image {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 25px;
+                vertical-align: middle;
+                margin-right: 5px;
+            }
+            
+            .twitter-text {
+                font-size: 14px;
+                border: 0px;
+                vertical-align: middle;
+            }
+
+            .twitter-button {
+                background-color: #1DA1F2;
+                color: white;
+                border: 0px;
+                font-weight: bold;
+                padding: 8px 15px;
+                border-radius: 20px;
+                vertical-align: middle;
+            }
+
+            .twitter-button:hover {
+                cursor: pointer;
+            }
+
+            .sign-up-form {
+                width: 310px;
+                border: 1px solid black;
+                padding: 10px;
+                margin-top: 10px;
+            }
+
+            .sign-up-name {
+                font-size: 16px;
+                border-radius: 5px;
+                border: 1px solid gray;
+                padding: 5px;
+                width: 135px;
+                margin-right: 5px;
+            }
+
+            .sign-up-email {
+                font-size: 16px;
+                border-radius: 5px;
+                border: 1px solid gray;
+                margin-top: 10px;
+                width: 290px;
+                display: block;
+                padding: 5px;
+            }
+
+            .sign-up-button {
+                background-color: #1DA1F2;
+                border: 0px;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+                font-size: 16px;
+                width: 300px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                margin-top: 10px;
+            }
+
+            .pawbook {
+                margin-top: 10px;
+            }
+
+            .pawbook-friend {
+                width: 250px;
+                display: inline-block;
+                margin-right: 5px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            }
+
+            .pawbook-photo {
+                width: 250px;
+                height: 250px;
+                object-fit: cover;
+            }
+
+            .pawbook-name {
+                font-weight: bold;
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                padding-left: 10px;
+                font-size: 16px;
+                margin-bottom: 0px;
+            }
+
+            .pawbook-friends {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                color: gray;
+                font-size: 14px;
+                margin-left: 10px;
+                margin-top: 4px;
+            }
+
+            .pawbook-add-friend {
+                background-color: #1a7dba;
+                border: 0px;
+                color: white;
+                font-size: 16px;
+                padding: 8px 15px;
+                border-radius: 5px;
+                margin-left: 10px;
+                margin-bottom: 10px;
+            }
+
+            .pawbook-add-friend {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <img class="rect-rounded" src="./assets/cat.jpg">
+        <img class="square" src="./assets/cat.jpg">
+        <img class="circle" src="./assets/cat.jpg">
+
+        <div>
+            <input class="simple-search-box" type="text" placeholder="Search">
+        </div>
+        
+        <div>
+            <input class="google-search" type="text" placeholder="Search Google or type a URL">
+        </div>
+
+        <div class="twitter">
+            <img class="twitter-image" src="./assets/cat.jpg">
+            <input class="twitter-text" placeholder="What's happening?">
+            <button class="twitter-button">Tweet</button>
+        </div>
+
+        <div class="sign-up-form">
+            <input class="sign-up-name" type="text" placeholder="First name">
+            <input class="sign-up-name" type="text" placeholder="Surname">
+            <input class="sign-up-email" type="text" placeholder="Email">
+            <button class="sign-up-button">Sign Up</button>
+        </div>
+
+        <div class="pawbook">
+            <div class="pawbook-friend">
+                <img class="pawbook-photo" src="./assets/cat.jpg">
+                <p class="pawbook-name">Oliver</p>
+                <p class="pawbook-friends">2 mutual friends</p>
+                <button class="pawbook-add-friend">Add Friend</button>
+            </div>
+            <div class="pawbook-friend">
+                <img class="pawbook-photo"src="./assets/cat2.jpg">
+                <p class="pawbook-name">Mimi</p>
+                <p class="pawbook-friends">3 mutual friends</p>
+                <button class="pawbook-add-friend">Add Friend</button>
+            </div>
+            <div class="pawbook-friend">
+                <img class="pawbook-photo"src="./assets/dog.jpg">
+                <p class="pawbook-name">Rex</p>
+                <p class="pawbook-friends">4 mutual friends</p>
+                <button class="pawbook-add-friend">Add Friend</button>
+            </div>            
+        </div>
+    </body>
+</html>

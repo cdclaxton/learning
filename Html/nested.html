@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nested layouts</title>
+        <style>
+            p {
+                margin-top: 0px;
+                margin-bottom: 0px;
+            }
+
+            .vertical {
+                border: 1px solid teal;
+                margin-bottom: 10px;
+            }
+
+            .vertical-text {
+                border: 1px solid green;
+                margin-top: 0px;
+                padding-top: 0px;
+            }
+
+
+            .horizontal {
+                border: 1px solid teal;
+                margin-bottom: 10px;
+            }
+
+            .horizontal-text {
+                border: 1px solid green;
+                display: inline-block;
+            }
+
+            .cat {
+                padding: 5px;
+                margin-bottom: 10px;
+            }
+
+            .cat-image-div {
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 20px;
+            }
+
+            .cat-image {
+                width: 70px;
+                height: 70px;
+                object-fit: cover;
+                border-radius: 50px;
+            }
+
+            .cat-text {
+                padding: 0px;
+                margin: 0px;
+                display: inline-block;
+                vertical-align: middle;
+                width: 200px;
+            }
+
+            .cat-line1 {
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bold;
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .cat-line2 {
+                font-family: Arial, Helvetica, sans-serif;
+                color:gray;
+                margin-bottom: 0px;
+                margin-top: 0px;
+                margin-bottom: 5px;
+            }
+
+            .cat-line3 {
+                font-family: Arial, Helvetica, sans-serif;
+                color:gray;
+                margin-bottom: 0px;
+                margin-top: 0px;
+            }
+
+            .cat-button-div {
+                display: inline-block;
+                vertical-align: middle;
+            }
+            
+            .cat-button {
+                background-color: #1DA1F2;
+                color: white;
+                padding: 6px 12px;
+                border: 0px;
+                border-radius: 5px;
+                font-weight: bold;
+                font-size: 16px;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .cat-button:hover {
+                cursor: pointer;
+            }
+
+        </style>
+    </head>
+    <body>
+        <p>Example of vertical divs:</p>
+        <div class="vertical">
+            <div class="vertical-text">
+                <p>Text 1</p>
+            </div>
+            <div class="vertical-text">
+                <p>Text 2</p>
+            </div>
+        </div>
+
+        <p>Example of horizontal divs:</p>
+        <div class="horizontal">
+            <div class="horizontal-text">
+                <p>Text 1</p>
+            </div>
+            <div class="horizontal-text">
+                <p>Text 2</p>
+            </div>
+            <div class="horizontal-text">
+                <p>Text 3</p>
+            </div>
+        </div>
+
+        <div class="cat">
+            <div class="cat-image-div">
+                <img class="cat-image" src="./assets/cat.jpg">
+            </div>
+
+            <div class="cat-text">
+                <div class="cat-line1">
+                    <p>Oliver</p>
+                </div>
+                <div class="cat-line2">
+                    <p>The cat</p>
+                </div>
+                <div class="cat-line3">
+                    <p>Popular</p>
+                </div>
+            </div>
+
+            <div class="cat-button-div">
+                <button class="cat-button">Follow</button>
+            </div>
+        </div>
+
+        <div class="cat">
+            <div class="cat-image-div">
+                <img class="cat-image" src="./assets/cat2.jpg">
+            </div>
+
+            <div class="cat-text">
+                <div class="cat-line1">
+                    <p>Mimi</p>
+                </div>
+                <div class="cat-line2">
+                    <p>Sleepy cat</p>
+                </div>
+                <div class="cat-line3">
+                    <p>Popular</p>
+                </div>
+            </div>
+
+            <div class="cat-button-div">
+                <button class="cat-button">Follow</button>
+            </div>
+        </div>
+
+        <div class="cat">
+            <div class="cat-image-div">
+                <img class="cat-image" src="./assets/dog.jpg">
+            </div>
+
+            <div class="cat-text">
+                <div class="cat-line1">
+                    <p>Rex</p>
+                </div>
+                <div class="cat-line2">
+                    <p>Happy dog</p>
+                </div>
+                <div class="cat-line3">
+                    <p>Popular</p>
+                </div>
+            </div>
+
+            <div class="cat-button-div">
+                <button class="cat-button">Follow</button>
+            </div>
+        </div>
+    </body>
+</html>

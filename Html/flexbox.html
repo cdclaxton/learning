@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Flexbox</title>
+        <style>
+            p {
+                margin: 0px;
+            }
+
+            .two-columns {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .left {
+                background-color: lightblue;
+                width: 200px;
+            }
+
+            .right {
+                background-color: lightpink;
+                width: 75px;
+            }
+
+            .three-columns {
+                display: flex;
+                flex-direction: row;
+                margin-top: 10px;
+            }
+
+            .three-columns-left {
+                background-color: lightblue;
+                width: 50px;
+            }  
+            
+            .three-columns-middle {
+                background-color: lightpink;
+                flex: 1;
+            }              
+
+            .three-columns-right {
+                background-color: lightblue;
+                width: 75px;
+            }       
+
+            .four-columns {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: 10px;
+            }
+
+            .four-columns-item {
+                background-color: lightpink;
+            }
+
+            .two-columns-wide {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: 10px;
+                height: 50px;
+                border: 1px solid gray;
+                align-items: center;
+            }
+
+            .two-columns-wide-item {
+                background-color: lightpink;
+            }
+
+            .notifications {
+                margin-top: 10px;
+                width: 300px;
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
+
+            .notification {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-bottom: 5px;
+            }
+
+            .notification-name {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+            }
+
+            .notification-count {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-size: 14px;
+                font-weight: bold;
+                color: white;
+                background-color: rgb(36, 154, 193);
+                padding: 1px 10px;
+                border-radius: 20px;
+            }
+
+            .catbook {
+                width: 350px;
+                margin-top: 10px;
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+                padding: 10px;
+            }
+
+            .cat {
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+            }
+
+            .cat-image-div {
+                width: 60px;
+            }
+
+            .cat-image {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 25px;
+            }
+
+            .cat-text {
+                flex: 1;
+            }
+
+            .cat-name {
+                font-family: Arial, Helvetica, sans-serif;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .cat-description {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                color: gray;
+                margin-bottom: 5px;
+            }
+
+            .cat-popularity {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                color: gray;
+            }
+
+            .cat-button {
+                background-color: rgb(36, 154, 193);
+                color: white;
+                border: 0px;
+                font-weight: bold;
+                font-size: 16px;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="two-columns">
+            <div class="left">
+                <p>200px</p>
+            </div>
+            <div class="right">
+                <p>75px</p>
+            </div>
+        </div>
+
+        <div class="three-columns">
+            <div class="three-columns-left">
+                <p>50px</p>
+            </div>
+            <div class="three-columns-middle">
+                <p>Remaining space</p>
+            </div>
+            <div class="three-columns-right">
+                <p>75px</p>
+            </div>            
+        </div>      
+        
+        <div class="four-columns">
+            <div class="four-columns-item">
+                <p>Item 1</p>
+            </div>
+            <div class="four-columns-item">
+                <p>Item 2</p>
+            </div>
+            <div class="four-columns-item">
+                <p>Item 3</p>
+            </div>       
+            <div class="four-columns-item">
+                <p>Item 4</p>
+            </div>                    
+        </div>         
+
+        <div class="two-columns-wide">
+            <div class="two-columns-wide-item">
+                <p>Item 1</p>
+            </div>
+            <div class="two-columns-wide-item">
+                <p>Item 2</p>
+            </div>
+        </div>
+
+        <div class="notifications">
+            <div class="notification">
+                <div class="notification-name">
+                    <p>Home</p>
+                </div>
+                <div class="notification-count">
+                    <p>14</p>
+                </div>   
+            </div>  
+            
+            <div class="notification">
+                <div class="notification-name">
+                    <p>Notifications</p>
+                </div>
+                <div class="notification-count">
+                    <p>3</p>
+                </div>  
+            </div>
+
+            <div class="notification">
+                <div class="notification-name">
+                    <p>Messages</p>
+                </div>
+                <div class="notification-count">
+                    <p>5</p>
+                </div> 
+            </div>                                
+        </div>
+
+        <div class="catbook">
+
+            <!-- Oliver-->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="assets/cat.jpg">
+                </div>
+
+                <div class="cat-text">
+                    <p class="cat-name">Oliver</p>
+                    <p class="cat-description">The cat</p>
+                    <p class="cat-popularity">Popular</p>
+                </div>
+
+                <div class="cat-button-div">
+                    <button class="cat-button">Follow</button>
+                </div>
+            </div>
+
+            <!-- Mimi-->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="assets/cat2.jpg">
+                </div>
+
+                <div class="cat-text">
+                    <p class="cat-name">Mimi</p>
+                    <p class="cat-description">Sleepy cat</p>
+                    <p class="cat-popularity">Popular</p>
+                </div>
+
+                <div class="cat-button-div">
+                    <button class="cat-button">Follow</button>
+                </div>
+            </div>
+
+            <!-- Rex-->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="assets/dog.jpg">
+                </div>
+
+                <div class="cat-text">
+                    <p class="cat-name">Rex</p>
+                    <p class="cat-description">Happy dog</p>
+                    <p class="cat-popularity">Popular</p>
+                </div>
+
+                <div class="cat-button-div">
+                    <button class="cat-button">Follow</button>
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>

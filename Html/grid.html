@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grid layout</title>
+        <style>
+            p {
+                margin: 0px;
+            }
+
+            .two-columns {
+                display: grid;
+                grid-template-columns: 200px 75px;
+                margin-bottom: 10px;
+            }
+
+            .column-1 {
+                background-color: lightblue;
+            }
+
+            .column-2 {
+                background-color: lightpink;
+            }
+
+            .column-3 {
+                background-color: lightblue;
+            }        
+            
+            .column-4 {
+                background-color: lightpink;
+            }  
+
+            .column-1a {
+                background-color: lightpink;
+            }
+
+            .column-2a {
+                background-color: lightblue;
+            }
+
+            .column-3a {
+                background-color: lightpink;
+            }        
+            
+            .column-4a {
+                background-color: lightblue;
+            }      
+
+            .three-columns {
+                display: grid;
+                grid-template-columns: 50px 1fr 75px;
+                margin-bottom: 10px;
+            }
+
+            .two-rows-four-columns {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                column-gap: 20px;
+                row-gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .catbook {
+                display: grid;
+                grid-template-columns: 200px 200px 200px;
+                column-gap: 10px;
+            }
+
+            .cat {
+                box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+                vertical-align: top;
+            }
+            
+            .cat-image {
+                width: 200px;
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .cat-name {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-weight: bold;
+                margin-left: 10px;
+                margin-bottom: 10px;
+            }
+
+            .cat-num-mutual-friends-div {
+                display: grid;
+                grid-template-columns: 40px 1fr;
+                align-items: center;
+                margin-left: 10px;
+                margin-bottom: 10px;
+            }
+
+            .cat-thumbnail {
+                width: 30px;
+                height: 30px;
+                object-fit: cover;
+                border-radius: 25px;
+            }
+
+            .cat-text {
+                font-family: Verdana, Geneva, Tahoma, sans-serif;
+                font-size: 12px;
+                color: gray;
+            }
+
+            .cat-button-div {
+                margin-left: 10px;
+                margin-bottom: 10px;
+            }
+
+            .cat-add-friend {
+                background-color: rgb(10, 102, 194);
+                color: white;
+                padding: 8px 20px;
+                border: 0px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="two-columns">
+            <div class="column-1">
+                <p>200px</p>
+            </div>
+            <div class="column-2">
+                <p>75px</p>
+            </div>
+        </div>
+
+        <div class="three-columns">
+            <div class="column-1">
+                <p>50px</p>
+            </div>
+            <div class="column-2">
+                <p>Remaining space</p>
+            </div>
+            <div class="column-3">
+                <p>75px</p>
+            </div>
+        </div>
+
+        <div class="two-rows-four-columns">
+            <div class="column-1"><p>Row 1, Column 1</p></div>
+            <div class="column-2"><p>Row 1, Column 2</p></div>
+            <div class="column-3"><p>Row 1, Column 3</p></div>
+            <div class="column-4"><p>Row 1, Column 4</p></div>
+            <div class="column-1a"><p>Row 2, Column 1</p></div>
+            <div class="column-2a"><p>Row 2, Column 2</p></div>
+            <div class="column-3a"><p>Row 2, Column 3</p></div>
+            <div class="column-4a"><p>Row 2, Column 4</p></div>            
+        </div>
+
+        <div class="catbook">
+
+            <!-- Oliver -->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="./assets/cat.jpg">
+                </div>
+                <div class="cat-name-div">
+                    <p class="cat-name">Oliver</p>
+                </div>
+                <div class="cat-num-mutual-friends-div">
+                    <div class="cat-thumbnail-div">
+                        <img class="cat-thumbnail" src="./assets/dog2.jpg">
+                    </div>
+                    <div class="cat-friends-text">
+                        <p class="cat-text">2 mutual friends</p>
+                    </div>
+                </div>
+                <div class="cat-button-div">
+                    <button class="cat-add-friend">Add Friend</button>
+                </div>
+            </div>
+
+            <!-- Mimi -->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="./assets/cat2.jpg">
+                </div>
+                <div class="cat-name-div">
+                    <p class="cat-name">Mimi</p>
+                </div>
+                <div class="cat-num-mutual-friends-div">
+                    <div class="cat-thumbnail-div">
+                        <img class="cat-thumbnail" src="./assets/dog2.jpg">
+                    </div>
+                    <div class="cat-friends-text">
+                        <p class="cat-text">3 mutual friends</p>
+                    </div>
+                </div>
+                <div class="cat-button-div">
+                    <button class="cat-add-friend">Add Friend</button>
+                </div>
+            </div>    
+
+            <!-- Rex -->
+            <div class="cat">
+                <div class="cat-image-div">
+                    <img class="cat-image" src="./assets/dog.jpg">
+                </div>
+                <div class="cat-name-div">
+                    <p class="cat-name">Rex</p>
+                </div>
+                <div class="cat-num-mutual-friends-div">
+                    <div class="cat-thumbnail-div">
+                        <img class="cat-thumbnail" src="./assets/dog2.jpg">
+                    </div>
+                    <div class="cat-friends-text">
+                        <p class="cat-text">4 mutual friends</p>
+                    </div>
+                </div>
+                <div class="cat-button-div">
+                    <button class="cat-add-friend">Add Friend</button>
+                </div>
+            </div>                        
+
+        </div>
+    </body>
+</html>

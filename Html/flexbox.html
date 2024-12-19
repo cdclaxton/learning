@@ -154,6 +154,39 @@
                 border-radius: 5px;
                 cursor: pointer;
             }
+
+            .search-bar {
+                display: flex;
+                background-color: #9955BB;
+                padding: 10px;
+                justify-content: space-between;
+                align-items: center;
+                width: 500px;
+            }
+
+            .home-text {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+                font-weight: bold;
+                color: white;
+            }
+
+            .search-box {
+                font-family: Arial, Helvetica, sans-serif;
+                border: 0px;
+                padding: 5px 10px;
+                border-radius: 20px;
+            }
+
+            .download {
+                background-color: #9955BB;
+                border: 1px solid white;
+                color: white;
+                padding: 5px 10px;
+                cursor: pointer;
+                font-family: Arial, Helvetica, sans-serif;
+
+            }
         </style>
     </head>
     <body>
@@ -285,5 +318,18 @@
             </div>
 
         </div>
+
+        <!-- Search bar -->
+         <div class="search-bar">
+            <div class="home">
+                <p class="home-text">Home</p>
+            </div>
+            <div class="search">
+                <input class="search-box" type="text" placeholder="Search">
+            </div>
+            <div class="download-div">
+                <button class="download">Download</button>
+            </div>
+         </div>
     </body>
 </html>

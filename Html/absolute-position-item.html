@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Online clothing</title>
+        <style>
+            body {
+                height: 1000px;
+            }
+
+            .image {
+                width: 300px;
+                height: 300px;
+                object-fit: cover;
+            }
+
+            .clothing {
+                position: relative;
+                display: inline-block;
+            }
+
+            .reduction {
+                position: absolute;
+                right: 0px;
+                top: 10px;
+                font-family: Arial;
+                font-size: 14px;
+                background-color: black;
+                color: white;
+                padding: 8px;
+            }
+
+            .overlay {
+                position: absolute;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+                height: 100px;
+                background-color: rgba(255, 255, 255, 0.7);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .add-to-cart {
+                background-color: white;
+                border: 1px solid black;
+                padding: 10px;
+                font-family: Arial, Helvetica, sans-serif;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="clothing">
+            <img class="image" src="./assets/shirt.jpg">
+            <div class="reduction">
+                20% OFF
+            </div>
+            <div class="overlay">
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </body>
+</html>

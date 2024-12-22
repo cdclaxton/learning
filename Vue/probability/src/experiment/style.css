@@ -1,0 +1,268 @@
+body {
+  padding-top: 50px;
+  height: 1000px;
+}
+
+button {
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.15s;
+  cursor: pointer;
+  background-color: rgb(233, 233, 233);
+}
+
+button:hover {
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+p {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+input {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  font-family: Arial, Helvetica, sans-serif;
+  position: fixed;
+  background-color: rgb(233, 233, 233);
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-bottom: 1px solid lightgray;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.header-left {
+  align-items: center;
+  justify-items: center;
+  display: flex;
+}
+
+.icon-div {
+  background-color: rgb(88, 163, 218);
+  width: 20px;
+  height: 20px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+.title-text {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  letter-spacing: 0.5px;
+}
+
+.header-right-button {
+  font-size: 14px;
+  color: rgb(88, 88, 88);
+  border: 1px solid white;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 2px;
+}
+
+.header-right-button:hover {
+  background-color: rgb(204, 204, 204);
+}
+
+.container {
+  display: flex;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.scenarios {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.scenario {
+  border: 1px solid lightgray;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  width: 350px;
+  padding: 15px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.scenario-prob-div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.scenario-prob-div p {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.scenario-prob {
+  width: 60px;
+  font-size: 15px;
+  border: 1px solid gray;
+  margin-left: 5px;
+}
+
+.delete-scenario {
+  color: gray;
+  font-size: 14px;
+  font-weight: 600;
+  width: 26px;
+  height: 26px;
+  border-radius: 15px;
+  border: 2px solid white;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+}
+
+.delete-scenario:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.scenario-name {
+  border: 0px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid gray;
+}
+
+.probability-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.add-scenario-button {
+  color: gray;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 30px;
+  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  border: 0px;
+}
+
+.add-scenario-button:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.add-probability-row {
+  color: gray;
+  font-size: 20px;
+  font-weight: 600;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  border: 0px;
+}
+
+.add-probability-row:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.normalise-probabilities {
+  color: gray;
+  font-size: 14px;
+  border: 0px;
+  height: 30px;
+  padding-left: 12px;
+  padding-right: 12px;
+  border-radius: 5px;
+  margin-left: 5px;
+}
+
+.normalise-probabilities:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.scenario-prob-table {
+  display: grid;
+  grid-template-columns: 100px 100px 30px;
+  row-gap: 2px;
+  column-gap: 5px;
+}
+
+.scenario-prob-table div {
+  font-family: Arial, Helvetica, sans-serif;
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.scenario-prob-table input {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.scenario-prob-table p {
+  font-size: 10px;
+  border: 1px solid gray;
+}
+
+.delete-probability-row {
+  color: gray;
+  font-size: 14px;
+  font-weight: 600;
+  width: 20px;
+  height: 20px;
+  border-radius: 15px;
+  border: 0px;
+}
+
+.delete-probability-row:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.results {
+  flex: 1;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: rgb(237, 237, 237);
+  margin-left: 20px;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid rgb(183, 183, 183);
+}
+
+.results-header {
+  font-size: 14px;
+  margin-top: 0px;
+}
+
+.results-table {
+  display: grid;
+  grid-template-columns: 100px 100px;
+  row-gap: 2px;
+  column-gap: 5px;
+  margin-left: 10px;
+}
+
+.results-table-header {
+  border-bottom: 1px solid gray;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.results-table div {
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-bottom: 4px;
+}

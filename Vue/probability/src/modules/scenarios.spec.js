@@ -4,6 +4,7 @@ import {
   DiscreteDistribution,
   ProbabilityInput,
   ValueInput,
+  Scenario,
 } from './scenarios'
 
 let invalidProbability = (p) => Number.isNaN(p.probability())
@@ -276,5 +277,38 @@ describe('DiscreteDistribution.deleteElement', () => {
     expect(d.deleteElement(-1)).toBe(false)
     expect(d.deleteElement(0)).toBe(true)
     expect(d.equals([[20, 0.6]])).toBe(true)
+  })
+})
+
+describe('DiscreteDistribution.sample', () => {
+  test('one element', () => {
+    let d = new DiscreteDistribution()
+    d.addElement(5.0, 1.0)
+    let samples = d.sample(10)
+    expect(samples.length).toBe(10)
+  })
+
+  test('two elements', () => {
+    let d = new DiscreteDistribution()
+    d.addElement(5.0, 0.5)
+    d.addElement(8.0, 0.5)
+
+    let samples = d.sample(10)
+    expect(samples.length).toBe(10)
+
+    let expectedValues = new Set([5.0, 8.0])
+    for (let s of samples) {
+      expect(expectedValues.has(s)).toBe(true)
+    }
+  })
+})
+
+describe('Scenario.sample', () => {
+  test('scenario probability == 0', () => {
+    let scenario = new Scenario()
+    scenario.addElement(2.0, 1.0)
+    scenario.setProbability(0.0)
+    let samples = scenario.sample(10)
+    expect(samples.length).toBe(10)
   })
 })

@@ -1,3 +1,5 @@
+import { sampleMultinomialPMF } from './multinomial'
+
 /**
  * ProbabilityInput holds and parses the string value for a probability.
  */
@@ -225,7 +227,20 @@ export class DiscreteDistribution {
     return true
   }
 
-  sample() {}
+  /**
+   * Draw n samples from the distribution.
+   * @param {int} n Number of samples to draw.
+   * @returns Array of samples.
+   */
+  sample(n) {
+    if (!this.isValid()) {
+      throw new Error('discrete distribution is invalid')
+    }
+
+    let values = this.elements.map((e) => e.valueInput.value())
+    let probabilities = this.elements.map((e) => e.probabilityInput.probability())
+    return sampleMultinomialPMF(values, probabilities, n)
+  }
 }
 
 export class Scenario {
@@ -251,8 +266,33 @@ export class Scenario {
     return this.distribution.deleteElement(idx)
   }
 
+  setProbability(p) {
+    this.probabilityInput.stringValue = p
+  }
+
   equals(otherName, otherDistribution) {
     return this.name === otherName && this.distribution.equals(otherDistribution)
+  }
+
+  sample(n) {
+    if (!this.isValid()) {
+      throw new Error('scenario is invalid')
+    }
+
+    // Generate n samples without censoring
+    let samples = this.distribution.sample(n)
+
+    // Probability that the scenario yields a value
+    let p = this.probabilityInput.probability()
+
+    // Apply censoring based on Bernoulli samples
+    for (let i = 0; i < n; i++) {
+      if (Math.random() > p) {
+        samples[i] = NaN
+      }
+    }
+
+    return samples
   }
 }
 

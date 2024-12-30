@@ -224,4 +224,77 @@ export class DiscreteDistribution {
 
     return true
   }
+
+  sample() {}
+}
+
+export class Scenario {
+  constructor() {
+    this.name = ''
+    this.distribution = new DiscreteDistribution()
+    this.probabilityInput = new ProbabilityInput(0.0)
+  }
+
+  isValid() {
+    return this.probabilityInput.isValid() && this.distribution.isValid()
+  }
+
+  normaliseDistribution() {
+    this.distribution.normalise()
+  }
+
+  addElement(value, probability) {
+    this.distribution.addElement(value, probability)
+  }
+
+  deleteElement(idx) {
+    return this.distribution.deleteElement(idx)
+  }
+
+  equals(otherName, otherDistribution) {
+    return this.name === otherName && this.distribution.equals(otherDistribution)
+  }
+}
+
+export class Scenarios {
+  constructor() {
+    this.scenarios = []
+    this.result = new DiscreteDistribution()
+  }
+
+  addScenario() {
+    let s = new Scenario()
+    this.scenarios.push(s)
+  }
+
+  deleteScenario(idx) {
+    if (idx < 0 || idx >= this.scenarios.length) {
+      return false
+    }
+
+    this.scenarios.splice(idx, 1)
+    return true
+  }
+
+  clear() {
+    this.scenarios = []
+  }
+
+  scenariosValid() {
+    for (let s of this.scenarios) {
+      if (!s.isValid()) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  calculate() {
+    if (!this.scenariosValid()) {
+      return false
+    }
+
+    for (let i = 0; i < 100; i++) {}
+  }
 }

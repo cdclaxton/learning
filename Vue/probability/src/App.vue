@@ -1,47 +1,39 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script lang="js">
+import Header from './components/Header.vue'
+import Results from './components/Results.vue'
+import Scenarios from './components/Scenarios.vue'
+import { ProbabilityElement } from './modules/probability'
+
+let result = [
+  new ProbabilityElement(0, 0.1),
+  new ProbabilityElement(1, 0.8),
+  new ProbabilityElement(2, 0.1),
+]
+
+export default {
+  components: {
+    Header,
+    Scenarios,
+    Results,
+  },
+  data() {
+    return {
+      result: result,
+    }
+  },
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <!-- Header bar -->
+  <Header />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+  <!-- Container for the scenarios and the results-->
+  <div class="container">
+    <!-- Scenarios -->
+    <Scenarios />
 
-  <main>
-    <TheWelcome />
-  </main>
+    <!-- Results -->
+    <Results :valueToProbabilities="result" />
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

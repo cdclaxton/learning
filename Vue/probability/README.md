@@ -1,4 +1,4 @@
-# probability
+# Scenario Consequences
 
 Vue-based web-app to calculate probability distributions.
 

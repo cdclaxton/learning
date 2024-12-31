@@ -5,6 +5,7 @@ import {
   ProbabilityInput,
   ValueInput,
   Scenario,
+  dicreteDistributionFromSamples,
 } from './scenarios'
 
 let invalidProbability = (p) => Number.isNaN(p.probability())
@@ -310,5 +311,59 @@ describe('Scenario.sample', () => {
     scenario.setProbability(0.0)
     let samples = scenario.sample(10)
     expect(samples.length).toBe(10)
+
+    for (let s of samples) {
+      expect(Number.isNaN(s)).toBe(true)
+    }
+  })
+
+  test('scenario probability == 1', () => {
+    let scenario = new Scenario()
+    scenario.addElement(2.0, 1.0)
+    scenario.setProbability(1.0)
+    let samples = scenario.sample(10)
+    expect(samples.length).toBe(10)
+
+    for (let s of samples) {
+      expect(s === 2.0).toBe(true)
+    }
+  })
+})
+
+describe('dicreteDistributionFromSamples', () => {
+  test('no samples', () => {
+    expect(() => dicreteDistributionFromSamples([])).toThrowError(
+      'no samples from which to build a distribution',
+    )
+  })
+
+  test('one sample', () => {
+    let d = dicreteDistributionFromSamples([2.0])
+    expect(d.equals([[2.0, 1.0]])).toBe(true)
+  })
+
+  test('two samples (same)', () => {
+    let d = dicreteDistributionFromSamples([3.0, 3.0])
+    expect(d.equals([[3.0, 1.0]])).toBe(true)
+  })
+
+  test('two samples (different)', () => {
+    let d = dicreteDistributionFromSamples([3.0, 5.0])
+    expect(
+      d.equals([
+        [3.0, 0.5],
+        [5.0, 0.5],
+      ]),
+    ).toBe(true)
+  })
+
+  test('three samples', () => {
+    let d = dicreteDistributionFromSamples([3.0, 5.0, 3.0])
+    expect(
+      d.equals([
+        [3.0, 2 / 3],
+        [5.0, 1 / 3],
+      ]),
+    ).toBe(true)
   })
 })

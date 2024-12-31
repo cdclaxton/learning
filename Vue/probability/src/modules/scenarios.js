@@ -40,6 +40,10 @@ export class ProbabilityInput {
     let p = this.probability()
     return (Number.isNaN(other) && Number.isNaN(p)) || Math.abs(p - other) < 1e-6
   }
+
+  toString() {
+    return `${this.stringValue}(${this.probability()})`
+  }
 }
 
 /**
@@ -75,6 +79,10 @@ export class ValueInput {
     let v = this.value()
     return (Number.isNaN(other) && Number.isNaN(v)) || Math.abs(v - other) < 1e-6
   }
+
+  toString() {
+    return `${this.stringValue}(${this.value()})`
+  }
 }
 
 /**
@@ -103,6 +111,10 @@ export class DistributionElement {
    */
   equals(otherValue, otherProbability) {
     return this.valueInput.equals(otherValue) && this.probabilityInput.equals(otherProbability)
+  }
+
+  toString() {
+    return `v=${this.valueInput.toString()}, p=${this.probabilityInput.toString()})`
   }
 }
 
@@ -241,6 +253,51 @@ export class DiscreteDistribution {
     let probabilities = this.elements.map((e) => e.probabilityInput.probability())
     return sampleMultinomialPMF(values, probabilities, n)
   }
+
+  toString() {
+    let s = '['
+
+    for (let i = 0; i < this.elements.length; i++) {
+      s += this.elements[i].toString()
+      if (i < this.elements.length - 1) {
+        s += ', '
+      }
+    }
+
+    return s + ']'
+  }
+}
+
+export function dicreteDistributionFromSamples(samples) {
+  if (samples.length === 0) {
+    throw new Error('no samples from which to build a distribution')
+  }
+
+  // Number of samples
+  let n = samples.length
+
+  // Sort the samples in ascending order in place
+  samples.sort((a, b) => a - b)
+
+  let d = new DiscreteDistribution()
+
+  let value = samples[0]
+  let count = 1
+
+  for (let i = 1; i < n; i++) {
+    if (samples[i] === value) {
+      count += 1
+    } else {
+      d.addElement(value, count / n)
+      value = samples[i]
+      count = 1
+    }
+  }
+
+  d.addElement(value, count / n)
+
+  // Return the populated distribution
+  return d
 }
 
 export class Scenario {
@@ -274,6 +331,11 @@ export class Scenario {
     return this.name === otherName && this.distribution.equals(otherDistribution)
   }
 
+  /**
+   * Generate n samples from the scenario.
+   * @param {int} n Number of samples to generate.
+   * @returns Array of samples (number or NaN).
+   */
   sample(n) {
     if (!this.isValid()) {
       throw new Error('scenario is invalid')
@@ -320,21 +382,41 @@ export class Scenarios {
     this.scenarios = []
   }
 
+  /**
+   * Check if all scenarios are valid.
+   * @returns True if all scenarios are valid.
+   */
   scenariosValid() {
-    for (let s of this.scenarios) {
-      if (!s.isValid()) {
-        return false
-      }
-    }
-
-    return true
+    return this.scenarios.length > 0 && this.scenarios.every((s) => s.isValid())
   }
 
-  calculate() {
+  calculate(n) {
+    if (n < 1) {
+      throw new Error('invalid number of samples to generate')
+    }
+
     if (!this.scenariosValid()) {
       return false
     }
 
-    for (let i = 0; i < 100; i++) {}
+    // Generate samples
+    let samples = this.scenarios[0].sample(n)
+
+    // Convert NaNs to 0s
+    for (let i = 0; i < n; i++) {
+      if (Number.isNaN(samples[i])) {
+        samples[i] = 0
+      }
+    }
+
+    for (let i = 1; i < this.scenarios.length; i++) {
+      let scenarioSamples = this.scenarios[idx].sample(n)
+      for (let j = 0; j < n; j++) {
+        samples[j] = Math.max(samples[j], scenarioSamples[j])
+      }
+    }
+
+    // Convert the samples to a distribution
+    this.result = dicreteDistributionFromSamples(samples)
   }
 }

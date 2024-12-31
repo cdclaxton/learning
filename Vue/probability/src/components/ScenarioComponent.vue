@@ -9,6 +9,9 @@ export default {
     normalise() {
       this.scenario.normalise()
     },
+    addRow() {
+      this.scenario.addElement('', '')
+    },
   },
 }
 </script>
@@ -49,7 +52,7 @@ export default {
 
       <!-- Buttons to add and normalise probabilities -->
       <div class="probability-buttons">
-        <button class="add-probability-row">+</button>
+        <button class="add-probability-row" @click="addRow">+</button>
         <button class="normalise-probabilities" @click="normalise">Normalise</button>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Scenario } from '../modules/scenarios.js'
 export default {
   props: {
     scenario: Scenario,
+    scenarioIdx: Number,
   },
   methods: {
     normalise() {
@@ -11,6 +12,9 @@ export default {
     },
     addRow() {
       this.scenario.addElement('', '')
+    },
+    deleteScenario() {
+      this.$emit('evtDeleteScenario', this.scenarioIdx)
     },
   },
 }
@@ -20,7 +24,7 @@ export default {
   <div class="scenario">
     <div class="scenario-detail">
       <!-- Button to delete the scenario -->
-      <button class="delete-scenario">&times;</button>
+      <button class="delete-scenario" @click="deleteScenario">&times;</button>
 
       <!-- Text box for the scenario name -->
       <input
@@ -38,7 +42,7 @@ export default {
         <div></div>
 
         <!-- Data rows -->
-        <template v-for="e in scenario.distribution.elements">
+        <template v-for="(e, idx) in scenario.distribution.elements">
           <!-- Value -->
           <input type="text" v-model="e.valueInput.stringValue" />
 
@@ -46,7 +50,9 @@ export default {
           <input type="text" v-model="e.probabilityInput.stringValue" />
 
           <!-- Delete row button -->
-          <button class="delete-probability-row">&times;</button>
+          <button class="delete-probability-row" @click="scenario.distribution.deleteElement(idx)">
+            &times;
+          </button>
         </template>
       </div>
 

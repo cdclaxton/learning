@@ -36,6 +36,10 @@ export default {
       console.log(this.scenarios.toString())
       this.scenarios.calculate(100)
     },
+    receiveDeleteScenario(idx) {
+      console.log(`Received 'delete scenario' event for index ${idx}`)
+      this.scenarios.deleteScenario(idx)
+    },
   },
 }
 </script>
@@ -51,7 +55,11 @@ export default {
   <!-- Container for the scenarios and the results-->
   <div class="container">
     <!-- Scenarios -->
-    <ScenariosComponent :scenarios="scenarios.scenarios" @evtAddScenario="receiveAddScenario" />
+    <ScenariosComponent
+      :scenarios="scenarios.scenarios"
+      @evtAddScenario="receiveAddScenario"
+      @evtDeleteScenario="receiveDeleteScenario"
+    />
 
     <!-- Results -->
     <ResultsComponent :elements="scenarios.result.elements" />

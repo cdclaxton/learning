@@ -8,10 +8,13 @@ export default {
   components: {
     ScenarioComponent,
   },
-  emits: ['evtAddScenario'],
+  emits: ['evtAddScenario', 'evtDeleteScenario'],
   methods: {
     addScenario() {
       this.$emit('evtAddScenario')
+    },
+    deleteScenario(idx) {
+      this.$emit('evtDeleteScenario', idx)
     },
   },
 }
@@ -19,8 +22,8 @@ export default {
 
 <template>
   <div class="scenarios">
-    <template v-for="s in scenarios">
-      <ScenarioComponent :scenario="s" />
+    <template v-for="(s, idx) in scenarios">
+      <ScenarioComponent :scenario="s" :scenarioIdx="idx" @evtDeleteScenario="deleteScenario" />
     </template>
 
     <!-- Button to add a new scenario -->

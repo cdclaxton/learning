@@ -1,39 +1,59 @@
 <script lang="js">
-import Header from './components/Header.vue'
-import Results from './components/Results.vue'
-import Scenarios from './components/Scenarios.vue'
-import { ProbabilityElement } from './modules/probability'
-
-let result = [
-  new ProbabilityElement(0, 0.1),
-  new ProbabilityElement(1, 0.8),
-  new ProbabilityElement(2, 0.1),
-]
+import HeaderComponent from './components/HeaderComponent.vue'
+import ResultsComponent from './components/ResultsComponent.vue'
+import ScenariosComponent from './components/ScenariosComponent.vue'
+import { Scenarios, exampleScenarios } from './modules/scenarios'
 
 export default {
   components: {
-    Header,
-    Scenarios,
-    Results,
+    HeaderComponent,
+    ScenariosComponent,
+    ResultsComponent,
   },
   data() {
     return {
-      result: result,
+      scenarios: new Scenarios(),
     }
+  },
+  methods: {
+    receiveLoadExample() {
+      console.log("Received 'load example' event")
+      this.scenarios = exampleScenarios()
+      console.log(this.scenarios.toString())
+    },
+    receiveClear() {
+      console.log("Received 'clear' event")
+      this.scenarios.clear()
+      console.log(this.scenarios.toString())
+    },
+    receiveAddScenario() {
+      console.log("Received 'add scenario' event")
+      this.scenarios.addScenario()
+      console.log(this.scenarios.toString())
+    },
+    receiveCalculate() {
+      console.log("Received 'calculate' event")
+      console.log(this.scenarios.toString())
+      this.scenarios.calculate(100)
+    },
   },
 }
 </script>
 
 <template>
   <!-- Header bar -->
-  <Header />
+  <HeaderComponent
+    @evtLoadExample="receiveLoadExample"
+    @evtClear="receiveClear"
+    @evtCalculate="receiveCalculate"
+  />
 
   <!-- Container for the scenarios and the results-->
   <div class="container">
     <!-- Scenarios -->
-    <Scenarios />
+    <ScenariosComponent :scenarios="scenarios.scenarios" @evtAddScenario="receiveAddScenario" />
 
     <!-- Results -->
-    <Results :valueToProbabilities="result" />
+    <ResultsComponent :elements="scenarios.result.elements" />
   </div>
 </template>

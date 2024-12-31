@@ -5,6 +5,7 @@ import {
   ProbabilityInput,
   ValueInput,
   Scenario,
+  Scenarios,
   dicreteDistributionFromSamples,
 } from './scenarios'
 
@@ -177,6 +178,12 @@ describe('DiscreteDistribution.normalise', () => {
     let d = new DiscreteDistribution({ 2: 1.0 })
     d.normalise()
     expect(d.equals([[2, 1.0]])).toBe(true)
+  })
+
+  test('one value = 0', () => {
+    let d = new DiscreteDistribution({ 2: 0.0 })
+    d.normalise()
+    expect(d.equals([[2, 0.0]])).toBe(true)
   })
 
   test('two values, normalised', () => {
@@ -365,5 +372,37 @@ describe('dicreteDistributionFromSamples', () => {
         [5.0, 1 / 3],
       ]),
     ).toBe(true)
+  })
+})
+
+describe('Scenarios.calculate', () => {
+  test('invalid number of samples', () => {
+    let s = new Scenarios()
+    expect(() => s.calculate(-1)).toThrowError('invalid number of samples to generate')
+  })
+
+  test('no scenarios', () => {
+    let s = new Scenarios()
+    expect(s.calculate(10)).toBe(false)
+  })
+
+  test('one scenario, p=0', () => {
+    let s = new Scenarios()
+    s.addScenario()
+    s.scenarios[0].addElement(5.0, 1.0)
+    s.scenarios[0].setProbability(0)
+    expect(s.scenarios.length).toBe(1)
+    expect(s.calculate(10)).toBe(true)
+    expect(s.result.equals([[0.0, 1.0]])).toBe(true)
+  })
+
+  test('one scenario, p=1', () => {
+    let s = new Scenarios()
+    s.addScenario()
+    s.scenarios[0].addElement(5.0, 1.0)
+    s.scenarios[0].setProbability(1)
+    expect(s.scenarios.length).toBe(1)
+    expect(s.calculate(10)).toBe(true)
+    expect(s.result.equals([[5.0, 1.0]])).toBe(true)
   })
 })

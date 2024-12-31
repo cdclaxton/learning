@@ -42,7 +42,7 @@ export class ProbabilityInput {
   }
 
   toString() {
-    return `${this.stringValue}(${this.probability()})`
+    return `${this.probability()}`
   }
 }
 
@@ -81,7 +81,7 @@ export class ValueInput {
   }
 
   toString() {
-    return `${this.stringValue}(${this.value()})`
+    return `${this.value()}`
   }
 }
 
@@ -114,7 +114,7 @@ export class DistributionElement {
   }
 
   toString() {
-    return `v=${this.valueInput.toString()}, p=${this.probabilityInput.toString()})`
+    return `(v=${this.valueInput.toString()}, p=${this.probabilityInput.toString()})`
   }
 }
 
@@ -172,6 +172,11 @@ export class DiscreteDistribution {
   normalise() {
     // Calculate the total probability
     let p = this.totalProbability()
+
+    // Don't normalise if the sum of the probabilities is zero
+    if (p === 0) {
+      return
+    }
 
     // If the total probability is NaN (due to invalid probabilities) then
     // normalisation cannot be performed
@@ -311,7 +316,7 @@ export class Scenario {
     return this.probabilityInput.isValid() && this.distribution.isValid()
   }
 
-  normaliseDistribution() {
+  normalise() {
     this.distribution.normalise()
   }
 
@@ -356,6 +361,10 @@ export class Scenario {
 
     return samples
   }
+
+  toString() {
+    return `Name: ${this.name}, p: ${this.probabilityInput.probability()}, distribution: ${this.distribution.toString()}`
+  }
 }
 
 export class Scenarios {
@@ -380,6 +389,7 @@ export class Scenarios {
 
   clear() {
     this.scenarios = []
+    this.result = new DiscreteDistribution()
   }
 
   /**
@@ -391,8 +401,8 @@ export class Scenarios {
   }
 
   calculate(n) {
-    if (n < 1) {
-      throw new Error('invalid number of samples to generate')
+    if (n === undefined || n < 1) {
+      throw new Error(`invalid number of samples to generate: ${n}`)
     }
 
     if (!this.scenariosValid()) {
@@ -410,13 +420,53 @@ export class Scenarios {
     }
 
     for (let i = 1; i < this.scenarios.length; i++) {
-      let scenarioSamples = this.scenarios[idx].sample(n)
+      let scenarioSamples = this.scenarios[i].sample(n)
       for (let j = 0; j < n; j++) {
-        samples[j] = Math.max(samples[j], scenarioSamples[j])
+        if (!Number.isNaN(scenarioSamples[j])) {
+          samples[j] = Math.max(samples[j], scenarioSamples[j])
+        }
       }
     }
 
     // Convert the samples to a distribution
     this.result = dicreteDistributionFromSamples(samples)
+
+    return true
   }
+
+  toString() {
+    let s = 'scenarios = ['
+
+    for (let i = 0; i < this.scenarios.length; i++) {
+      s += this.scenarios[i].toString()
+      if (i < this.scenarios.length - 1) {
+        s += ', '
+      }
+    }
+
+    return s + '], result = ' + this.result.toString()
+  }
+}
+
+export function exampleScenarios() {
+  let s = new Scenarios()
+
+  // Add the first scenario
+  s.addScenario()
+  s.scenarios[0].name = 'Outcome 1'
+  s.scenarios[0].setProbability(0.8)
+  s.scenarios[0].addElement(2.0, 0.5)
+  s.scenarios[0].addElement(3.0, 0.2)
+  s.scenarios[0].addElement(5.0, 0.3)
+
+  // Add the second scenario
+  s.addScenario()
+  s.scenarios[1].name = 'Outcome 2'
+  s.scenarios[1].setProbability(0.3)
+  s.scenarios[1].addElement(3.0, 0.9)
+  s.scenarios[1].addElement(10.0, 0.1)
+
+  s.calculate(10)
+
+  return s
 }

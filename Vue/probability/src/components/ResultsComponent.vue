@@ -1,7 +1,7 @@
 <script lang="js">
 export default {
   props: {
-    valueToProbabilities: Array,
+    elements: Array,
   },
 }
 </script>
@@ -15,9 +15,9 @@ export default {
       <div class="results-table-header">Probability</div>
 
       <!-- Data row -->
-      <template v-for="item in valueToProbabilities">
-        <div>{{ item.value }}</div>
-        <div>{{ item.probability }}</div>
+      <template v-for="e in elements">
+        <div>{{ e.valueInput.value() }}</div>
+        <div>{{ e.probabilityInput.probability() }}</div>
       </template>
     </div>
   </div>

@@ -44,3 +44,13 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+## Design
+
+The class structure is shown in the UML class diagram below.
+
+![Class diagram](./design/design-Class%20diagram.drawio.png)
+
+The events emitted by the components and the handler functions are shown in the diagram below.
+
+![Event diagram](./design/design-Events.drawio.png)

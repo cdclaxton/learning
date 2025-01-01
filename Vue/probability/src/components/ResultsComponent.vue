@@ -8,7 +8,7 @@ export default {
 
 <template>
   <div class="results">
-    <p class="results-header">Results</p>
+    <p class="results-header">Result</p>
     <div class="results-table">
       <!-- Header row -->
       <div class="results-table-header">Value</div>

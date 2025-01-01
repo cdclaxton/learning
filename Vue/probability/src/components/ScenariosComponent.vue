@@ -13,7 +13,7 @@ export default {
     addScenario() {
       this.$emit('evtAddScenario')
     },
-    deleteScenario(idx) {
+    receiveDeleteScenario(idx) {
       this.$emit('evtDeleteScenario', idx)
     },
   },
@@ -23,7 +23,7 @@ export default {
 <template>
   <div class="scenarios">
     <template v-for="(s, idx) in scenarios">
-      <ScenarioComponent :scenario="s" :scenarioIdx="idx" @evtDeleteScenario="deleteScenario" />
+      <ScenarioComponent :scenario="s" :scenarioIdx="idx" @evtDeleteScenario="receiveDeleteScenario" />
     </template>
 
     <!-- Button to add a new scenario -->

@@ -62,6 +62,6 @@ export default {
     />
 
     <!-- Results -->
-    <ResultsComponent :elements="scenarios.result.elements" />
+    <ResultsComponent :distribution="scenarios.result" />
   </div>
 </template>

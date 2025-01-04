@@ -17,27 +17,18 @@ export default {
   },
   methods: {
     receiveLoadExample() {
-      console.log("Received 'load example' event")
       this.scenarios = exampleScenarios()
-      console.log(this.scenarios.toString())
     },
     receiveClear() {
-      console.log("Received 'clear' event")
       this.scenarios.clear()
-      console.log(this.scenarios.toString())
     },
     receiveAddScenario() {
-      console.log("Received 'add scenario' event")
       this.scenarios.addScenario()
-      console.log(this.scenarios.toString())
     },
     receiveCalculate() {
-      console.log("Received 'calculate' event")
-      console.log(this.scenarios.toString())
       this.scenarios.calculate(100)
     },
     receiveDeleteScenario(idx) {
-      console.log(`Received 'delete scenario' event for index ${idx}`)
       this.scenarios.deleteScenario(idx)
     },
   },

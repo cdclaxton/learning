@@ -17,11 +17,18 @@ export default {
       this.$emit('evtDeleteScenario', this.scenarioIdx)
     },
   },
+  computed: {
+    scenarioErrorClass() {
+      return {
+        'scenario-error': !this.scenario.isValid(),
+      }
+    },
+  },
 }
 </script>
 
 <template>
-  <div class="scenario">
+  <div class="scenario" :class="scenarioErrorClass">
     <div class="scenario-detail">
       <!-- Button to delete the scenario -->
       <button class="delete-scenario" @click="deleteScenario">&times;</button>

@@ -103,6 +103,10 @@ input {
   margin-bottom: 20px;
 }
 
+.scenario-error {
+  border: 1px solid rgb(186, 28, 28);
+}
+
 .scenario-prob-div {
   display: flex;
   flex-direction: row;

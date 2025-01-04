@@ -53,6 +53,25 @@ export default {
       this.y = d3.scaleLinear().range([this.height, 0])
       this.yAxis = this.svg.append('g').attr('class', 'myYaxis')
 
+      // X-axis label
+      this.svg
+        .append('text')
+        .attr('class', 'xLabel')
+        .attr('text-anchor', 'end')
+        .attr('x', this.width)
+        .attr('y', this.height + margin.top + 20)
+        .text('Value')
+
+      // Y-axis label
+      this.svg
+        .append('text')
+        .attr('class', 'yLabel')
+        .attr('text-anchor', 'end')
+        .attr('transform', 'rotate(-90)')
+        .attr('y', -margin.left + 20)
+        .attr('x', -margin.top)
+        .text('Probability')
+
       this.updateChart()
     },
     updateChart() {

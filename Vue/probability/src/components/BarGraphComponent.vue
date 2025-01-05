@@ -28,9 +28,6 @@ export default {
   },
   methods: {
     createChart() {
-      console.log('Creating chart')
-      console.log(this.data)
-
       // Calculate the dimensions of the bar graph
       const margin = { top: 10, right: 30, bottom: 70, left: 60 }
       this.width = 500 - margin.left - margin.right
@@ -75,9 +72,6 @@ export default {
       this.updateChart()
     },
     updateChart() {
-      console.log('Updating chart')
-      console.log(this.data)
-
       // Update the x-axis
       this.x.domain(this.data.elements.map((e) => e.valueInput.value()))
       this.xAxis.call(d3.axisBottom(this.x))
@@ -95,7 +89,7 @@ export default {
         .attr('y', (e) => this.y(e.probabilityInput.probability()))
         .attr('width', this.x.bandwidth())
         .attr('height', (e) => this.height - this.y(e.probabilityInput.probability()))
-        .attr('fill', '#69b3a2')
+        .attr('class', 'bar')
     },
   },
 }
@@ -105,3 +99,20 @@ export default {
   <!-- Div in which to place the bar graph -->
   <div ref="chart"></div>
 </template>
+
+<style>
+.bar {
+  fill: steelblue;
+  transition: fill 0.15s;
+}
+
+.bar:hover {
+  fill: orange;
+}
+
+.xLabel,
+.yLabel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+</style>

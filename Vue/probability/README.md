@@ -54,3 +54,17 @@ The class structure is shown in the UML class diagram below.
 The events emitted by the components and the handler functions are shown in the diagram below.
 
 ![Event diagram](./design/design-Events.drawio.png)
+
+### Vue.js crib sheet
+
+![Vue.js crib sheet](./design/design-Crib%20sheet.drawio.png)
+
+## Build and upload to website
+
+```bash
+# Build the app and place in a folder called 'dist'
+npm run build
+
+# Copy the built app to the website
+cp -r ./dist/* ~/website/scenario-consequences/
+```

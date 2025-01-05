@@ -13,11 +13,12 @@ export default {
   data() {
     return {
       scenarios: new Scenarios(),
+      nSamplesForCalculation: 10000,
     }
   },
   methods: {
     receiveLoadExample() {
-      this.scenarios = exampleScenarios()
+      this.scenarios = exampleScenarios(this.nSamplesForCalculation)
     },
     receiveClear() {
       this.scenarios.clear()
@@ -26,7 +27,7 @@ export default {
       this.scenarios.addScenario()
     },
     receiveCalculate() {
-      this.scenarios.calculate(100)
+      this.scenarios.calculate(this.nSamplesForCalculation)
     },
     receiveDeleteScenario(idx) {
       this.scenarios.deleteScenario(idx)

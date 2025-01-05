@@ -448,7 +448,7 @@ export class Scenarios {
   }
 }
 
-export function exampleScenarios() {
+export function exampleScenarios(nSamplesForCalculation) {
   let s = new Scenarios()
 
   // Add the first scenario
@@ -466,7 +466,7 @@ export function exampleScenarios() {
   s.scenarios[1].addElement(3.0, 0.9)
   s.scenarios[1].addElement(10.0, 0.1)
 
-  s.calculate(10)
+  s.calculate(nSamplesForCalculation)
 
   return s
 }

@@ -102,7 +102,7 @@ export default {
 
 <style>
 .bar {
-  fill: steelblue;
+  fill: rgb(88, 163, 218);
   transition: fill 0.15s;
 }
 

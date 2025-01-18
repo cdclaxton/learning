@@ -1,9 +1,13 @@
 <script lang="ts">
+import { defineComponent } from 'vue'
 import { QuestionAnswer } from '../modules/question'
 
-export default {
+export default defineComponent({
   props: {
-    qa: QuestionAnswer,
+    qa: {
+      type: QuestionAnswer,
+      required: true,
+    },
   },
   methods: {
     answeredAndCorrect() {
@@ -33,7 +37,7 @@ export default {
       }
     },
   },
-}
+})
 </script>
 
 <template>

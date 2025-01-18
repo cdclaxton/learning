@@ -29,6 +29,9 @@ export default defineComponent({
     buildQuestion() {
       return `${this.qa.question.n1} ${this.operation()} ${this.qa.question.n2} =`
     },
+    updateValue(e: Event) {
+      this.qa.answer.stringValue = (e.target as HTMLInputElement).value
+    },
   },
   computed: {
     divClass() {
@@ -44,12 +47,7 @@ export default defineComponent({
   <div class="single-question-answer" :class="divClass">
     <p v-html="buildQuestion()"></p>
 
-    <input
-      type="number"
-      :value="qa.answer.stringValue"
-      class="answer-input"
-      @input="(event) => (qa.answer.stringValue = event.target.value)"
-    />
+    <input type="number" :value="qa.answer.stringValue" class="answer-input" @input="updateValue" />
 
     <img v-if="answeredAndCorrect()" src="../assets/check-circle.svg" />
     <img v-else src="../assets/circle.svg" />

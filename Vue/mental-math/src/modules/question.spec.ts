@@ -11,6 +11,7 @@ import {
   multiplicationQuestionGenerator,
   divisionQuestionGenerator,
   generateListQuestions,
+  generateTailoredQuestions,
   QuestionSet,
 } from './question'
 
@@ -194,6 +195,13 @@ describe('question generators', () => {
 describe('generateListQuestions', () => {
   test('generate', () => {
     const qs = generateListQuestions(10, 1, 20)
+    expect(qs.length).toBe(10)
+  })
+})
+
+describe('generateTailoredQuestions', () => {
+  test('generate', () => {
+    const qs = generateTailoredQuestions(10)
     expect(qs.length).toBe(10)
   })
 })

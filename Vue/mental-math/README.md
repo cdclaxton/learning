@@ -20,3 +20,13 @@ npm run dev
 ## Design
 
 To run the design's `index.html`, right-click the file in VS Code and select `Open with Live Server`.
+
+## Deploy to website
+
+```bash
+# Build the app and place in a folder called 'dist'
+npm run build
+
+# Copy the built app to the website
+cp -r ./dist/* ~/website/mental-math/
+```

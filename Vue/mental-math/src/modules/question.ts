@@ -189,6 +189,39 @@ export const generateListQuestions = (
   return questions
 }
 
+export const generateTailoredQuestions = (n: number): listOfQuestions => {
+  const questions: listOfQuestions = []
+
+  for (let i = 0; i < n; i++) {
+    const questionType = randomInteger(0, 3)
+    let q: Question
+    switch (questionType) {
+      case 0:
+        // Addition
+        q = additionQuestionGenerator(1, 100)
+        break
+      case 1:
+        // Subtraction
+        q = subtractionQuestionGenerator(1, 100)
+        break
+      case 2:
+        // Multiplication
+        q = multiplicationQuestionGenerator(2, 12)
+        break
+      case 3:
+        // Division
+        q = divisionQuestionGenerator(2, 12)
+        break
+      default:
+        throw Error(`Invalid question type: ${questionType}`)
+    }
+
+    questions.push(QuestionAnswer.fromQuestion(q))
+  }
+
+  return questions
+}
+
 export class QuestionSet {
   constructor(public questionAnswers: QuestionAnswer[]) {}
 

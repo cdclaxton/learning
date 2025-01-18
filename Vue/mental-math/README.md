@@ -28,5 +28,7 @@ To run the design's `index.html`, right-click the file in VS Code and select `Op
 npm run build
 
 # Copy the built app to the website
+rm -rf ~/website/mental-math/
+mkdir ~/website/mental-math/
 cp -r ./dist/* ~/website/mental-math/
 ```

@@ -43,7 +43,13 @@ export default defineComponent({
 <template>
   <div class="single-question-answer" :class="divClass">
     <p v-html="buildQuestion()"></p>
-    <input type="text" placeholder="?" class="answer-input" v-model="qa.answer.stringValue" />
+
+    <input
+      type="number"
+      :value="qa.answer.stringValue"
+      class="answer-input"
+      @input="(event) => (qa.answer.stringValue = event.target.value)"
+    />
 
     <img v-if="answeredAndCorrect()" src="../assets/check-circle.svg" />
     <img v-else src="../assets/circle.svg" />

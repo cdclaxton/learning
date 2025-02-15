@@ -444,6 +444,44 @@ list_sum([H1|T1], [H2|T2], [H|L3]) :-
 X = [11, 22, 33].
 ```
 
+```prolog
+/* max(L,A,M) succeeds if M is the largest element of the list
+   greater than A */
+max([],A,A).
+max([H|T],A,M) :- H >= A, max(T,H,M).
+max([H|T],A,M) :- H < A, max(T,A,M).
+get_head([H|_],H).
+maximum(L,M) :- get_head(L,H), max(L,H,M).
+→
+8 ?- maximum([1,2,0],X).
+X = 2.
+```
+
+```prolog
+/* Example of a partial map
+   Predicate evens(X,L) succeeds if L contains just the even numbers in X. */
+evens([],[]).
+evens([X|T],[X|L]) :- 0 is X mod 2, evens(T,L).
+evens([X|T],L) :- 1 is X mod 2, evens(T,L).
+→
+1 ?- evens([1,2,3,4,5],X).
+X = [2, 4].
+```
+
+```prolog
+/* Example of a partial map
+   Program removes specified names */
+name(dave).
+name(george).
+
+censor([],[]).
+censor([H|T], L) :- name(H), censor(T,L).
+censor([H|T], [H|L]) :- censor(T,L).
+→
+1 ?- censor([hello,dave,and,chris],X).
+X = [hello, and, chris].
+```
+
 Walk through a list, printing each element:
 
 ```prolog

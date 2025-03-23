@@ -1,4 +1,5 @@
 from behave import *
+from hamcrest import assert_that, equal_to, none
 
 from extractor import Extractor
 
@@ -21,22 +22,22 @@ def step_impl(context, text):
 
 @then("it won't return anything")
 def step_impl(context):
-    assert context.result is None
+    assert_that(context.result, none())
 
 
 @then('it will return "{text}"')
 def step_impl(context, text):
-    assert context.result == text
+    assert_that(context.result, equal_to(text))
 
 
 @then("it will return {text}")
 def step_impl(context, text):
-    assert context.result == text
+    assert_that(context.result, equal_to(text))
 
 
 @then("it will return ")
 def step_impl(context):
-    assert context.result is None
+    assert_that(context.result, none())
 
 
 @given("a table")
@@ -63,8 +64,6 @@ def step_impl(context):
         assert row["Text"] == context.extracted_table[idx]["text"]
 
         if len(row["Result"]) == 0:
-            assert context.extracted_table[idx]["result"] is None
+            assert_that(context.extracted_table[idx]["result"], none())
         else:
-            assert (
-                row["Result"] == context.extracted_table[idx]["result"]
-            ), f"Expected: {row['Result']}, got {context.extracted_table[idx]['result']}"
+            assert_that(row["Result"], context.extracted_table[idx]["result"])

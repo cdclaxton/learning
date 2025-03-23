@@ -1,5 +1,6 @@
 import re
 from behave import *
+from hamcrest import assert_that, equal_to
 
 use_step_matcher("re")
 
@@ -26,6 +27,4 @@ def step_impl(context, text):
 
 @then("it returns (?P<expected>.*)")
 def step_impl(context, expected):
-    assert (
-        context.result == expected
-    ), f"Expected: {expected}, actual: {context.result}, for input: {context.input}"
+    assert_that(context.result, equal_to(expected))

@@ -10,12 +10,8 @@ def step_impl(context):
     context.fn = extractor.postcode
 
 
-@when('we send "{text}"')
-def step_impl(context, text):
-    context.result = context.fn(text)
-
-
 @when("we send {text}")
+@when('we send "{text}"')
 def step_impl(context, text):
     context.result = context.fn(text)
 
@@ -25,12 +21,8 @@ def step_impl(context):
     assert_that(context.result, none())
 
 
-@then('it will return "{text}"')
-def step_impl(context, text):
-    assert_that(context.result, equal_to(text))
-
-
 @then("it will return {text}")
+@then('it will return "{text}"')
 def step_impl(context, text):
     assert_that(context.result, equal_to(text))
 

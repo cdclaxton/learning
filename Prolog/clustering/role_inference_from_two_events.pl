@@ -12,6 +12,8 @@
 /* Events 
 
    event(EventType, Id, Confidence).
+
+   Id is used to provide a distinction between the test cases.
 */
 event(eventA, 1, absent).
 event(eventB, 1, absent).

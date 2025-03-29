@@ -12,13 +12,13 @@ Programming consists of:
 - Defining rules -- logic contains rules of inference
 - Asking questions (a conjunction of goals to be satisfied using known clauses)
 
-Modus ponens logic:
+_Modus ponens_ logic:
 
 - p => q
 - if proposition p is true, then conclude that q is true
 - e.g. if it is raining, then the ground is wet. It is raining, therefore the ground is wet
 
-Horn clause logic:
+**Horn clause** logic:
 
 - Prolog uses a subset of First Order Logic called 'quantifier-free Horn clause logic'
 - no existential or universal quantifiers
@@ -140,9 +140,9 @@ in_sector(gwr, rail).
 X = gwr.
 ```
 
-press Enter --> Prolog stops searching for more answers
+press `Enter` --> Prolog stops searching for more answers
 
-press ; --> Prolog will resume its search through the database
+press `;` --> Prolog will resume its search through the database
 
 Anonymous variable:
 
@@ -157,7 +157,7 @@ symbol `,`
 
 p,q is true iff p and q are true
 
-backtracking --> repeated attempts to satisfy and re-satisfy goals in a conjunction
+**backtracking** -- repeated attempts to satisfy and re-satisfy goals in a conjunction
 
 ```prolog
 boss_of(darren, chris).
@@ -387,8 +387,8 @@ List membership:
 
 ```prolog
 /* List membership: member(X,L) succeeds if X is in list L */
-member(X,[Y|_]) :- X = Y.		/* Boundary condition */
-member(X,[_|Y]) :- member(X,Y).	/* Recursive case */
+member(X,[Y|_]) :- X = Y.        /* Boundary condition */
+member(X,[_|Y]) :- member(X,Y).  /* Recursive case */
 
 ?- member(cat,[dog,cat,fox]).
 true ;
@@ -694,6 +694,8 @@ male(james).
 
 true.
 ```
+
+`between(Low, High, Value)` -- `Value` takes on the values from `Low` to `High`.
 
 ## Examples
 

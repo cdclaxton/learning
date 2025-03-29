@@ -1,5 +1,12 @@
 /* Demonstration */
 
+/* Persons
+
+   person(Name, AgeGroup).
+*/
+
+
+
 /* Events
 
    event(Person, EventType, Datetime).
@@ -116,4 +123,14 @@ inferredRole(Person, roleC, Datetime, InferredConfidence) :-
       InferredConfidence = high, InferredConfidenceC1 = high, eventAtOrBeforeTime(Person, eventC3, Datetime)
     ).
 
-/* Inferred association */
+/* Inferred association 
+
+   inferredAssociation(PersonA, PersonB, Datetime, Association, Confidence).
+*/
+
+
+
+/* Member of the same group 
+
+   memberOfSameGroup(PersonA, PersonB, Datetime).
+*/

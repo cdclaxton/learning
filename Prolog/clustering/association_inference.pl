@@ -30,11 +30,17 @@ undirectedAssociation(PersonA, PersonB, Assoc) :-
     association(PersonA, PersonB, Assoc) ; 
     association(PersonB, PersonA, Assoc).
 
+roles(PersonA, PersonB, RoleA, RoleB) :-
+   (role(PersonA, RoleA), role(PersonB, RoleB)) ;
+   (role(PersonB, RoleA), role(PersonA, RoleB)).
+
 /* Inferred association */
 inferredAssociation(PersonA, PersonB, InferredAssociation) :-
     undirectedAssociation(PersonA, PersonB, Assoc),
-    ( InferredAssociation = inferredAssoc1, Assoc == assoc1, (role(PersonA, roleA), role(PersonB, roleB) ; role(PersonA, roleB), role(PersonB, roleA)) ;
-      InferredAssociation = inferredAssoc2, Assoc == assoc1, (role(PersonA, roleC), role(PersonB, roleD) ; role(PersonB, roleC), role(PersonA, roleD)) ).
+    ( InferredAssociation = inferredAssoc1, Assoc == assoc1, 
+      roles(PersonA, PersonB, roleA, roleB) ;
+      InferredAssociation = inferredAssoc2, Assoc == assoc1,
+      roles(PersonA, PersonB, roleC, roleD) ).
 
 /* Test queries 
 

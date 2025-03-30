@@ -458,6 +458,13 @@ X = 2.
 ```
 
 ```prolog
+/* max(L, V) succeeds if V is the maximum value in the list L. */
+max([], 0).
+max([H|T], Max) :- max(T, Value), H > Value, Max is H.
+max([H|T], Max) :- max(T, Value), H =< Value, Max is Value.
+```
+
+```prolog
 /* Example of a partial map
    Predicate evens(X,L) succeeds if L contains just the even numbers in X. */
 evens([],[]).

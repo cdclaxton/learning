@@ -77,8 +77,8 @@ sudo rm -rf /usr/local/go
 
 # Download and install a new version
 cd ~
-wget https://go.dev/dl/go1.21.0.linux-amd64.tar.gz
-sudo tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.24.2.linux-amd64.tar.gz
 
 # Add the path by editing .profile
 # vim $HOME/.profile

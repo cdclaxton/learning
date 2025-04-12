@@ -8,7 +8,7 @@ Prolog has been used to investigate a first-order logic approach to overlappying
 
 ### Infer the role of an entity from a single event
 
-The role of an entity can be inferred from the events to which it is related. In the specification of the probability of a role, it is necessary to consider that an event may not have occurred, i.e. it is deemed absent. If the event is present then, for the purposes of this example, it may have a probability that is low or high, i.e. $c_e \in \{ \text{low}, \text{high} \}$. The probability of the inferred role $c_r \in \{ \text{low}, \text{medium}, \text{high} \}$.
+The role of an entity can be inferred from the events to which it is related. In the specification of the probability of a role, it is necessary to consider that an event may not have occurred, i.e. it is deemed absent. If the event is present then, for the purposes of this example, it may have a probability that is low or high, i.e. $p_e \in \{ \text{low}, \text{high} \}$. The probability of the inferred role $p_r \in \{ \text{low}, \text{medium}, \text{high} \}$.
 
 The logical inference is from an event to a role:
 
@@ -48,7 +48,7 @@ event A ---|
 event B ---|
 ```
 
-The (discrete) probability associated with an event of a given type (A or B) is given by $e \in \{ \text{absent}, \text{low}, \text{high} \}$. The probability of the role $c_r \in \{ \text{low}, \text{medium}, \text{high} \}$.
+The (discrete) probability associated with an event of a given type (A or B) is given by $e \in \{ \text{absent}, \text{low}, \text{high} \}$. The probability of the role $p_r \in \{ \text{low}, \text{medium}, \text{high} \}$.
 
 The probability of the role given the event A or B's presence or absence and its probability (if present) is defined as:
 
@@ -108,7 +108,13 @@ Person 3 --[assoc1]-- Person 4
 
 The graph structure and inferences are implemented in `association_inference.pl`.
 
-### Infer an association between persons with a discrete probability
+### Precedence of associations with uncertainty
+
+If two people are connected via more than one association, the most 'consequential' association can be found. Suppose each association type has a precendence and that the association has a probability. The task is to find the 'highest' association given some measure that takes into account precedence and probability.
+
+This is implemented in `association_precedence.pl`.
+
+### Infer an association between persons with uncertainty
 
 The events to which a person is associated allows the role of a person to be determined, along with a probability of that role assignment. Two persons can have an association of a given type, which could also have a probability associated with it.
 
@@ -122,17 +128,17 @@ The events to which a person is associated allows the role of a person to be det
 
 In the simplest case, consider the association between two persons to be binary. The inferred role of a person can take on one of three values, where $p \in \{ \text{low}, \text{medium}, \text{high} \}$. If there is just a single association and 3 probability values, that means there are $3 \times 3 = 9$ combinations to consider, as illustrated below where each column represents the probability of an attribute.
 
-| Role 1 | Role 2 | Inferred association |
-|--------|--------|----------------------|
-| low    | low    | $P_0$                |
-| low    | medium | $P_1$                |
-| low    | high   | $P_2$                |
-| medium | low    | $P_3$                |
-| medium | medium | $P_4$                |
-| medium | high   | $P_5$                |
-| high   | low    | $P_6$                |
-| high   | medium | $P_7$                |
-| high   | high   | $P_8$                |
+| Inferred role 1 | Inferred role 2 | Inferred association |
+|-----------------|-----------------|----------------------|
+| low             | low             | $P_0$                |
+| low             | medium          | $P_1$                |
+| low             | high            | $P_2$                |
+| medium          | low             | $P_3$                |
+| medium          | medium          | $P_4$                |
+| medium          | high            | $P_5$                |
+| high            | low             | $P_6$                |
+| high            | medium          | $P_7$                |
+| high            | high            | $P_8$                |
 
 This is implemented in `association_inference_with_uncertainty.pl`.
 

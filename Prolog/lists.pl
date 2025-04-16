@@ -34,3 +34,6 @@ argMaxHelper([V1|V2], [P1|P2], PartialMax, FinalMax, _, FinalV) :-
 argMaxHelper([_|V2], [P1|P2], PartialMax, FinalMax, PartialV, FinalV) :- 
     P1=<PartialMax, argMaxHelper(V2, P2, PartialMax, FinalMax, PartialV, FinalV).
 argMax(V, P, PMax, VMax) :- argMaxHelper(V, P, 0, PMax, 0, VMax).
+
+/* Put the element on the head of the list */
+prepend(Element, List, [Element|List]).

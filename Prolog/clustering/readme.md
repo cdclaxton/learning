@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Prolog has been used to investigate a first-order logic approach to overlappying graph clustering.
+Prolog has been used to investigate a first-order logic approach to overlappying graph clustering. The first section entitled 'Building Blocks' was developed to explore small parts of a larger model, which is shown in the section entitled 'Demo'.
 
 ## Building blocks
 
@@ -110,7 +110,13 @@ The graph structure and inferences are implemented in `association_inference.pl`
 
 ### Precedence of associations with uncertainty
 
-If two people are connected via more than one association, the most 'consequential' association can be found. Suppose each association type has a precendence and that the association has a probability. The task is to find the 'highest' association given some measure that takes into account precedence and probability.
+If two people are connected via more than one association, the most 'consequential' association can be found. Suppose each association type has a precendence and that the association has a probability. The task is to find the 'highest' association given some measure that takes into account precedence and probability. One possible measure of consequence or severity is:
+
+$$
+\text{severity} = \text{precedence value} \times \text{probability}
+$$
+
+where the precedence value is a measure of the consequence of the association and the probability is the likelihood of the association.
 
 This is implemented in `association_precedence.pl`.
 
@@ -140,11 +146,11 @@ In the simplest case, consider the association between two persons to be binary.
 | high            | medium          | $P_7$                |
 | high            | high            | $P_8$                |
 
-This is implemented in `association_inference_with_uncertainty.pl`.
+If instead of discrete probabilities continuous probabilities are used and a function maps two inferred probabilities to a probability of an inferred association, the code would be much simpler.
 
 ### Infer whether two persons are in the same cluster
 
-This is implemented in `cluster_inference.pl`.
+This is implemented in `path_in_graph.pl`.
 
 ## Demo
 

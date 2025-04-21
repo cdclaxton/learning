@@ -188,9 +188,9 @@ Sub ColourCells()
 End Sub
 ```
 
-- `Do While <condition>` ... `<Loop>`
+- `Do While <condition>` ... `Loop`
   - Executes while the condition is True
-- `Do Until` loop
+- `Do Until` ... `Loop`
   - executes until the condition is True
 - `For Each <variable> In <collection>` ... `Next <variable>`
   - loop through each object in a collection, e.g. worksheets
@@ -395,6 +395,89 @@ Sub ArrayExample()
     Debug.Print "Lowest array index: " & LBound(MyArray) ' 0
     Debug.Print "Highest array index: " & UBound(MyArray) ' 4
     Debug.Print IsArray(MyArray) ' True
+End Sub
+```
+
+### Class modules
+
+- Class module is the VBA equivalent of a class
+- Right-click in the VBE -> Insert -> Class Module
+- Change the name of the class using its properties
+- Parts of a class module:
+  - Methods
+  - Member variables
+  - Properties -- types of functions/subs that behave like variables
+  - Events -- subs that are triggered by an event
+- Destructor: `Private Sub Class_Terminate()`
+
+```vb
+' Example of a class module
+Option Explicit
+
+' Member variable
+Private dblTotal As Double
+
+' Properties
+Property Get Total() As Double  ' Getter
+    Total = dblTotal
+End Property
+
+Property Let Total(value As Double)  ' Setter
+    dblTotal = value
+End Property
+
+' Event
+Private Sub Class_Initialize()
+    dblTotal = 100
+End Sub
+
+' Methods
+Public Sub Add(value As Double)
+    dblTotal = dblTotal + value
+End Sub
+
+Public Sub ShowDebug()
+    Debug.Print "Total: " & Me.dblTotal
+End Sub
+```
+
+to use the class module:
+
+```vb
+Dim dataItem As New clsDataItem
+dataItem.ShowDebug    ' Total: 100
+
+dataItem.Add 100      ' Calling Add() method
+dataItem.ShowDebug    ' Total: 200
+
+dataItem.Total = 500  ' Use the setter
+dataItem.ShowDebug    ' Total: 500
+```
+
+### Collection
+
+- Methods:
+  - `Add()`
+  - `Count()`
+  - `Item()`
+  - `Remove()`
+
+```vb
+Sub CollectionExample()
+  Dim col1 As New Collection
+
+  col1.Add "Item 1"
+  Debug.Print col1.Count()  ' 1
+  Debug.Print col1.Item(1)  ' Item 1
+
+  col1.Add "Item 2"
+  Debug.Print col1.Count()  ' 2
+  Debug.Print col1.Item(1)  ' Item 1
+  Debug.Print col1.Item(2)  ' Item 2
+
+  col1.Remove (1)
+  Debug.Print col1.Count()  ' 1
+  Debug.Print col1.Item(1)  ' Item 2
 End Sub
 ```
 
@@ -717,3 +800,64 @@ End Sub
   - Value -- control's value
   - Visible -- visible?
   - Width
+
+## Word
+
+- Open the Visual Basic Editor (VBE) with Alt+F11
+- To edit a template (.dotm file) as double-clicking the file will create a new file:
+  - Open MS Word
+  - Open the template file
+
+### DocVariable
+
+- To create a DocVariable: Insert -> Quick Parts -> Field...
+- To toggle fields between results and code: ALT+F9
+
+```vb
+' Show the field codes in the document
+Sub ShowFieldCodes()
+    Dim fieldLoop As Field
+    Debug.Print "Field codes:"
+    For Each fieldLoop In ActiveDocument.Fields
+        Debug.Print fieldLoop.Code
+    Next fieldLoop
+End Sub
+```
+
+```vb
+' Show the name and value of each variable
+Sub ShowVariables()
+    Dim myVar
+    For Each myVar In ActiveDocument.Variables
+        Debug.Print "Name = '" & myVar.Name & "', Value: " & myVar.Value
+    Next myVar
+End Sub
+```
+
+```vb
+' Update a variable
+Sub UpdateVariable()
+  Dim oVars As Word.Variables
+  Set oVars = ActiveDocument.Variables
+  oVars("varName").Value = "Hi, Chris"
+
+  Debug.Print ActiveDocument.Fields.Update
+End Sub
+```
+
+### Bookmarks
+
+- To add a bookmark: Insert -> Bookmark (flag icon)
+- To show bookmarks:
+  - File -> Options -> Advanced
+  - Under 'Show document content' select 'Show bookmarks' and click OK
+
+```vb
+' Check if a bookmark exists
+If ActiveDocument.Bookmarks.Exists(strSightingsBookmark) = False Then
+  Dim result
+  result = MsgBox("Sightings bookmark not found. Unable to auto-populate.", _
+      vbOKOnly + vbCritical)
+  Exit Sub
+End If
+```

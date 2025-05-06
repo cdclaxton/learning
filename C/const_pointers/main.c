@@ -1,5 +1,10 @@
 #include <assert.h>
 
+void func1(int *a)
+{
+    *a = 100;
+}
+
 int main(void)
 {
     // Constant value
@@ -30,6 +35,11 @@ int main(void)
     assert(*ptr3 == 200);
     // *ptr3 = 300;  error: assignment of read-only location ‘*(const int *)ptr3’
     // ptr3 = &d;  error: assignment of read-only variable ‘ptr3’
+
+    // Pass a pointer to a function func1()
+    int f = 15;
+    func1(&f);
+    assert(f == 100);
 
     return 0;
 }

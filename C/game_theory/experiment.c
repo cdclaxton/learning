@@ -3,9 +3,10 @@
 #include <string.h>
 #include "experiment.h"
 
-PayoffElement *buildPayoffElement(int player1Payoff, int player2Payoff)
+PayoffElement *buildPayoffElement(int player1Payoff,
+                                  int player2Payoff)
 {
-    PayoffElement *element = malloc(sizeof(PayoffElement));
+    PayoffElement *const element = malloc(sizeof(PayoffElement));
     if (element == NULL)
     {
         printf("Failed to allocate space for the payoff element");
@@ -18,7 +19,7 @@ PayoffElement *buildPayoffElement(int player1Payoff, int player2Payoff)
     return element;
 }
 
-void printPayoffElement(PayoffElement *element)
+void printPayoffElement(const PayoffElement *const element)
 {
     printf("Payoff: Player 1=%d, Player 2=%d", element->player1Payoff, element->player2Payoff);
 }
@@ -50,27 +51,27 @@ void freePayoffMatrix(PayoffMatrix *matrix)
     free(matrix);
 }
 
-bool payoff(int player1Decision,
-            int player2Decision,
-            PayoffMatrix *matrix,
-            PayoffElement **result)
+bool payoff(int player1Action,                // Action of player 1
+            int player2Action,                // Action of player 2
+            const PayoffMatrix *const matrix, // Payoff matrix
+            PayoffElement **result)           // Payoff result
 {
-    if ((player1Decision == COOPERATE) && (player2Decision == COOPERATE))
+    if ((player1Action == COOPERATE) && (player2Action == COOPERATE))
     {
         *result = matrix->cooperateCooperate;
         return true;
     }
-    else if ((player1Decision == COOPERATE) && (player2Decision == DEFECT))
+    else if ((player1Action == COOPERATE) && (player2Action == DEFECT))
     {
         *result = matrix->cooperateDefect;
         return true;
     }
-    else if ((player1Decision == DEFECT) && (player2Decision == COOPERATE))
+    else if ((player1Action == DEFECT) && (player2Action == COOPERATE))
     {
         *result = matrix->defectCooperate;
         return true;
     }
-    else if ((player1Decision == DEFECT) && (player2Decision == DEFECT))
+    else if ((player1Action == DEFECT) && (player2Action == DEFECT))
     {
         *result = matrix->defectDefect;
         return true;
@@ -84,12 +85,12 @@ bool payoff(int player1Decision,
 // Strategy
 // -----------------------------------------------------------------------------
 
-void freeStrategy(Strategy *strategy)
+void freeStrategy(Strategy *const strategy)
 {
     free(strategy);
 }
 
-void freeStrategies(Strategy **strategies,
+void freeStrategies(Strategy **const strategies,
                     int numberOfStrategies)
 {
     for (int i = 0; i < numberOfStrategies; i++)
@@ -102,8 +103,8 @@ void freeStrategies(Strategy **strategies,
 // Strategy: Always defect
 // -----------------------------------------------------------------------------
 
-int alwaysDefectDecide(int *playerDecisions,
-                       int *opponentDecisions,
+int alwaysDefectDecide(const int *const playerDecisions,
+                       const int *const opponentDecisions,
                        int currentTurn)
 {
     return DEFECT;
@@ -111,7 +112,7 @@ int alwaysDefectDecide(int *playerDecisions,
 
 Strategy *newAlwaysDefectStrategy()
 {
-    Strategy *strategy = malloc(sizeof(Strategy));
+    Strategy *const strategy = malloc(sizeof(Strategy));
     strategy->name = "always-defect";
     strategy->decide = alwaysDefectDecide;
     return strategy;
@@ -121,8 +122,8 @@ Strategy *newAlwaysDefectStrategy()
 // Strategy: Always cooperate
 // -----------------------------------------------------------------------------
 
-int alwaysCooperateDecide(int *playerDecisions,
-                          int *opponentDecisions,
+int alwaysCooperateDecide(const int *const playerDecisions,
+                          const int *const opponentDecisions,
                           int currentTurn)
 {
     return COOPERATE;
@@ -130,7 +131,7 @@ int alwaysCooperateDecide(int *playerDecisions,
 
 Strategy *newAlwaysCooperateStrategy()
 {
-    Strategy *strategy = malloc(sizeof(Strategy));
+    Strategy *const strategy = malloc(sizeof(Strategy));
     strategy->name = "always-cooperate";
     strategy->decide = alwaysCooperateDecide;
     return strategy;
@@ -140,8 +141,8 @@ Strategy *newAlwaysCooperateStrategy()
 // Strategy: Always defect if the opponent defects
 // -----------------------------------------------------------------------------
 
-int alwaysDefectIfOpponentDefectsDecide(int *playerDecisions,
-                                        int *opponentDecisions,
+int alwaysDefectIfOpponentDefectsDecide(const int *const playerDecisions,
+                                        const int *const opponentDecisions,
                                         int currentTurn)
 {
     // Cooperate on the first turn
@@ -171,8 +172,8 @@ Strategy *newAlwaysDefectIfOpponentDefectsStrategy()
 // Strategy: Tit-for-tat
 // -----------------------------------------------------------------------------
 
-int titForTatDecide(int *playerDecisions,
-                    int *opponentDecisions,
+int titForTatDecide(const int *const playerDecisions,
+                    const int *const opponentDecisions,
                     int currentTurn)
 {
     // Cooperate on the first turn
@@ -196,7 +197,8 @@ Strategy *newTitForTatStrategy()
 // Strategy utility functions
 // -----------------------------------------------------------------------------
 
-bool anyDefections(int *decisions, int maxIndex)
+bool anyDefections(const int *const decisions,
+                   int maxIndex)
 {
     for (int i = 0; i <= maxIndex; i++)
     {
@@ -236,7 +238,7 @@ Game *newGame(int numberOfRounds)
     return game;
 }
 
-void freeGame(Game *game)
+void freeGame(Game *const game)
 {
     free(game->player1Actions);
     free(game->player2Actions);
@@ -253,7 +255,7 @@ bool isActionValid(int action)
     return false;
 }
 
-bool updateGame(Game *game,
+bool updateGame(Game *const game,
                 int player1Action,
                 int player2Action)
 {
@@ -281,10 +283,10 @@ bool updateGame(Game *game,
     return true;
 }
 
-bool scoreGame(Game *game,
-               PayoffMatrix *payoffMatrix,
-               int *player1Score,
-               int *player2Score)
+bool scoreGame(const Game *const game,
+               const PayoffMatrix *const payoffMatrix,
+               int *const player1Score,
+               int *const player2Score)
 {
     if ((game == NULL) || (payoffMatrix == NULL))
     {
@@ -323,7 +325,7 @@ bool scoreGame(Game *game,
     return true;
 }
 
-void printGame(Game *game)
+void printGame(const Game *const game)
 {
     printf("Game:\n");
     printf("  Number of rounds: %d\n", game->numberOfRounds);
@@ -338,9 +340,9 @@ void printGame(Game *game)
     }
 }
 
-bool executeGame(Game *game,
-                 Strategy *player1,
-                 Strategy *player2)
+bool executeGame(Game *const game,
+                 const Strategy *const player1,
+                 const Strategy *const player2)
 {
     int action1;
     int action2;
@@ -367,11 +369,11 @@ bool executeGame(Game *game,
     }
 }
 
-bool gameEquals(Game *game,
+bool gameEquals(const Game *const game,
                 int expectedNumberOfRounds,
                 int expectedNumberOfRoundsPlayed,
-                int *expectedPlayer1Actions,
-                int *expectedPlayer2Actions)
+                const int *const expectedPlayer1Actions,
+                const int *const expectedPlayer2Actions)
 {
     if (game == NULL)
     {
@@ -400,7 +402,7 @@ bool gameEquals(Game *game,
 // Tournament
 // -----------------------------------------------------------------------------
 
-Tournament *newTournament(Strategy **strategies,
+Tournament *newTournament(Strategy **const strategies,
                           int numberOfStrategies,
                           int numberOfRoundsPerGame)
 {
@@ -450,7 +452,7 @@ Tournament *newTournament(Strategy **strategies,
     return tournament;
 }
 
-void freeTournament(Tournament *tournament)
+void freeTournament(Tournament *const tournament)
 {
     free(tournament->player1Strategies);
     free(tournament->player2Strategies);
@@ -467,7 +469,7 @@ void freeTournament(Tournament *tournament)
     free(tournament);
 }
 
-void printTournament(Tournament *tournament)
+void printTournament(const Tournament *const tournament)
 {
     printf("Tournament:\n");
     printf("Number of games: %d\n", tournament->numberOfGames);
@@ -479,7 +481,7 @@ void printTournament(Tournament *tournament)
     }
 }
 
-void executeTournament(Tournament *tournament)
+void executeTournament(Tournament *const tournament)
 {
     if (tournament == NULL)
     {
@@ -510,15 +512,15 @@ TournamentScores *newTournamentScores(int numberOfGames)
     return scores;
 }
 
-void freeTournamentScores(TournamentScores *scores)
+void freeTournamentScores(TournamentScores *const scores)
 {
     free(scores->player1Scores);
     free(scores->player2Scores);
     free(scores);
 }
 
-TournamentScores *scoreTournament(Tournament *tournament,
-                                  PayoffMatrix *payoffMatrix)
+TournamentScores *scoreTournament(const Tournament *const tournament,
+                                  const PayoffMatrix *const payoffMatrix)
 {
     // Check that the tournament and payoff matrix are not NULL
     if ((tournament == NULL) || (payoffMatrix == NULL))
@@ -551,10 +553,10 @@ TournamentScores *scoreTournament(Tournament *tournament,
     return scores;
 }
 
-bool tournamentScoresEquals(TournamentScores *scores,
+bool tournamentScoresEquals(const TournamentScores *const scores,
                             int numberOfGames,
-                            int *expectedPlayer1Scores,
-                            int *expectedPlayer2Scores)
+                            const int *const expectedPlayer1Scores,
+                            const int *const expectedPlayer2Scores)
 {
     if (scores == NULL)
     {
@@ -578,11 +580,11 @@ bool tournamentScoresEquals(TournamentScores *scores,
     return true;
 }
 
-bool updateStrategyScore(Strategy **strategies,
+bool updateStrategyScore(Strategy **const strategies,
                          int numberOfStrategies,
-                         Strategy *playerStrategy,
+                         const Strategy *const playerStrategy,
                          int playerScore,
-                         int *scores)
+                         int *const scores)
 {
     int strategyIndex = -1;
 
@@ -605,10 +607,10 @@ bool updateStrategyScore(Strategy **strategies,
     return true;
 }
 
-int *strategyScores(Strategy **strategies,
+int *strategyScores(Strategy **const strategies,
                     int numberOfStrategies,
-                    Tournament *tournament,
-                    TournamentScores *tournamentScores)
+                    const Tournament *const tournament,
+                    const TournamentScores *const tournamentScores)
 {
     if (tournament->numberOfGames != tournamentScores->numberOfGames)
     {
@@ -658,8 +660,8 @@ int *strategyScores(Strategy **strategies,
     return scores;
 }
 
-bool strategyScoresEqual(int *scores,
-                         int *expectedScores,
+bool strategyScoresEqual(const int *const scores,
+                         const int *const expectedScores,
                          int numberOfScores)
 {
     for (int i = 0; i < numberOfScores; i++)
@@ -673,12 +675,13 @@ bool strategyScoresEqual(int *scores,
     return true;
 }
 
-void printStrategyScores(Strategy **strategies,
+void printStrategyScores(Strategy **const strategies,
                          int numberOfStrategies,
-                         int *scores)
+                         const int *const scores)
 {
+    printf("Score\tStrategy\n");
     for (int i = 0; i < numberOfStrategies; i++)
     {
-        printf("Strategy: %s \tscore: %d\n", strategies[i]->name, scores[i]);
+        printf("%d\t%s\n", scores[i], strategies[i]->name);
     }
 }

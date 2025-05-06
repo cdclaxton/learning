@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-// Constants related to player decisions
+// Constants related to player actions
 #define COOPERATE 0
 #define DEFECT 1
 
@@ -17,14 +17,14 @@ PayoffElement *buildPayoffElement(int player1Payoff,  // Payoff for player 1
 void freePayoffElement(PayoffElement *element);
 
 // Print the payoff element to stdout
-void printPayoffElement(PayoffElement *element);
+void printPayoffElement(const PayoffElement *const element);
 
 typedef struct
 {
-    PayoffElement *cooperateCooperate;
-    PayoffElement *cooperateDefect;
-    PayoffElement *defectCooperate;
-    PayoffElement *defectDefect;
+    PayoffElement *cooperateCooperate; // Payoff if both players cooperate
+    PayoffElement *cooperateDefect;    // Payoff if player 1 cooperates and player 2 defects
+    PayoffElement *defectCooperate;    // Payoff if player 1 defects and player 2 cooperates
+    PayoffElement *defectDefect;       // Payoff if both players defect
 } PayoffMatrix;
 
 PayoffMatrix *buildPayoffMatrix(int bothPlayersCooperate, // Payoff for each player when they both cooperate
@@ -35,10 +35,10 @@ PayoffMatrix *buildPayoffMatrix(int bothPlayersCooperate, // Payoff for each pla
 // Free the payoff matrix (and its elements)
 void freePayoffMatrix(PayoffMatrix *matrix);
 
-bool payoff(int player1Decision,     // Decision of player 1
-            int player2Decision,     // Decision of player 2
-            PayoffMatrix *matrix,    // Payoff matrix
-            PayoffElement **result); // Payoff result
+bool payoff(int player1Action,                // Action of player 1
+            int player2Action,                // Action of player 2
+            const PayoffMatrix *const matrix, // Payoff matrix
+            PayoffElement **const result);    // Payoff result
 
 // -----------------------------------------------------------------------------
 // Strategy
@@ -51,30 +51,40 @@ typedef struct
 
     // Decision function that takes an array of the player's decisions, their
     // opponent's decisions and the current turn index
-    int (*decide)(int *playerDecisions, int *opponentDecisions, int currentTurn);
+    int (*decide)(const int *const playerDecisions,
+                  const int *const opponentDecisions,
+                  int currentTurn);
 } Strategy;
 
 // Free the memory allocated for the strategy
-void freeStrategy(Strategy *strategy);
+void freeStrategy(Strategy *const strategy);
 
 // Free the memory allocated to an array of strategies
-void freeStrategies(Strategy **strategies,
+void freeStrategies(Strategy **const strategies,
                     int numberOfStrategies);
 
 // -----------------------------------------------------------------------------
 // Strategies
 // -----------------------------------------------------------------------------
 
-int alwaysDefectDecide(int *, int *, int);
+int alwaysDefectDecide(const int *const playerDecisions,
+                       const int *const opponentDecisions,
+                       int currentTurn);
 Strategy *newAlwaysDefectStrategy();
 
-int alwaysCooperateDecide(int *, int *, int);
+int alwaysCooperateDecide(const int *const playerDecisions,
+                          const int *const opponentDecisions,
+                          int currentTurn);
 Strategy *newAlwaysCooperateStrategy();
 
-int alwaysDefectIfOpponentDefectsDecide(int *, int *, int);
+int alwaysDefectIfOpponentDefectsDecide(const int *const playerDecisions,
+                                        const int *const opponentDecisions,
+                                        int currentTurn);
 Strategy *newAlwaysDefectIfOpponentDefectsStrategy();
 
-int titForTatDecide(int *, int *, int);
+int titForTatDecide(const int *const playerDecisions,
+                    const int *const opponentDecisions,
+                    int currentTurn);
 Strategy *newTitForTatStrategy();
 
 // -----------------------------------------------------------------------------
@@ -82,7 +92,8 @@ Strategy *newTitForTatStrategy();
 // -----------------------------------------------------------------------------
 
 // Are there any defections in the range [0, maxIndex]?
-bool anyDefections(int *decisions, int maxIndex);
+bool anyDefections(const int *const decisions,
+                   int maxIndex);
 
 // -----------------------------------------------------------------------------
 // Game
@@ -107,36 +118,36 @@ typedef struct
 Game *newGame(int numberOfRounds);
 
 // Free the memory allocated for the game
-void freeGame(Game *game);
+void freeGame(Game *const game);
 
 // Is the action valid?
 bool isActionValid(int action);
 
 // Update the actions of the players in a game
-bool updateGame(Game *game,
+bool updateGame(Game *const game,
                 int player1Action,
                 int player2Action);
 
 // Calculate the scores for the two players
-bool scoreGame(Game *game,
-               PayoffMatrix *payoffMatrix,
-               int *player1Score,
-               int *player2Score);
+bool scoreGame(const Game *const game,
+               const PayoffMatrix *const payoffMatrix,
+               int *const player1Score,
+               int *const player2Score);
 
 // Print the game to stdout (for debugging)
-void printGame(Game *game);
+void printGame(const Game *const game);
 
 // Execute the game
-bool executeGame(Game *game,
-                 Strategy *player1,
-                 Strategy *player2);
+bool executeGame(Game *const game,
+                 const Strategy *const player1,
+                 const Strategy *const player2);
 
 // Does the game have the expected values?
-bool gameEquals(Game *game,
+bool gameEquals(const Game *const game,
                 int expectedNumberOfRounds,
                 int expectedNumberOfRoundsPlayed,
-                int *expectedPlayer1Actions,
-                int *expectedPlayer2Actions);
+                const int *const expectedPlayer1Actions,
+                const int *const expectedPlayer2Actions);
 
 // -----------------------------------------------------------------------------
 // Tournament
@@ -159,18 +170,18 @@ typedef struct
 
 // Build a new tournament where every strategy plays against every other
 // strategy and itself
-Tournament *newTournament(Strategy **strategies,
+Tournament *newTournament(Strategy **const strategies,
                           int numberOfStrategies,
                           int numberOfRoundsPerGame);
 
 // Free the space allocated to a tournament
-void freeTournament(Tournament *tournament);
+void freeTournament(Tournament *const tournament);
 
 // Print the tournament to stdout (for debugging purposes)
-void printTournament(Tournament *tournament);
+void printTournament(const Tournament *const tournament);
 
 // Execute the tournament
-void executeTournament(Tournament *tournament);
+void executeTournament(Tournament *const tournament);
 
 typedef struct
 {
@@ -187,37 +198,37 @@ typedef struct
 TournamentScores *newTournamentScores(int numberOfGames);
 
 // Free the memory allocated for the tournament scores struct
-void freeTournamentScores(TournamentScores *scores);
+void freeTournamentScores(TournamentScores *const scores);
 
 // Calculate the scores for the tournament
-TournamentScores *scoreTournament(Tournament *tournament,
-                                  PayoffMatrix *payoff);
+TournamentScores *scoreTournament(const Tournament *const tournament,
+                                  const PayoffMatrix *const payoffMatrix);
 
 // Are the tournament scores equal to those expected?
-bool tournamentScoresEquals(TournamentScores *scores,
+bool tournamentScoresEquals(const TournamentScores *const scores,
                             int numberOfGames,
-                            int *expectedPlayer1Scores,
-                            int *expectedPlayer2Scores);
+                            const int *const expectedPlayer1Scores,
+                            const int *const expectedPlayer2Scores);
 
 // Update the overall strategy scores
-bool updateStrategyScore(Strategy **strategies,
+bool updateStrategyScore(Strategy **const strategies,
                          int numberOfStrategies,
-                         Strategy *playerStrategy,
+                         const Strategy *const playerStrategy,
                          int playerScore,
-                         int *scores);
+                         int *const scores);
 
 // Calculate the score for each strategy
-int *strategyScores(Strategy **strategies,
+int *strategyScores(Strategy **const strategies,
                     int numberOfStrategies,
-                    Tournament *tournament,
-                    TournamentScores *tournamentScores);
+                    const Tournament *const tournament,
+                    const TournamentScores *const tournamentScores);
 
 // Are the strategy scores equal to their expected scores?
-bool strategyScoresEqual(int *scores,
-                         int *expectedScores,
+bool strategyScoresEqual(const int *const scores,
+                         const int *const expectedScores,
                          int numberOfScores);
 
 // Print the strategy scores to stdout
-void printStrategyScores(Strategy **strategies,
+void printStrategyScores(Strategy **const strategies,
                          int numberOfStrategies,
-                         int *scores);
+                         const int *const scores);

@@ -8,4 +8,5 @@ go run main.go
 curl -XGET http://localhost:8000/a
 curl -XGET http://localhost:8000/1/b
 curl -XGET http://localhost:8000/1/c
+curl -XGET http://localhost:8000/1/d
 ```

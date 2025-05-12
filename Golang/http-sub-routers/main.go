@@ -23,6 +23,11 @@ func handlerC(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("From handler C\n"))
 }
 
+func handlerD(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("From handler D\n"))
+}
+
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println(r.RequestURI)
@@ -30,9 +35,16 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func subRouterSpecificMiddleware(next http.Handler) http.Handler {
+func subRouterSpecificMiddleware1(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Sub-router middleware: %s", r.RequestURI)
+		log.Printf("Sub-router middleware 1: %s", r.RequestURI)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func subRouterSpecificMiddleware2(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Sub-router middleware 2: %s", r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -48,10 +60,14 @@ func main() {
 	subRouter1 := router.PathPrefix("/1").Subrouter()
 
 	// Add sub-router specific middleware
-	subRouter1.Use(subRouterSpecificMiddleware)
-
+	subRouter1.Use(subRouterSpecificMiddleware1)
 	subRouter1.HandleFunc("/b", handlerB)
 	subRouter1.HandleFunc("/c", handlerC)
+
+	// Create a 2nd sub-router, but with the same path prefix as the 1st
+	subRouter2 := router.PathPrefix("/1").Subrouter()
+	subRouter2.Use(subRouterSpecificMiddleware2)
+	subRouter2.HandleFunc("/d", handlerD)
 
 	srv := &http.Server{
 		Handler: router,

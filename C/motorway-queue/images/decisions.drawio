@@ -1,0 +1,223 @@
+<mxfile host="Electron" modified="2025-05-26T08:21:16.673Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="0wt9THe0ntoF9zhgnqvV" version="22.1.2" type="device">
+  <diagram name="Page-1" id="9TWJ3wuK8kpGgWCEg8Eb">
+    <mxGraphModel dx="1785" dy="601" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-5" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="120" y="120" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-1" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="160" y="131.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-6" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+          <mxGeometry x="120" y="190" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-10" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Motorway junction&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="460" y="60" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-12" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" parent="1" vertex="1">
+          <mxGeometry x="310" y="131.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" parent="1" source="0KQMzi5qDK9B-gI_tnlq-1" target="0KQMzi5qDK9B-gI_tnlq-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-1" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="280" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-2" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="350" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-3" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="361.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-4" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="310" y="361.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-3" target="XbpQxZjChk4AafrXOQUD-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-6" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="440" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-7" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="510" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-8" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="160" y="451.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-2" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="280" y="463" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-9" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="310" y="451.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-8" target="XbpQxZjChk4AafrXOQUD-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-11" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="110" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-12" value="Vehicle is on the motorway and there isn&#39;t a blockage immediately ahead" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="120" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-13" value="&lt;b&gt;Move forward&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="230" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-14" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="270" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-15" value="Vehicle is on the A-road and there isn&#39;t a motorway junction immediately ahead" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="280" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-16" value="&lt;b&gt;Move forward&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="390" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-17" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="430" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-18" value="Vehicle is on the motorway and there is a blockage immediately ahead" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="440" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-19" value="&lt;b&gt;Stop&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="550" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-29" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-39" y="590" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-30" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="121" y="600" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-31" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="121" y="670" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-32" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="681.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-34" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="530" y="611.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-35" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-32" target="XbpQxZjChk4AafrXOQUD-34">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-36" value="Vehicle is on the A-road and the next motorway section is clear" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-29" y="600" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-37" value="&lt;b&gt;Rejoin motorway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-29" y="710" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-38" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="750" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-39" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="760" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-40" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="830" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-41" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="379" y="841.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-42" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="530" y="841.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-43" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-41" target="XbpQxZjChk4AafrXOQUD-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-44" value="Vehicle is on the A-road and the next motorway section is blocked" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="760" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-45" value="&lt;b&gt;Move forward&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="870" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-46" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="721" y="771.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-47" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="910" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-48" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="920" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-49" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="990" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-50" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="381" y="931.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-51" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="532" y="931.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-52" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-50" target="XbpQxZjChk4AafrXOQUD-51">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-53" value="Vehicle is on the motorway and there is a junction in its path.&amp;nbsp; The next motorway section is clear." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="920" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-54" value="&lt;b&gt;Move forward&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1030" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-56" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="1070" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-57" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1080" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-58" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1150" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-59" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="381" y="1091.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-60" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="532" y="1161.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-61" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-59" target="XbpQxZjChk4AafrXOQUD-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-62" value="Vehicle is on the motorway and there is a junction in its path.&amp;nbsp; The next motorway section is blocked." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1080" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-63" value="&lt;b&gt;Leave motorway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1190" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-64" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="721" y="1091.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-65" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="1230" width="910" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-66" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1240" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-67" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="120" y="1310" width="740" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-68" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="381" y="1251.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-69" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;opacity=60;" vertex="1" parent="1">
+          <mxGeometry x="532" y="1251.5" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-71" value="Vehicle is on the motorway and there is a junction in its path.&amp;nbsp; The path to the junction is blocked." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1240" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-72" value="&lt;b&gt;Stop&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="-30" y="1350" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-73" value="" style="shape=mxgraph.cisco.misc.car;html=1;pointerEvents=1;dashed=0;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;verticalLabelPosition=bottom;verticalAlign=top;align=center;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="470" y="1263" width="69" height="37" as="geometry" />
+        </mxCell>
+        <mxCell id="0KQMzi5qDK9B-gI_tnlq-7" value="" style="endArrow=none;html=1;rounded=0;strokeWidth=6;" parent="1" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="490" y="1400" as="sourcePoint" />
+            <mxPoint x="490" y="100" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="XbpQxZjChk4AafrXOQUD-70" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;" edge="1" parent="1" source="XbpQxZjChk4AafrXOQUD-68" target="XbpQxZjChk4AafrXOQUD-69">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,6 +1,6 @@
 # Motorway Journey Simulator
 
-A vehicle driving along the M5 motorway going from junction 14 to junction 11A travels at a constant speed for the journey. Suppose that there is a chance that the route between two junctions has a blockage (e.g. due to congestion), but that if the driver knows there is congestion after the next junction that they can divert onto an A-road. How is the journey time is affected by the vehicle's speed, probability of a blockage occurring and the duration of a blockage?
+A vehicle driving along the M5 motorway going from junction 14 to junction 11A travels at a constant speed for the journey. Suppose that there is a chance that the route between two junctions has a blockage (e.g. due to congestion), but that if the driver knows there is congestion after the next junction they can divert onto an A-road. How is the journey time affected by the vehicle's speed, probability of a blockage occurring and the duration of a blockage?
 
 The four motorway junctions on the M5 are illustrated below. There is an A-road that runs parallel to each motorway section that is assumed to allow the vehicle to travel between the junctions covering the same distance and at the same constant speed as on the motorway.
 

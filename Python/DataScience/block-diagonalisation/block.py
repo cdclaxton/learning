@@ -117,6 +117,8 @@ if __name__ == "__main__":
 
     plt.subplot(1, 2, 2)
     plt.imshow(result)
+    plt.xticks(np.arange(len(block_ordering)), block_ordering)
+    plt.yticks(np.arange(len(block_ordering)), block_ordering)
     plt.title("Reordered")
 
     plt.show()

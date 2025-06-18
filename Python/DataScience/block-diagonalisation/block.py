@@ -32,6 +32,7 @@ def build_matrix():
 
 
 def reorder_matrix(ordering, matrix):
+    """Build the reordered matrix."""
 
     n_rows = matrix.shape[0]
 
@@ -52,10 +53,11 @@ def shuffle_matrix(matrix):
     ordering = list(range(n_rows))
     random.shuffle(ordering)
 
-    return reorder_matrix(ordering, matrix)
+    return reorder_matrix(ordering, matrix), ordering
 
 
 def random_pair(N):
+    """Generate a random pair of distinct values in the range [0, N-1]."""
     x1 = np.random.randint(N)
     x2 = np.random.randint(N)
     while x1 == x2:
@@ -77,12 +79,12 @@ def calc_distance(matrix, ordering):
     return distance
 
 
-def block_diagonalise(matrix):
+def block_diagonalise(matrix, initial_ordering):
 
     n_rows, n_cols = matrix.shape
     assert n_rows == n_cols
 
-    ordering = list(range(n_rows))
+    ordering = initial_ordering[:]
     initial_distance = calc_distance(matrix, ordering)
 
     for _ in range(50):
@@ -104,21 +106,36 @@ def block_diagonalise(matrix):
 
 if __name__ == "__main__":
 
+    # Build a random symmetric block diagonal matrix
     matrix = build_matrix()
 
-    shuffled = shuffle_matrix(matrix)
+    # Shuffle the rows and columns of the matrix
+    shuffled, shuffled_ordering = shuffle_matrix(matrix)
 
-    block_ordering = block_diagonalise(shuffled)
-    result = reorder_matrix(block_ordering, shuffled)
+    # Perform block diagonalisation
+    block_ordering = block_diagonalise(matrix, shuffled_ordering)
+    result = reorder_matrix(block_ordering, matrix)
 
-    plt.subplot(1, 2, 1)
+    # Number of rows and columns in the matrix
+    n = len(block_ordering)
+
+    plt.subplot(1, 3, 1)
+    plt.imshow(matrix)
+    plt.xticks(np.arange(n))
+    plt.yticks(np.arange(n))
+    plt.title("Original")
+
+    plt.subplot(1, 3, 2)
     plt.imshow(shuffled)
+    plt.xticks(np.arange(n), shuffled_ordering)
+    plt.yticks(np.arange(n), shuffled_ordering)
     plt.title("Shuffled")
 
-    plt.subplot(1, 2, 2)
+    plt.subplot(1, 3, 3)
     plt.imshow(result)
-    plt.xticks(np.arange(len(block_ordering)), block_ordering)
-    plt.yticks(np.arange(len(block_ordering)), block_ordering)
+    plt.xticks(np.arange(n), block_ordering)
+    plt.yticks(np.arange(n), block_ordering)
     plt.title("Reordered")
 
     plt.show()
+    # plt.savefig("example.png")

@@ -138,4 +138,4 @@ if __name__ == "__main__":
     plt.title("Reordered")
 
     plt.show()
-    # plt.savefig("example.png")
+    # plt.savefig("example.png", bbox_inches="tight")

@@ -1,5 +1,8 @@
 Feature: Postcode extraction
 
+    @allure.label.package:org.example
+    @allure.label.testClass:TestNoPostcodePresent
+    @allure.label.testMethod:TestNoPostcode()
     Scenario: No postcode present in text
         Given we have a postcode extractor
         When we send "BS1"

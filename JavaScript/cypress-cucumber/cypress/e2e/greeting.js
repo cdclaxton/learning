@@ -1,6 +1,5 @@
-const assert = require('assert');
-const { When, Then } = require('@cucumber/cucumber');
-const { Greeter } = require("../../src/index.js")
+const { When, Then } = require('@badeball/cypress-cucumber-preprocessor');
+const { Greeter } = require("../../src/index")
 
 When('the greeter says hello', function() {
     this.whatIHeard = new Greeter().sayHello();

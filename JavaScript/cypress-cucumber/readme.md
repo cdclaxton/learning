@@ -20,6 +20,10 @@ npm install @cucumber/cucumber --save-dev
 
 # Run the Cucumber tests
 npx cucumber-js
+
+# Make Cypress and Cucumber work together
+npm uninstall @cucumber/cucumber  # don't work together
+npm install cypress-cucumber-preprocessor --save-dev
 ```
 
 Files and folders:

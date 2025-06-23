@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:open": "cypress open",
-    "test:cu": "cucumber-js"
+    "cy:open": "cypress open"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "^11.3.0",
-    "cypress": "^14.5.0"
+    "cypress": "^14.5.0",
+    "@badeball/cypress-cucumber-preprocessor": "^22.1.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5"
   }
 }

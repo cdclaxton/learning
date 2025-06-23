@@ -1,4 +1,3 @@
-@example
 Feature: Greeting
 
     Scenario: Say hello

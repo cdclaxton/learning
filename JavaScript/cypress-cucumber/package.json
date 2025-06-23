@@ -1,0 +1,17 @@
+{
+  "name": "cypress-cucumber",
+  "version": "1.0.0",
+  "description": "Exploration of using Cypress and Cucumber tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cy:open": "cypress open",
+    "test:cu": "cucumber-js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.3.0",
+    "cypress": "^14.5.0"
+  }
+}

@@ -24,13 +24,15 @@ npx cucumber-js
 # Make Cypress and Cucumber work together
 npm uninstall @cucumber/cucumber  # don't work together
 npm install cypress-cucumber-preprocessor --save-dev
+
+# Run Cypress with Allure reports
+npm run allure:clear
+npm run cy:run
 ```
 
 Files and folders:
 
 * `cypress.config.js` -- Cypress configuration script
 * `./cypress/e2e/spec.cy.js` -- Cypress test
-* `./features` -- Cucumber test foldee
-* `./features/*.feature` -- Feature file tests in Gherkin syntax
-* `./features/support/*.js` -- JS code to run feature tests
+* `./cypress/e2e/greeting.feature` -- Cucumber feature file tested by Cypress
 * `./src` -- The app's source code

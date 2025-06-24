@@ -14,4 +14,26 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
+import './commands';
+import '@shelex/cypress-allure-plugin';
+
+// Only process .feature files
+if (Cypress.spec.fileExtension === '.feature') {
+    console.log(`Found feature file: ${Cypress.spec.absolute}`)
+
+    // Get the tags from the feature file
+    console.log(Cypress.config().featureFileTags);
+    const featureFileTags = Cypress.config().featureFileTags;
+
+    // Find the tag(s) that match the feature file
+    const matchingFilepaths = Object.keys(featureFileTags)
+        .filter(filepath => Cypress.spec.absolute.endsWith(filepath))
+    if (matchingFilepaths.length === 1) {
+        const tags = featureFileTags[matchingFilepaths[0]];
+        console.log(`Tag for ${Cypress.spec.absolute} = ${tags}`)
+
+        Cypress.Allure.reporter.getInterface().epic(tags[0]);
+        Cypress.Allure.reporter.getInterface().suite('Cat');
+    }
+}
+

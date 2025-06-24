@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:open": "cypress open"
+    "cy:open": "npx cypress open --env allure=true",
+    "cy:run": "npx cypress run --env allure=true",
+    "allure:clear": "rm -rf allure-results/ allure-report cypress/screenshots"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "cypress": "^14.5.0",
     "@badeball/cypress-cucumber-preprocessor": "^22.1.0",
-    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5"
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.5",
+    "@cucumber/gherkin": "^32.1.2",
+    "@shelex/cypress-allure-plugin": "^2.41.2",
+    "cypress": "^14.5.0"
   }
 }

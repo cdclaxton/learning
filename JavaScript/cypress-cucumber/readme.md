@@ -1,6 +1,6 @@
 # Cypress and Cucumber tests
 
-The code in this repo explores how to use the Cypress test framework with Cucumber tests.
+The code in this repo explores how to use the Cypress test framework with Cucumber tests and generate Allure reports.
 
 The commands used during the construction of the code base are as follows.
 
@@ -28,6 +28,7 @@ npm install cypress-cucumber-preprocessor --save-dev
 # Run Cypress with Allure reports
 npm run allure:clear
 npm run cy:run
+npm run cy:open
 ```
 
 Files and folders:

@@ -25,6 +25,9 @@ npx cucumber-js
 npm uninstall @cucumber/cucumber  # don't work together
 npm install cypress-cucumber-preprocessor --save-dev
 
+# Install Allure
+npm install @shelex/cypress-allure-plugin --save-dev
+
 # Run Cypress with Allure reports
 npm run allure:clear
 npm run cy:run

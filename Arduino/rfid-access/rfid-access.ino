@@ -9,7 +9,8 @@
 #define RST_PIN 9
 #define SS_PIN 10
 
-String MasterTag = "13131C39";
+String PetersTag = "13131C39";
+String ReubensTag = "B3F2B438";
 String tagID;
 
 // Create instances
@@ -33,7 +34,7 @@ void loop() {
   // tone(buzzer, 1000);
 
   while(getID()) {
-    if (tagID == MasterTag) {
+    if ((tagID == PetersTag) || (tagID == ReubensTag)) {
       Serial.println("Access granted");
       showAccess(true);
       delay(1000);

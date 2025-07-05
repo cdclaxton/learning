@@ -10,8 +10,15 @@ Install the `MFRC522` library (from the GithubCommunity) in the Arduino IDE.
 
 The circuit consists of an Ardunio Uno, an RFID-RC522 board and a custom board containing two LEDs and a buzzer.
 
-![Circuit diagram](./circuit.png)
+![Circuit diagram](./images/circuit.png)
 
+The RFID board looks like this:
+
+![RFID board](./images/rfid-board.jpg)
+
+The full circuit looks like this:
+
+![Arduino and extension board](./images/arduino-and-rfid-board.jpg)
 
 ## Getting the ID of an RFID tag
 

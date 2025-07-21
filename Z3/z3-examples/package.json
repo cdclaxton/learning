@@ -1,0 +1,15 @@
+{
+  "name": "z3-examples",
+  "version": "1.0.0",
+  "description": "Examples using Microsoft's Z3 SMT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "z3-solver": "^4.15.2"
+  },
+  "type": "module"
+}

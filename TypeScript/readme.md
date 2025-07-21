@@ -10,6 +10,12 @@
 sudo apt-get install nodejs npm
 ```
 
+## Run the examples
+
+```bash
+npx ts-node index.ts
+```
+
 ## Start a new project
 
 ```bash

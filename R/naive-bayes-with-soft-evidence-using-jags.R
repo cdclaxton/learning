@@ -69,7 +69,7 @@ cpt_g1 <- matrix(c(
 
 # Calculate the product term given by:
 #
-# \product_{i=0}^{M-1} p(f_i | c) p(g_i | f_i)
+# \prod_{i=0}^{M-1} p(f_i | c) p(g_i | f_i)
 product_term <- function(c, f, g, cpts_f, cpts_g) {
     stopifnot(0 <= c && c <= 1)
     stopifnot(length(f) == length(g))

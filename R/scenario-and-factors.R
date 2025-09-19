@@ -28,7 +28,7 @@ build_or_gate_cpt <- function(N) {
 }
 
 # Build the CPT p(f_j=1|c)
-build_p_f_given_c <- function(p_f_given_c, p_f_given_not_c) {
+build_p_f_given_c <- function(p_f_given_not_c, p_f_given_c) {
     stopifnot(valid_probability(p_f_given_c))
     stopifnot(valid_probability(p_f_given_not_c))
 
@@ -130,12 +130,12 @@ p_c_given_s <- c(0.1, 0.2, 0.6, 0.9)
 
 f <- c(0, 0, 1)
 
-cpt_f0 <- build_p_f_given_c(0.9, 0.2)
+cpt_f0 <- build_p_f_given_c(0.2, 0.9)
 cpt_f1 <- build_p_f_given_c(0.5, 0.5)
 cpt_f2 <- build_p_f_given_c(0.1, 0.7)
 cpts_f <- matrix(c(cpt_f0, cpt_f1, cpt_f2), nrow=3, byrow=TRUE)
 
-# Calculate p(c|f) using the closed form solution
+# Calculate p(c=1|f) using the closed form solution
 p_closed_form <- p_c_given_f(1, p_si, p_c_given_s, f, cpts_f)
 
 # ------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ log_joint <- function(s, c, f, g, p_si, p_c_given_s, cpts_f, cpts_g) {
 }
 
 # Calculate p(c,g)
-p_c_g <- function(p_s, c, g, p_si, p_c_given_s, cpts_f, cpts_g) {
+p_c_g <- function(p_s, c, g, p_c_given_s, cpts_f, cpts_g) {
 
     N <- length(p_s)
     l <- rep(list(0:1), N)
@@ -275,13 +275,13 @@ p_c_g <- function(p_s, c, g, p_si, p_c_given_s, cpts_f, cpts_g) {
     grid_f <- expand.grid(l2)    
 
     total <- 0.0
-    for (i in 1:length(grid_s)) {
+    for (i in 1:nrow(grid_s)) {
         s <- array(unlist(grid_s[i,]))
 
-        for (j in 1:length(grid_f)) {
+        for (j in 1:nrow(grid_f)) {
             f <- array(unlist(grid_f[j,]))
 
-            total = total + exp(log_joint(s, c, f, g, p_si, p_c_given_s, cpts_f, cpts_g))
+            total = total + exp(log_joint(s, c, f, g, p_s, p_c_given_s, cpts_f, cpts_g))
         }
     }
 
@@ -292,14 +292,14 @@ p_c_g <- function(p_s, c, g, p_si, p_c_given_s, cpts_f, cpts_g) {
 # Calculate p(c=1|g=[1,1,..,1])
 p_c_given_g <- function(M, p_si, p_c_given_s, cpts_f, cpts_g) {
     g <- rep(1, M)
-    p1 <- p_c_g(p_si, 1, g, p_si, p_c_given_s, cpts_f, cpts_g)
-    p2 <- p_c_g(p_si, 0, g, p_si, p_c_given_s, cpts_f, cpts_g)
+    p1 <- p_c_g(p_si, 1, g, p_c_given_s, cpts_f, cpts_g)
+    p2 <- p_c_g(p_si, 0, g, p_c_given_s, cpts_f, cpts_g)
 
     return(p1/(p1+p2))
 }
 
 # Build the CPT p(g_j=1|f)
-build_p_g_given_f <- function(p_g_given_f, p_g_given_not_f) {
+build_p_g_given_f <- function(p_g_given_not_f, p_g_given_f) {
     stopifnot(valid_probability(p_g_given_f))
     stopifnot(valid_probability(p_g_given_not_f))
 

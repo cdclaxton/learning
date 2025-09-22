@@ -197,7 +197,7 @@ cat("Closed form: p(c|f) =", p_closed_form, "\n")
 cat("Mean of c:", mean(mat[, "c"]), "\n")
 
 # ------------------------------------------------------------------------------
-# Closed form solution of model with soft evidence
+# Closed form solution of model with soft evidence (Pearl's approach)
 # ------------------------------------------------------------------------------
 
 log_p_fi_given_c <- function(f, c, cpt_f) {
@@ -384,3 +384,128 @@ mat <- as.matrix(samples)
 
 cat("Posterior of closed form solution with soft evidence = ", posterior, "\n")
 cat("Mean of c:", mean(mat[, "c"]), "\n")
+
+# ------------------------------------------------------------------------------
+# Closed form solution of model with soft evidence (Jeffrey's approach)
+# ------------------------------------------------------------------------------
+
+# ln p(s,c,f)
+#
+# s = vector of states of s, e.g. c(0,1,1)
+# c = state of the scenario (0 or 1)
+# f = observed state of the factors, e.g c(1,0)
+# p_s = prior probability of each situation
+# p_c_given_s = p(c|s)
+# cpts_f = p(f|c)
+ln_p_s_c_f <- function(s, c, f, p_s, p_c_given_s, cpts_f) {
+
+    stopifnot(length(s) > 0)
+    stopifnot(c == 0 || c == 1)
+    stopifnot(length(s) == length(p_s))
+    stopifnot(nrow(p_c_given_s) == 2^length(p_s))
+    stopifnot(nrow(cpts_f) == length(f))
+
+    # Calculate \sum_{i=0}^{N-1} ln p(s_i)
+    N <- length(s)
+    term_1 <- 0.0
+    for (i in 1:N) {
+        if (s[i] == 0) {
+            term_1 = term_1 + log(1 - p_s[i])
+        } else {
+            term_1 = term_1 + log(p_s[i])
+        }
+    }
+
+    # Calculate ln p(c|s)
+    idx <- row_index(s)
+    if (c == 0) {
+        term_2 <- log(1 - p_c_given_s[idx])
+    } else {
+        term_2 <- log(p_c_given_s[idx])
+    }
+
+    # Calculate \sum_{j=0}^{M-1} ln p(f_i|c)
+    term_3 <- 0.0
+    for (j in 1:M) {
+        term_3 = term_3 + log_p_fi_given_c(f[j], c, cpts_f[j,])
+    }
+
+    ln_p <- term_1 + term_2 + term_3
+
+    stopifnot(valid_probability(exp(ln_p)))
+    return(ln_p)
+}
+
+p_c_and_f <- function(c, f, p_s, p_c_given_s, cpts_f) {
+    stopifnot(c == 0 || c == 1)
+    stopifnot(length(p_s) > 0)
+    
+    # Create a table of the different states of s
+    N <- length(p_s)
+    l <- rep(list(0:1), N)
+    grid <- expand.grid(l)
+
+    total = 0.0
+    for (i in 1:nrow(grid)) {
+        s <- array(unlist(grid[i,]))
+        r <- row_index(s)
+        stopifnot(1 <= r && r <= length(p_c_given_s))
+
+        total = total + exp(ln_p_s_c_f(s, c, f, p_s, p_c_given_s, cpts_f))
+    }
+
+    stopifnot(valid_probability(total))
+    return(total)
+}
+
+# p(c=1|f)
+p_c_given_f2 <- function(f, p_s, p_c_given_s, cpts_f) {
+    num <- p_c_and_f(1, f, p_s, p_c_given_s, cpts_f)
+    den <- p_c_and_f(0, f, p_s, p_c_given_s, cpts_f) + p_c_and_f(1, f, p_s, p_c_given_s, cpts_f)
+
+    p <- num/den
+    stopifnot(valid_probability(p))
+
+    return(p)
+}
+
+calc_weight <- function(f, p_f) {
+    stopifnot(length(f) == length(p_f))
+
+    M <- length(p_f)
+    p <- rep(0, M)
+    for (j in 1:M) {
+        if (f[j] == 0) {
+            p[j] = 1 - p_f[j]
+        } else {
+            p[j] = p_f[j]
+        }
+    }
+
+    weight <- exp(sum(log(p)))
+    stopifnot(valid_probability(weight))
+
+    return(weight)
+}
+
+# Posterior using Jeffrey's approach to combining uncertain observations
+calc_posterior2 <- function(c, p_s, p_c_given_s, cpts_f, p_f) {
+    
+    # Create a table of the different states of f
+    M <- length(p_f)
+    l <- rep(list(0:1), M)
+    grid <- expand.grid(l)
+
+    total = 0.0
+    for (i in 1:nrow(grid)) {
+        f <- array(unlist(grid[i,]))
+
+        total = total + calc_weight(f, p_f) * p_c_given_f2(f, p_s, p_c_given_s, cpts_f) 
+    }
+
+    stopifnot(valid_probability(total))
+    return(total)
+}
+
+posterior2 <- calc_posterior2(1, p_si, p_c_given_s, cpts_f, p_f)
+cat("Posterior of closed form solution with soft evidence using Jeffrey's approach = ", posterior2, "\n")

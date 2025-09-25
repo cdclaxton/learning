@@ -135,7 +135,28 @@ p(e_1, e_2, y_1, y_2) &= \sum_{x} p(x,e_1,e_2,y_1,y_2) \\
 \end{align*}
 $$
 
-The equations are implemented in the associated R script.
+The equations are implemented in the associated R script `zadeh's_problem.R`
+
+## One expert
+
+Suppose there is a single expert. The joint probability is given by
+
+$$
+p(s,t) = p(s) p(t|s)
+$$
+
+and the posterior conditional probability is given by
+
+$$
+\begin{align*}
+p(s|t) &= \frac{p(s,t)}{p(t)} \\
+  &= \frac{p(s) p(t|s)}{\sum_{s} p(s) p(t|s)}
+\end{align*}
+$$
+
+![One expert posterior conditional](./one_expert.png)
+
+Only when the prior probability $p(s) = 0.5$ does the posterior conditional probability equal the likelihood.
 
 ## Bibliography
 

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Config tool</title>
+
+        <!-- Stylesheet -->
+        <link rel="stylesheet" href="prototype.css">
+    </head>
+    <body>
+
+        <!-- Banner -->
+        <div class="title">
+            <h1>Probabilistic model configuration</h1>
+        </div>
+
+        <!-- Phases entry boxes -->
+        <div class="main-section">
+            <p class="section-title">Phases</p>
+            <p class="help-text">A phase is a single step in a plan</p>
+            <div class="single-phase-box">
+                <div class="input-pair">
+                    <label for="phase-id">ID:</label>
+                    <input id="phase-id" type="text" placeholder="Phase ID" class="input-box">
+                </div>
+                <div class="input-pair">
+                    <label for="phase-name">Name:</label>
+                    <input id="phase-name" type="text" placeholder="Phase name" class="input-box">
+                </div>
+                <button class="delete-button">Delete</button>
+            </div> 
+            <div class="single-phase-box">
+                <div class="input-pair">
+                    <label for="phase-id">ID:</label>
+                    <input id="phase-id" type="text" placeholder="Phase ID" class="input-box">
+                </div>
+                <div class="input-pair">
+                    <label for="phase-name">Name:</label>
+                    <input id="phase-name" type="text" placeholder="Phase name" class="input-box">
+                </div>
+                <button class="delete-button">Delete</button>
+            </div>                       
+            <button class="add-button">Add phase</button>
+        </div>
+
+        <!-- Factors entry boxes -->
+        <div class="main-section">
+            <p class="section-title">Factors</p>
+            <p class="help-text">Factors that are relevant to the outcomes. Attributes should be comma separated.</p>
+            <div class="single-factor-box">
+                <div class="input-pair">
+                    <label for="factor-id">ID:</label>
+                    <input id="factor-id" type="text" placeholder="Factor ID" class="input-box">
+                </div>
+                <div class="input-pair">
+                    <label for="factor-name">Name:</label>
+                    <input id="factor-name" type="text" placeholder="Factor name" class="input-box">
+                </div>                
+                <div class="input-pair">
+                    <label for="factor-attributes">Attributes:</label>
+                    <input id="factor-attributes" type="text" placeholder="Factor attributes" class="input-box">
+                </div>
+                <button class="delete-button">Delete</button>
+            </div>
+            <div class="single-factor-box">
+                <div class="input-pair">
+                    <label for="factor-id">ID:</label>
+                    <input id="factor-id" type="text" placeholder="Factor ID" class="input-box">
+                </div>
+                <div class="input-pair">
+                    <label for="factor-name">Name:</label>
+                    <input id="factor-name" type="text" placeholder="Factor name" class="input-box">
+                </div>                
+                <div class="input-pair">
+                    <label for="factor-attributes">Attributes:</label>
+                    <input id="factor-attributes" type="text" placeholder="Factor attributes" class="input-box">
+                </div>
+                <button class="delete-button">Delete</button>
+            </div>            
+            <button class="add-button">Add factor</button>
+        </div>
+        
+        <!-- Outcomes entry boxes -->
+        <div class="main-section">
+            <p class="section-title">Outcomes</p>
+            <div class="sub-section">
+                <div class="outcome-header">
+                    <label for="outcome-name">Name:</label>
+                    <input id="outcome-name" type="text" placeholder="Outcome name">
+                </div>
+                <div class="dotted-sub-section">
+                    <p class="help-text">Probability in the range 0 to 1 that the outcome occurs given the phases</p>
+                    <table>
+                        <tr>
+                            <th>Phase-1</th>
+                            <th>Phase-2</th>
+                            <th>Probability</th>
+                        </tr>
+                        <tr>
+                            <td>False</td>
+                            <td>False</td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>False</td>
+                            <td>True</td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>                            
+                        </tr>      
+                        <tr>
+                            <td>True</td>
+                            <td>False</td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>                            
+                        </tr>  
+                        <tr>
+                            <td>True</td>
+                            <td>True</td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>                            
+                        </tr>                                                    
+                    </table>
+                </div>
+                <div class="dotted-sub-section">
+                    <p class="help-text">Probability in the range 0 to 1 that the factor occurs given the outcome</p>
+                    <table>
+                        <tr>
+                            <th>Factor (and attribute)</th>
+                            <th>p(factor|outcome)</th>
+                            <th>p(factor|not outcome)</th>
+                            <th></th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select id="factor">
+                                    <option>Factor 0</option>
+                                    <option>Factor 1</option>
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>
+                            <td>
+                                <input type="number" class="probability-entry" placeholder="0.0" min="0.0" max="1.0" step="0.01">
+                            </td>
+                            <td>
+                                <button class="delete-button">Delete</button>
+                            </td>                     
+                        </tr>
+                    </table>
+                    <button class="add-button">Add relevant factor</button>
+                </div>
+
+                <!-- Scores -->
+                <div class="dotted-sub-section">
+                    <p class="help-text">Scores for each dimension if the outcome occurs</p>
+                    <div class="scores">
+                        <div>
+                            <p class="score-label">Physical</p>
+                        </div>
+                        <div>
+                            <input id="score-physical" type="text" placeholder="Physical score" class="input-box">
+                        </div>
+                        <div>
+                            <p class="score-label">Psychological</p>
+                        </div>
+                        <div>
+                            <input id="score-psychological" type="text" placeholder="Pyschological score" class="input-box">
+                        </div>
+                    </div>                   
+                </div>
+                <button class="delete-button">Delete outcome</button>
+            </div>
+            <button class="add-button">Add outcome</button>
+        </div>
+
+        <!-- Examples -->
+        <div class="main-section">
+            <p class="section-title">Examples</p>
+            <div class="sub-section">
+                <label for="example-name">Name:</label>
+                <input id="example-name" type="text" placeholder="Example name">
+                                
+                <div class="example-input-output">
+                    <div class="example-input">
+                        <div class="example-input-phases">
+                            <p>Phases</p>
+                            <div class="example-phases">
+                                <div>
+                                    <p class="score-label">Phase 1</p>
+                                </div>
+                                <div>
+                                    <input id="example-0-phase-0" type="number" placeholder="Phase probability" class="input-box" min="0.0" max="1.0" step="0.01">
+                                </div>     
+                                <div>
+                                    <p class="score-label">Phase 2</p>
+                                </div>
+                                <div>
+                                    <input id="example-0-phase-1" type="number" placeholder="Phase probability" class="input-box" min="0.0" max="1.0" step="0.01">
+                                </div>                                                   
+                            </div>
+                        </div>
+                        <p>Factors</p>
+                        <div class="example-factors">
+                            <div>
+                                <p class="score-label">Factor 1</p>
+                            </div>
+                            <div>
+                                <input id="example-0-factor-0" type="number" placeholder="Factor probability" class="input-box" min="0.0" max="1.0" step="0.01">
+                            </div>   
+                            <div>
+                                <p class="score-label">Factor 2</p>
+                            </div>
+                            <div>
+                                <input id="example-0-factor-1" type="number" placeholder="Factor probability" class="input-box" min="0.0" max="1.0" step="0.01">
+                            </div>                                                             
+                        </div>
+                    </div>
+                    <div class="example-output">
+                        <p>Result</p>
+                        <div class="example-dimensions">
+                            <table>
+                                <tr>
+                                    <th>Dimension</th>
+                                    <th>Distribution mean</th>
+                                </tr>
+                                <tr>
+                                    <td>Physical</td>
+                                    <td>0.0</td>
+                                </tr>
+                                <tr>
+                                    <td>Psychological</td>
+                                    <td>0.0</td>
+                                </tr>                                
+                            </table>                            
+                        </div>
+                    </div>
+                </div>
+                <button class="delete-button">Delete example</button>
+            </div>
+            <button class="add-button">Add example</button>
+        </div>
+    </body>
+</html>

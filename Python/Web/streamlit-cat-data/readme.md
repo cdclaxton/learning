@@ -40,7 +40,7 @@ npm run start
 Inside the root `streamlit-cat-data` directory run 
 
 ```bash
-streamlit run cat_data/example.py
+streamlit run cat_data/app.py
 ```
 
 ## Shipping the component
@@ -59,4 +59,4 @@ npm run build
 ```
 
 * Set `_RELEASE = True` in `example.py`
-* Run the app with `streamlit run cat_data/example.py`
+* Run the app with `streamlit run cat_data/app.py`

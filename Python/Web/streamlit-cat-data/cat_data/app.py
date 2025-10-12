@@ -6,7 +6,7 @@ import streamlit as st
 _RELEASE = True
 
 if _RELEASE:
-
+    # Release mode uses built versions of the React components
     root_dir = os.path.dirname(os.path.abspath(__file__))
 
     _header = components.declare_component(
@@ -21,7 +21,7 @@ if _RELEASE:
         "result", path=os.path.join(root_dir, "result-frontend/build")
     )
 else:
-
+    # Non-release mode pulls the components from development servers
     _header = components.declare_component("header", url="http://localhost:3001")
 
     _information = components.declare_component(
@@ -32,7 +32,7 @@ else:
 
 
 def title(title, key=None):
-    return _header(title=title)
+    return _header(title=title, key=key)
 
 
 def information(title, text, key=None):
@@ -79,13 +79,23 @@ results = [
     },
     {
         "id": 2,
-        "datasetName": "Ally cat arrests 2016",
+        "datasetName": "Alley cat arrests 2016",
         "dateUploaded": (
             datetime.datetime.now() - datetime.timedelta(days=2)
         ).isoformat(),
         "numberOfRows": 250,
         "numberOfRowsWithErrors": 10,
         "numberOfUniqueCats": 134,
+    },
+    {
+        "id": 3,
+        "datasetName": "Distinguished cats nominated for New Years honours",
+        "dateUploaded": (
+            datetime.datetime.now() - datetime.timedelta(days=5)
+        ).isoformat(),
+        "numberOfRows": 100,
+        "numberOfRowsWithErrors": 1,
+        "numberOfUniqueCats": 99,
     },
 ]
 

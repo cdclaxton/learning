@@ -108,7 +108,7 @@ const BuildResult = ({result}: {result: ResultData}) => {
                     }</p>
                 </div>
                 <div className={styleClasses.resultsSummary}>
-                    <p>{result.numberOfRows} rows with {result.numberOfRowsWithErrors} errors ({percentageErrors} %)</p>
+                    <p>{result.numberOfRows} rows with {result.numberOfRowsWithErrors} {result.numberOfRowsWithErrors == 1 ? "error" : "errors"} ({percentageErrors} %)</p>
                     <p>{result.numberOfUniqueCats} unique felines</p>
                 </div>
                 <button className={styleClasses.downloadButton}>Download</button>

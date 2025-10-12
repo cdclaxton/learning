@@ -31,4 +31,6 @@ streamlit run cat_data/example.py
 
 ## Shipping the component
 
-Run `npm run build` inside each of the component's frontend folders.
+* Run `npm run build` inside each of the components' frontend folders.
+* Set `_RELEASE = True` in `example.py`
+* Run the app with `streamlit run cat_data/example.py`

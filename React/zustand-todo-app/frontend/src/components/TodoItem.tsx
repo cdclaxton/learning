@@ -7,7 +7,7 @@ const TodoItem = ({item}: {item: Item}) => {
     const toggleCompleted = useItemStore((state) => state.toggleCompleted);
 
     const handleCompletedClick = () => {
-        toggleCompleted(item.id);
+        toggleCompleted(item.id, !item.completed);
     }
 
     const handleDeleteClick = () => {

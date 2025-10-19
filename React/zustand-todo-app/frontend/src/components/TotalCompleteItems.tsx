@@ -1,7 +1,7 @@
 import { useItemStore } from "../store/store";
 
 const TotalCompleteItems = () => {
-    const items = useItemStore((state) => state.items)
+    const items = useItemStore(s => s.items);
     const numberOfItems = items.filter((item) => item.completed).length;
 
     return (

@@ -3,9 +3,9 @@ import { useItemStore } from '../store/store';
 
 const AddTodoForm = () => {
     const [value, setValue] = React.useState('');
-    const addItem = useItemStore((state) => state.addItem)
+    const addItem = useItemStore(s => s.addItem)
 
-    const onSubmit = (event) => {
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         addItem(value);
     }

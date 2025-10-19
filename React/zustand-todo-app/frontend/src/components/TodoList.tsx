@@ -2,7 +2,7 @@ import { useItemStore } from "../store/store";
 import TodoItem from "./TodoItem";
 
 const TodoList = () => {
-    const todos = useItemStore((state) => state.items);
+    const todos = useItemStore(s => s.items);
 
     return (
         <ul className="list-group">

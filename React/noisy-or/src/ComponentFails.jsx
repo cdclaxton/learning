@@ -13,7 +13,9 @@ const ComponentFails = ({id, probability, setProbability, name, letter, image}) 
         <label htmlFor={id} className="form-label">Probability the {name} fails:</label>
         <input type="range" className="form-range" min="0" max="1" step="0.01" 
             id={id} onChange={updateProbability} value={probability}/>
-        <p><MathJax>{"\\(p_{" + letter +"} = " + probability + "\\)"}</MathJax></p>
+        <p><MathJax className="formula" inline dynamic>
+            {"\\(p_{" + letter +"} = " + probability + "\\)"}
+            </MathJax></p>
         </>
     )
 }

@@ -155,7 +155,7 @@ Inference on a chain, as illustrated above, can be implemented using a naive bru
 make example3
 ```
 
-For ease of indexing in the code, $K \in \{0, 1, 2, 3\}$, i.e. each variable has four possible states. The marginal distribution can be represented as $3 \times K$ matrix, where each row represents one of three variables $x_i$ and the columns represent the $K$ states.
+For ease of indexing in the C code, $K \in \{0, 1, 2, 3\}$, i.e. each variable has four possible states. The marginal distribution can be represented as $3 \times K$ matrix, where each row represents one of three variables $x_i$ and the columns represent the $K$ states.
 
 ### Brute-force approach
 
@@ -165,7 +165,7 @@ $$
 p(x_n) = \sum_{x_0} \ldots \sum_{x_{n-1}} \sum_{x_{n+1}} \sum_{x_{N-1}} p(\mathbf{x})
 $$
 
-Note how the summation $\sum_{x_{n}}$ isn't included. To illustrate the marginal distribution, suppose there are only two variabls and that the joint distribution is given by the table shown below. 
+Note how the summation $\sum_{x_{n}}$ isn't included. To illustrate the marginal distribution, suppose there are only two variables and that the joint distribution is given by the table shown below. 
 
 ![Joint distribution](./images/joint_distribution.png)
 
@@ -179,7 +179,7 @@ $$
 p(x_1 = 1) = \sum_{x_2} p(x_1 = 1, x_2) = 0.15 + 0.15 = 0.3
 $$
 
-As expected, the sum of the marginal distributions is one.
+As expected, the sum of the marginal distributions is 1.
 
 Similarly, for $x_2$:
 
@@ -278,5 +278,5 @@ $$
 The terms $\mu_\alpha(x_1)$, $\mu_\alpha(x_2)$, $\mu_\beta(x_1)$ and $\mu_\beta(x_2)$ are called messages. In the implementation, each message is represented as a $K$-dimensional vector (array). For example,
 
 $$
-\mu_\alpha(x_1) = [ \mu_\alpha(x1=0), \mu_\alpha(x1=1), \ldots, \mu_\alpha(x1=K-1)]
+\mu_\alpha(x_1) = [ \mu_\alpha(x_1=0), \mu_\alpha(x_1=1), \ldots, \mu_\alpha(x_1=K-1)]
 $$

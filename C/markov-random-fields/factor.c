@@ -50,11 +50,11 @@ void statesString(char *states,
         char stringForVariable[10];
         if (i < (nVariables - 1))
         {
-            sprintf(stringForVariable, "x_%d=%d, ", i, states[i]);
+            sprintf(stringForVariable, "x_%d=%d, ", i + 1, states[i]);
         }
         else
         {
-            sprintf(stringForVariable, "x_%d=%d", i, states[i]);
+            sprintf(stringForVariable, "x_%d=%d", i + 1, states[i]);
         }
 
         strcat(resultString, stringForVariable);

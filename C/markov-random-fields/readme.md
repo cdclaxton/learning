@@ -6,6 +6,48 @@ Run the unit tests with `make test`.
 
 ![Four factor model](./images/four_factor.png)
 
+The probability of $x$ is calculated as
+
+$$
+p(x) = f_a(x_1, x_2) f_b(x_1, x_2) f_c(x_2, x_3) f_d(x_3)
+$$
+
+where the conditonal probability tables are as follows.
+
+| $x_1$ | $x_2$ | $f_a$ |
+|-------|-------|-------|
+| 0     | 0     | 0.8   |
+| 0     | 1     | 0.2   |
+| 1     | 0     | 0.7   |
+| 1     | 1     | 0.1   |
+
+| $x_1$ | $x_2$ | $f_b$ |
+|-------|-------|-------|
+| 0     | 0     | 0.9   |
+| 0     | 1     | 0.3   |
+| 1     | 0     | 0.2   |
+| 1     | 1     | 0.4   |
+
+| $x_2$ | $x_3$ | $f_c$ |
+|-------|-------|-------|
+| 0     | 0     | 0.4   |
+| 0     | 1     | 0.1   |
+| 1     | 0     | 0.6   |
+| 1     | 1     | 0.7   |
+
+| $x_3$ | $f_d$ |
+|-------|-------|
+| 0     | 0.6   |
+| 1     | 0.1   |
+
+The problem is to find the state $x$ that maximises the probability. A brute force approach was implemented in C in `example1.c`. The most probable state is $x=(1,1,1)$ with a probability of 0.70.
+
+To run the example:
+
+```bash
+make example1
+```
+
 ## Image denoising
 
 Image denoising using a Markov Random Field is implemented in `example2.c`. To run:
@@ -15,6 +57,52 @@ make example2
 
 # Run using ./example2 <h> <eta> <beta>
 ./example2 -0.3 1 1
+```
+
+An example of the output is:
+
+```
+h = -0.100000, beta = 2.000000, eta = 1.000000
+Original image:
+|==========|
+|##........|
+|##........|
+|#######...|
+|#######...|
+|.....##...|
+|.....##...|
+|...#######|
+|...#######|
+|...##...##|
+|...##...##|
+|==========|
+Noisy image (error=9):
+|==========|
+|#...#.....|
+|##........|
+|#######..#|
+|##.##.##.#|
+|.....##...|
+|#....##...|
+|...#######|
+|...#######|
+|...##....#|
+|...##...##|
+|==========|
+Denoising stopped at pass 2
+Denoised image (error=0):
+|==========|
+|##........|
+|##........|
+|#######...|
+|#######...|
+|.....##...|
+|.....##...|
+|...#######|
+|...#######|
+|...##...##|
+|...##...##|
+|==========|
 ```
 
 The noise-free binary image is denoted $\mathbf{x}$ where $x_i \in \{0, 1\}$ and $i$ runs over all pixels, so $i = 0, 1, ..., D-1$. The observed noisy image is denoted $\mathbf{y}$. The goal is to recover the noise-free image $\mathbf{x}$ given the noisy image $\mathbf{y}$.

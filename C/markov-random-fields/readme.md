@@ -61,6 +61,8 @@ $a ⫫ b | c$ means that conditioning on $c$ makes $a$ and $b$ independent.
 
 Factorisation into potentials is not uniquely specified by the graph. Therefore, an extra node is introduced for each factor to form a bipartite graph.
 
+![Three nodes](./images/three_nodes.png)
+
 ## Brute-force probability maximisation
 
 ![Four factor model](./images/four_factor.png)

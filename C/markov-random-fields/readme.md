@@ -2,6 +2,65 @@
 
 Run the unit tests with `make test`.
 
+Graphical models:
+
+* useful in the presence of limited training data
+* integrate prior knowledge
+* interpretable models
+* inference is often approximate
+
+Sum rule:
+
+$$
+p(x) = \sum_{y} p(x,y)
+$$
+
+**Potential** $\phi(x)$ is a non-negative function of a variable $x$ and $\phi(x_0, x_1, \ldots, x_{N-1})$ is a non-negative function of a set of variables.
+
+**Gibbs distribution** if all of the potentials are strictly positive.
+
+Markov Random Field (MRF):
+
+$$
+p(\mathcal{X}) = \frac{1}{Z} \sum_{c=1}^{C} \phi_c(\mathcal{X}_c)
+$$
+
+where $Z$ is a normalising constant, $\mathcal{X} = \{x_1, \ldots, x_D\}$ is a set of variables with the maximal cliques $\{ \mathcal{X}_c \}_{c=1}^{C}$ in an undirected graph $\mathcal{G}$.
+
+A **clique** is a subset of fully connected vertices.
+
+A **maximal clique** is a clique that cannot be extended by adding another vertex.
+
+In the chain 
+
+```
+  a --- c --- b
+```
+
+there are two cliques, `a-c` and `b-c`. The MRF is given by
+
+$$
+p(a,b,c) = \frac{1}{Z} \phi_1(a,c) \phi_2(b,c)
+$$
+
+where
+
+$$
+Z = \sum_{a,b,c} \phi_1(a,c) \phi_2(b,c)
+$$
+
+Marginalising over $c$ makes $a$ and $b$ dependent, i.e. $p(a,b) \neq p(a) p(b)$.
+
+$a ⫫ b | c$ means that conditioning on $c$ makes $a$ and $b$ independent.
+
+**Separation** -- A subset $S$ separates $A$ from $B$ if every path from a member of $A$ to any member of $B$ passes through $S$.
+
+**Global Markov Property** -- $A ⫫ B | C$ for disjoint sets $(A,B,S)$ where $S$ separates $A$ from $B$.
+
+**Local Markov Property** -- $p(x | \mathcal{X} \backslash \{x\}) = p(x | ne(x))$ where $ne(x)$ are the neighbours of $x$.
+
+Factorisation into potentials is not uniquely specified by the graph. Therefore, an extra node is introduced for each factor to form a bipartite graph.
+
 ## Brute-force probability maximisation
 
 ![Four factor model](./images/four_factor.png)
@@ -9,7 +68,16 @@ Run the unit tests with `make test`.
 The probability of $x$ is calculated as
 
 $$
-p(x) = f_a(x_1, x_2) f_b(x_1, x_2) f_c(x_2, x_3) f_d(x_3)
+\begin{align}
+p(x) &= \frac{1}{Z} \prod_{k} f_k(\mathcal{X}_k) \\
+ &= \frac{1}{Z} f_a(x_1, x_2) f_b(x_1, x_2) f_c(x_2, x_3) f_d(x_3)
+\end{align}
+$$
+
+and 
+
+$$
+Z = \sum_{\mathcal{X}} f(\mathcal{X}).
 $$
 
 where the conditonal probability tables are as follows.

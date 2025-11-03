@@ -350,3 +350,15 @@ The terms $\mu_\alpha(x_1)$, $\mu_\alpha(x_2)$, $\mu_\beta(x_1)$ and $\mu_\beta(
 $$
 \mu_\alpha(x_1) = [ \mu_\alpha(x_1=0), \mu_\alpha(x_1=1), \ldots, \mu_\alpha(x_1=K-1)]
 $$
+
+## Sum-product algorithm
+
+The sum-product algorithm is also called belief propagation. The graph must be a chain or a tree, i.e. it must not have loops. The algorithm can be used to calculate marginals.
+
+![Sum product algorithm](./images/sum_product_algorithm.png)
+
+To run the example:
+
+```bash
+make example4
+```

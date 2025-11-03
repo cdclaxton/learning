@@ -1,0 +1,262 @@
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "permutations.h"
+
+// Number of time steps
+#define N_TIME_STEPS 3
+#define N_LANES 3
+
+// Sample from a categorical distribution. Note that probs must sum to 1.
+int sampleFromCategoricalDist(double *probs,
+                              int nElements)
+{
+
+    // Value in the range [0,1]
+    double value = (double)rand() / RAND_MAX;
+
+    // Return a sample using the CDF
+    double total = probs[0];
+    for (int i = 0; i < (nElements - 1); i++)
+    {
+        if (value <= total)
+        {
+            return i;
+        }
+        total += probs[i + 1];
+    }
+
+    return nElements - 1;
+}
+
+void sampleVehiclePosition(double initialLane[N_LANES],
+                           double gTheta[N_LANES][N_LANES],
+                           int *positions)
+{
+    // Initial position
+    positions[0] = sampleFromCategoricalDist(initialLane, N_LANES);
+
+    // Subsequent positions
+    for (int i = 1; i < N_TIME_STEPS; i++)
+    {
+        int prev = positions[i - 1];
+        positions[i] = sampleFromCategoricalDist(gTheta[prev], N_LANES);
+    }
+}
+
+void printVehiclePosition(int positions[N_TIME_STEPS])
+{
+    printf("Ground-truth lanes: ");
+    for (int i = 0; i < N_TIME_STEPS; i++)
+    {
+        printf("%d ", positions[i]);
+    }
+    printf("\n");
+}
+
+// Sample from a continuous uniform distribution.
+double sampleFromUniform(double minValue,
+                         double maxValue)
+{
+    // Value in the range [0,1]
+    double value = (double)rand() / RAND_MAX;
+
+    // Value in the range [minValue, maxValue]
+    return ((maxValue - minValue) * value) + minValue;
+}
+
+// Populate a lane x timestep matrix.
+void generateObservations(int vehiclePositions[N_TIME_STEPS],
+                          double pMinVehicleInLane,
+                          double pMaxVehicleInLane,
+                          double pMinVehicleNotInLane,
+                          double pMaxVehicleNotInLane,
+                          double observations[N_LANES][N_TIME_STEPS])
+{
+    for (int t = 0; t < N_TIME_STEPS; t++)
+    {
+        double total = 0.0;
+        for (int lane = 0; lane < N_LANES; lane++)
+        {
+            if (vehiclePositions[t] == lane)
+            {
+                observations[lane][t] = sampleFromUniform(pMinVehicleInLane, pMaxVehicleInLane);
+            }
+            else
+            {
+                observations[lane][t] = sampleFromUniform(pMinVehicleNotInLane, pMaxVehicleNotInLane);
+            }
+            total += observations[lane][t];
+        }
+
+        // Normalise the values
+        for (int lane = 0; lane < N_LANES; lane++)
+        {
+            observations[lane][t] = observations[lane][t] / total;
+        }
+    }
+}
+
+void printObservations(double observations[N_LANES][N_TIME_STEPS])
+{
+    for (int lane = 0; lane < N_LANES; lane++)
+    {
+        printf("Lane %d: ", lane);
+        for (int t = 0; t < N_TIME_STEPS; t++)
+        {
+            printf("%f ", observations[lane][t]);
+        }
+        printf("\n");
+    }
+}
+
+// Returns the unnormalised joint probability.
+double jointProbability(double observations[N_LANES][N_TIME_STEPS],
+                        double gTheta[N_LANES][N_LANES],
+                        int state[N_TIME_STEPS])
+{
+    double total = 0.0;
+
+    for (int xi = 0; xi < N_LANES; xi++)
+    {
+        // Lane at the i(th) timestep
+        int lane = state[xi];
+
+        total += log(observations[lane][xi]);
+    }
+
+    // Pairs
+    for (int xi = 0; xi < N_LANES - 1; xi++)
+    {
+        int lane1 = state[xi];
+        int lane2 = state[xi + 1];
+        total += log(gTheta[lane1][lane2]);
+    }
+
+    return exp(total);
+}
+
+double marginal(double observations[N_LANES][N_TIME_STEPS],
+                double gTheta[N_LANES][N_LANES],
+                int xi,
+                int lane,
+                int *permutations,
+                int nPermutations)
+{
+    double total = 1.0;
+
+    // Walk through each permutation
+    for (int i = 0; i < nPermutations; i++)
+    {
+        if (permutations[matrixIndex(i, xi, N_TIME_STEPS)] != lane)
+        {
+            continue;
+        }
+        total += jointProbability(observations,
+                                  gTheta,
+                                  permutations + i * N_TIME_STEPS);
+    }
+    return total;
+}
+
+int generatePermuations(int **matrix)
+{
+    // Calculate the number of permutations
+    int nPermutations = numberOfPermutations(N_TIME_STEPS, N_LANES);
+
+    // Allocate space all permutations
+    *matrix = (int *)malloc(nPermutations * N_TIME_STEPS * sizeof(int));
+    if (matrix == NULL)
+    {
+        perror("Failed to allocate memory for permutations");
+        exit(1);
+    }
+
+    // Generate the permutations
+    permutations(N_TIME_STEPS, N_LANES, *matrix);
+    // printMatrix(*matrix, nPermutations, N_TIME_STEPS);
+
+    return nPermutations;
+}
+
+void bruteForce(double observations[N_LANES][N_TIME_STEPS],
+                double gTheta[N_LANES][N_LANES],
+                double result[N_LANES][N_TIME_STEPS])
+{
+    // Generate all permutations
+    int *permutations = NULL;
+    int nPermutations = generatePermuations(&permutations);
+
+    // Walk through each time step
+    for (int xi = 0; xi < N_TIME_STEPS; xi++)
+    {
+        double total = 0.0;
+
+        // Walk through each lane
+        for (int lane = 0; lane < N_LANES; lane++)
+        {
+            double p = marginal(observations,
+                                gTheta,
+                                xi,
+                                lane,
+                                permutations,
+                                nPermutations);
+            result[lane][xi] = p;
+            total += p;
+        }
+
+        // Normalise
+        for (int lane = 0; lane < N_LANES; lane++)
+        {
+            result[lane][xi] = result[lane][xi] / total;
+        }
+    }
+
+    // Free the generated permutations
+    free(permutations);
+}
+
+int main(void)
+{
+    // Setting seed for the rand() function
+    srand(time(0));
+
+    // Probability of changing lane
+    double gTheta[N_LANES][N_LANES] = {{0.6, 0.4, 0.0},
+                                       {0.2, 0.6, 0.2},
+                                       {0, 0.4, 0.6}};
+
+    // Probability of starting in a given lane
+    double initialLane[N_LANES] = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
+
+    // Create a random ground truth path for the vehicle
+    int vehiclePositions[N_LANES];
+    sampleVehiclePosition(initialLane, gTheta, vehiclePositions);
+    printVehiclePosition(vehiclePositions);
+
+    // Generate the observations
+    double observations[N_LANES][N_TIME_STEPS];
+    double pMinVehicleInLane = 1.0;
+    double pMaxVehicleInLane = 8.0;
+    double pMinVehicleNotInLane = 0.6;
+    double pMaxVehicleNotInLane = 0.2;
+    generateObservations(vehiclePositions,
+                         pMinVehicleInLane, pMaxVehicleInLane,
+                         pMinVehicleNotInLane, pMaxVehicleNotInLane,
+                         observations);
+    printf("Observations:\n");
+    printObservations(observations);
+    printf("\n");
+
+    // Calculate the predicted vehicle path using a brute force approach
+    double predictedBruteForce[N_LANES][N_TIME_STEPS];
+    bruteForce(observations, gTheta, predictedBruteForce);
+    printf("Brute force:\n");
+    printObservations(predictedBruteForce);
+    printf("\n");
+
+    // Calculate the predicted vehicle path using sum-product algorithm
+
+    return 0;
+}

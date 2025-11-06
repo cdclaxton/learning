@@ -1,8 +1,10 @@
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "factor.h"
 #include "permutations.h"
+#include "sum_product_utilities.h"
 
 void testBitState()
 {
@@ -213,6 +215,105 @@ void testPermutations()
     testSinglePermutation(2, 3, &expected5[0][0]);
 }
 
+bool messagesEqual(double *message1,
+                   double *message2,
+                   int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        double delta = fabs(message1[i] - message2[i]);
+        if (delta > 1e-6)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void testMessagesEqual()
+{
+    double message1[3] = {1.0, 2.0, 3.0};
+    double message2[3] = {1.0, 2.0, 3.1};
+
+    assert(messagesEqual(message1, message1, 3) == true);
+    assert(messagesEqual(message1, message2, 3) == false);
+}
+
+void testCalcLogMessage()
+{
+    double message[3] = {0.2, 0.5, 0.3};
+    double actual[3];
+    double expected[3] = {log(0.2), log(0.5), log(0.3)};
+
+    calcLogMessage(message, 3, actual);
+    assert(messagesEqual(expected, actual, 3) == true);
+}
+
+void testSumLogMessages()
+{
+    double message1[3] = {log(0.2), log(0.5), log(0.3)};
+    double message2[3] = {log(0.1), log(0.2), log(0.7)};
+    double expected[3] = {
+        log(0.2) + log(0.1),
+        log(0.5) + log(0.2),
+        log(0.3) + log(0.7)};
+    double actual[3];
+    sumLogMessages(message1, message2, 3, actual);
+    assert(messagesEqual(expected, actual, 3) == true);
+}
+
+void testCopyMessage()
+{
+    double message1[3] = {log(0.2), log(0.5), log(0.3)};
+    double actual[3];
+    copyLogMessage(message1, 3, actual);
+    assert(messagesEqual(message1, actual, 3) == true);
+}
+
+void testMatrixRow()
+{
+    double matrix[3][4] = {{0.6, 0.2, 0.0, 0.2},
+                           {0.2, 0.6, 0.1, 0.1},
+                           {0, 0.1, 0.6, 0.3}};
+
+    // Row 1
+    double expected1[4] = {0.6, 0.2, 0.0, 0.2};
+    double actual1[4];
+    matrixRow(matrix[0], 0, 4, actual1);
+    assert(messagesEqual(expected1, actual1, 4) == true);
+
+    // Row 2
+    double expected2[4] = {0.2, 0.6, 0.1, 0.1};
+    double actual2[4];
+    matrixRow(matrix[0], 1, 4, actual2);
+    assert(messagesEqual(expected2, actual2, 4) == true);
+
+    // Row 3
+    double expected3[4] = {0, 0.1, 0.6, 0.3};
+    double actual3[4];
+    matrixRow(matrix[0], 2, 4, actual3);
+    assert(messagesEqual(expected3, actual3, 4) == true);
+}
+
+void testMatrixColumn()
+{
+    double matrix[3][4] = {{0.6, 0.2, 0.0, 0.2},
+                           {0.2, 0.6, 0.1, 0.1},
+                           {0, 0.1, 0.6, 0.3}};
+
+    // Column 1
+    double expected1[3] = {0.6, 0.2, 0.0};
+    double actual1[3] = {0, 0, 0};
+    matrixColumn(matrix[0], 0, 3, 4, actual1);
+    assert(messagesEqual(expected1, actual1, 3) == true);
+
+    // Column 2
+    double expected2[3] = {0.2, 0.6, 0.1};
+    double actual2[3] = {0, 0, 0};
+    matrixColumn(matrix[0], 1, 3, 4, actual2);
+    assert(messagesEqual(expected2, actual2, 3) == true);
+}
+
 int main(void)
 {
     printf("Running tests ...\n");
@@ -230,6 +331,14 @@ int main(void)
     testNumberOfPermutations();
     testIndex();
     testPermutations();
+
+    // Sum-product utilities
+    testMessagesEqual();
+    testCalcLogMessage();
+    testSumLogMessages();
+    testCopyMessage();
+    testMatrixRow();
+    testMatrixColumn();
 
     printf("Tests pass\n");
 }

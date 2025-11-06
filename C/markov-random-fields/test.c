@@ -154,6 +154,27 @@ bool matricesEqual(int *matrix1,
     return true;
 }
 
+bool matricesEqualDouble(double *matrix1,
+                         double *matrix2,
+                         int nRows,
+                         int nCols)
+{
+    for (int i = 0; i < nRows; i++)
+    {
+        for (int j = 0; j < nCols; j++)
+        {
+            int idx = matrixIndex(i, j, nCols);
+            double diff = fabs(matrix1[idx] - matrix2[idx]);
+
+            if (diff > 1e-6)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void testSinglePermutation(int nElements,
                            int nStates,
                            int *expected)
@@ -312,6 +333,32 @@ void testMatrixColumn()
     double actual2[3] = {0, 0, 0};
     matrixColumn(matrix[0], 1, 3, 4, actual2);
     assert(messagesEqual(expected2, actual2, 3) == true);
+
+    // Column 3
+    double expected3[3] = {0.0, 0.1, 0.6};
+    double actual3[3] = {0, 0, 0};
+    matrixColumn(matrix[0], 2, 3, 4, actual3);
+    assert(messagesEqual(expected3, actual3, 3) == true);
+
+    // Column 4
+    double expected4[3] = {0.2, 0.1, 0.3};
+    double actual4[3] = {0, 0, 0};
+    matrixColumn(matrix[0], 3, 3, 4, actual4);
+    assert(messagesEqual(expected4, actual4, 3) == true);
+}
+
+void testSetMatrixColumn()
+{
+    double matrix[3][4] = {{0.6, 0.2, 0.0, 0.2},
+                           {0.2, 0.6, 0.1, 0.1},
+                           {0, 0.1, 0.6, 0.3}};
+    double vector[3] = {0.5, 0.6, 0.7};
+    setMatrixColumn(matrix[0], 3, 4, vector, 2);
+
+    double expected[3][4] = {{0.6, 0.2, 0.5, 0.2},
+                             {0.2, 0.6, 0.6, 0.1},
+                             {0, 0.1, 0.7, 0.3}};
+    assert(matricesEqualDouble(matrix[0], expected[0], 3, 4) == true);
 }
 
 int main(void)
@@ -339,6 +386,7 @@ int main(void)
     testCopyMessage();
     testMatrixRow();
     testMatrixColumn();
+    testSetMatrixColumn();
 
     printf("Tests pass\n");
 }

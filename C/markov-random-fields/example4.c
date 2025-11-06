@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 #include "permutations.h"
+#include "sum_product_utilities.h"
 
 // Number of time steps
 #define N_TIME_STEPS 3
@@ -276,6 +277,97 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
                 double gTheta[N_LANES][N_LANES],
                 double result[N_LANES][N_TIME_STEPS])
 {
+    if (N_TIME_STEPS != 3)
+    {
+        printf("Sum-product algorithm only works for 3 time steps");
+        exit(1);
+    }
+
+    // Step 1
+    double mu_f0_to_x0[N_LANES];
+    double lambda_f0_to_x0[N_LANES];
+    matrixColumn(observations[0], 0, N_LANES, N_TIME_STEPS, mu_f0_to_x0);
+    calcLogMessage(mu_f0_to_x0, N_LANES, lambda_f0_to_x0);
+
+    double mu_f1_to_x1[N_LANES];
+    double lambda_f1_to_x1[N_LANES];
+    matrixColumn(observations[0], 1, N_LANES, N_TIME_STEPS, mu_f1_to_x1);
+    calcLogMessage(mu_f1_to_x1, N_LANES, lambda_f1_to_x1);
+
+    double mu_f2_to_x2[N_LANES];
+    double lambda_f2_to_x2[N_LANES];
+    matrixColumn(observations[0], 2, N_LANES, N_TIME_STEPS, mu_f2_to_x2);
+    calcLogMessage(mu_f2_to_x2, N_LANES, lambda_f2_to_x2);
+
+    // Step 2
+    double lambda_x0_to_g0[N_LANES];
+    copyLogMessage(lambda_f0_to_x0, N_LANES, lambda_x0_to_g0);
+
+    double lambda_x2_to_g1[N_LANES];
+    copyLogMessage(lambda_f2_to_x2, N_LANES, lambda_x2_to_g1);
+
+    double lambda_g0_to_x1[N_LANES];
+    double g_x0_x1[N_LANES];
+    matrixRow(gTheta[0], 0, N_LANES, g_x0_x1);
+    logSumProductForStates(N_LANES, g_x0_x1, lambda_x0_to_g0, lambda_g0_to_x1);
+
+    double lambda_g1_to_x1[N_LANES];
+    double g_x1_x2[N_LANES];
+    matrixRow(gTheta[0], 1, N_LANES, g_x1_x2);
+    logSumProductForStates(N_LANES, g_x1_x2, lambda_x2_to_g1, lambda_g1_to_x1);
+
+    // Step 3
+    double lambda_x1_to_g0[N_LANES];
+    sumLogMessages(lambda_f1_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_g0);
+
+    double lambda_x1_to_g1[N_LANES];
+    sumLogMessages(lambda_f1_to_x1, lambda_g0_to_x1, N_LANES, lambda_x1_to_g1);
+
+    double lambda_g0_to_x0[N_LANES];
+    logSumProductForStates(N_LANES, g_x0_x1, lambda_x1_to_g0, lambda_g0_to_x0);
+
+    double lambda_g1_to_x2[N_LANES];
+    logSumProductForStates(N_LANES, g_x1_x2, lambda_x1_to_g1, lambda_g1_to_x2);
+
+    // Step 4
+    double lambda_x0_to_f0[N_LANES];
+    copyLogMessage(lambda_g0_to_x0, N_LANES, lambda_g0_to_x0);
+
+    double lambda_x1_to_f1[N_LANES];
+    sumLogMessages(lambda_g0_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_f1);
+
+    double lambda_x2_to_f2[N_LANES];
+    copyLogMessage(lambda_g1_to_x1, N_LANES, lambda_x2_to_f2);
+
+    // Step 5: Calculate marginals
+    double p_x0[3];
+    marginalFactors(lambda_f0_to_x0,
+                    lambda_g0_to_x0,
+                    NULL,
+                    N_LANES,
+                    2,
+                    p_x0);
+
+    double p_x1[3];
+    marginalFactors(lambda_g0_to_x1,
+                    lambda_f1_to_x1,
+                    lambda_g1_to_x1,
+                    N_LANES,
+                    3,
+                    p_x1);
+
+    double p_x2[3];
+    marginalFactors(lambda_f2_to_x2,
+                    lambda_g1_to_x2,
+                    NULL,
+                    N_LANES,
+                    2,
+                    p_x2);
+
+    // Record the result
+    setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x0, 0);
+    setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x1, 1);
+    setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x2, 2);
 }
 
 int main(void)

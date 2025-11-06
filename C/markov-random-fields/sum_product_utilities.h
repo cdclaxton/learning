@@ -9,6 +9,22 @@ void sumLogMessages(double *logMessage1,
                     int length,
                     double *result);
 
+void sumThreeLogMessages(double *logMessage1,
+                         double *logMessage2,
+                         double *logMessage3,
+                         int length,
+                         double *result);
+
+double logSumProduct(int factorState,
+                     double *g,
+                     int numStates,
+                     double *logVariableToFactorMessage);
+
+void logSumProductForStates(int numStates,
+                            double *g,
+                            double *logVariableToFactorMessage,
+                            double *result);
+
 // Copy a log message.
 void copyLogMessage(double *logMessage,
                     int length,
@@ -30,3 +46,16 @@ void matrixColumn(double *matrix,
 // Print a message.
 void printMessage(double *message,
                   int length);
+
+void marginalFactors(double *logMessage1,
+                     double *logMessage2,
+                     double *logMessage3,
+                     int length,
+                     int nMessages,
+                     double *result);
+
+void setMatrixColumn(double *matrix,
+                     int nRows,
+                     int nCols,
+                     double *vector,
+                     int columnIndex);

@@ -19,4 +19,4 @@ example3:
 	$(CC) $(CFLAGS) -o example3 example3.c -lm && ./example3
 
 example4:
-	$(CC) $(CFLAGS) -o example4 example4.c permutations.c permutations.h um_product_utilities.c sum_product_utilities.h -lm && ./example4
+	$(CC) $(CFLAGS) -o example4 example4.c permutations.c permutations.h sum_product_utilities.c sum_product_utilities.h -lm && ./example4

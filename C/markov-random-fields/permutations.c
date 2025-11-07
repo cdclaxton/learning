@@ -1,16 +1,10 @@
 #include <math.h>
 #include <stdio.h>
+#include "matrix.h"
 
 int numberOfPermutations(int N, int M)
 {
     return (int)pow(M, N);
-}
-
-int matrixIndex(int rowIndex,
-                int colIndex,
-                int nColumns)
-{
-    return rowIndex * nColumns + colIndex;
 }
 
 void permutations(int N, int M, int *matrix)
@@ -42,19 +36,5 @@ void permutations(int N, int M, int *matrix)
                 matrix[matrixIndex(i, element, N)] = 0;
             }
         }
-    }
-}
-
-void printMatrix(int *matrix,
-                 int nRows,
-                 int nCols)
-{
-    for (int i = 0; i < nRows; i++)
-    {
-        for (int j = 0; j < nCols; j++)
-        {
-            printf("%d ", matrix[matrixIndex(i, j, nCols)]);
-        }
-        printf("\n");
     }
 }

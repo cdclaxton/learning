@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "matrix.h"
 
 void expLogMessage(double *logMessage,
                    int length,
@@ -56,7 +57,7 @@ void copyLogMessage(double *logMessage,
 }
 
 double logSumProduct(int factorState,
-                     double *g,
+                     double *g, // N_LANES x N_LANES matrix
                      int numStates,
                      double *logVariableToFactorMessage)
 {
@@ -64,43 +65,21 @@ double logSumProduct(int factorState,
 
     for (int i = 0; i < numStates; i++)
     {
-        total += g[i] * exp(logVariableToFactorMessage[i]);
+        int idx = matrixIndex(factorState, i, numStates);
+        total += g[idx] * exp(logVariableToFactorMessage[i]);
     }
 
     return log(total);
 }
 
 void logSumProductForStates(int numStates,
-                            double *g,
+                            double *g, // N_LANES x N_LANES matrix
                             double *logVariableToFactorMessage,
                             double *result)
 {
     for (int i = 0; i < numStates; i++)
     {
         result[i] = logSumProduct(i, g, numStates, logVariableToFactorMessage);
-    }
-}
-
-void matrixRow(double *matrix,
-               int row,
-               int nColumns,
-               double *result)
-{
-    for (int i = 0; i < nColumns; i++)
-    {
-        *(result + i) = matrix[row * nColumns + i];
-    }
-}
-
-void matrixColumn(double *matrix,
-                  int column,
-                  int nRows,
-                  int nColumns,
-                  double *result)
-{
-    for (int i = 0; i < nRows; i++)
-    {
-        *(result + i) = matrix[i * nColumns + column];
     }
 }
 
@@ -178,16 +157,4 @@ void marginalFactors(double *logMessage1,
 
     free(lambda_x);
     free(mu_x);
-}
-
-void setMatrixColumn(double *matrix,
-                     int nRows,
-                     int nCols,
-                     double *vector,
-                     int columnIndex)
-{
-    for (int i = 0; i < nRows; i++)
-    {
-        matrix[i * nCols + columnIndex] = vector[i];
-    }
 }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "matrix.h"
 #include "permutations.h"
 #include "sum_product_utilities.h"
 
@@ -307,14 +308,10 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     copyLogMessage(lambda_f2_to_x2, N_LANES, lambda_x2_to_g1);
 
     double lambda_g0_to_x1[N_LANES];
-    double g_x0_x1[N_LANES];
-    matrixRow(gTheta[0], 0, N_LANES, g_x0_x1);
-    logSumProductForStates(N_LANES, g_x0_x1, lambda_x0_to_g0, lambda_g0_to_x1);
+    logSumProductForStates(N_LANES, gTheta[0], lambda_x0_to_g0, lambda_g0_to_x1);
 
     double lambda_g1_to_x1[N_LANES];
-    double g_x1_x2[N_LANES];
-    matrixRow(gTheta[0], 1, N_LANES, g_x1_x2);
-    logSumProductForStates(N_LANES, g_x1_x2, lambda_x2_to_g1, lambda_g1_to_x1);
+    logSumProductForStates(N_LANES, gTheta[0], lambda_x2_to_g1, lambda_g1_to_x1);
 
     // Step 3
     double lambda_x1_to_g0[N_LANES];
@@ -324,10 +321,10 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     sumLogMessages(lambda_f1_to_x1, lambda_g0_to_x1, N_LANES, lambda_x1_to_g1);
 
     double lambda_g0_to_x0[N_LANES];
-    logSumProductForStates(N_LANES, g_x0_x1, lambda_x1_to_g0, lambda_g0_to_x0);
+    logSumProductForStates(N_LANES, gTheta[0], lambda_x1_to_g0, lambda_g0_to_x0);
 
     double lambda_g1_to_x2[N_LANES];
-    logSumProductForStates(N_LANES, g_x1_x2, lambda_x1_to_g1, lambda_g1_to_x2);
+    logSumProductForStates(N_LANES, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
 
     // Step 4
     double lambda_x0_to_f0[N_LANES];

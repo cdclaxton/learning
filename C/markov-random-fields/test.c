@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "factor.h"
+#include "matrix.h"
 #include "permutations.h"
 #include "sum_product_utilities.h"
 

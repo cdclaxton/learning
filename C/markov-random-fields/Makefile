@@ -20,3 +20,7 @@ example3:
 
 example4:
 	$(CC) $(CFLAGS) -o example4 example4.c permutations.c permutations.h sum_product_utilities.c sum_product_utilities.h matrix.c matrix.h -lm && ./example4
+
+leak:
+	$(CC) $(CFLAGS) -O0 -O1 -o example4 example4.c permutations.c permutations.h sum_product_utilities.c sum_product_utilities.h matrix.c matrix.h -lm && valgrind --leak-check=yes ./example4
+	$(CC) $(CFLAGS) -O0 -O1 -o test test.c factor.h factor.c permutations.c permutations.h sum_product_utilities.c sum_product_utilities.h matrix.c matrix.h -lm && valgrind --leak-check=yes ./test

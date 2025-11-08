@@ -40,3 +40,18 @@ void marginalFactors(double *logMessage1,
                      int length,
                      int nMessages,
                      double *result);
+
+double jointProbability(double *observations, // nLanes x nTimesteps
+                        double *gTheta,       // nLanes x nLanes
+                        int *state,           // nLanes
+                        int nLanes,
+                        int nTimesteps);
+
+double marginal(double *observations, // nLanes x nTimesteps
+                double *gTheta,       // nLanes x nLanes
+                int xi,
+                int lane,
+                int *permutations,
+                int nPermutations,
+                int nLanes,
+                int nTimesteps);

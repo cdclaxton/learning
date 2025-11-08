@@ -141,54 +141,6 @@ void printObservations(double observations[N_LANES][N_TIME_STEPS])
     }
 }
 
-// Returns the unnormalised joint probability.
-double jointProbability(double observations[N_LANES][N_TIME_STEPS],
-                        double gTheta[N_LANES][N_LANES],
-                        int state[N_TIME_STEPS])
-{
-    double total = 0.0;
-
-    for (int xi = 0; xi < N_LANES; xi++)
-    {
-        // Lane at the i(th) timestep
-        int lane = state[xi];
-
-        total += log(observations[lane][xi]);
-    }
-
-    // Pairs
-    for (int xi = 0; xi < N_LANES - 1; xi++)
-    {
-        int lane1 = state[xi];
-        int lane2 = state[xi + 1];
-        total += log(gTheta[lane1][lane2]);
-    }
-
-    return exp(total);
-}
-
-double marginal(double observations[N_LANES][N_TIME_STEPS],
-                double gTheta[N_LANES][N_LANES],
-                int xi,
-                int lane,
-                int *permutations,
-                int nPermutations)
-{
-    double total = 1.0;
-
-    // Walk through each permutation
-    for (int i = 0; i < nPermutations; i++)
-    {
-        if (permutations[matrixIndex(i, xi, N_TIME_STEPS)] == lane)
-        {
-            total += jointProbability(observations,
-                                      gTheta,
-                                      permutations + i * N_TIME_STEPS);
-        }
-    }
-    return total;
-}
-
 int generatePermuations(int **matrix)
 {
     // Calculate the number of permutations
@@ -225,12 +177,14 @@ void bruteForce(double observations[N_LANES][N_TIME_STEPS],
         // Walk through each lane
         for (int lane = 0; lane < N_LANES; lane++)
         {
-            double p = marginal(observations,
-                                gTheta,
+            double p = marginal(observations[0],
+                                gTheta[0],
                                 xi,
                                 lane,
                                 permutations,
-                                nPermutations);
+                                nPermutations,
+                                N_LANES,
+                                N_TIME_STEPS);
             result[lane][xi] = p;
             total += p;
         }
@@ -258,9 +212,11 @@ void findMostLikelyStates(double observations[N_LANES][N_TIME_STEPS],
 
     for (int i = 0; i < nPermutations; i++)
     {
-        double prob = jointProbability(observations,
-                                       gTheta,
-                                       permutations + i * N_TIME_STEPS);
+        double prob = jointProbability(observations[0],
+                                       gTheta[0],
+                                       permutations + i * N_TIME_STEPS,
+                                       N_LANES,
+                                       N_TIME_STEPS);
         if (prob > maximumJointProbability)
         {
             memcpy(mostLikelyStates,
@@ -284,7 +240,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
         exit(1);
     }
 
-    // Step 1
     double mu_f0_to_x0[N_LANES];
     double lambda_f0_to_x0[N_LANES];
     matrixColumn(observations[0], 0, N_LANES, N_TIME_STEPS, mu_f0_to_x0);
@@ -300,7 +255,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     matrixColumn(observations[0], 2, N_LANES, N_TIME_STEPS, mu_f2_to_x2);
     calcLogMessage(mu_f2_to_x2, N_LANES, lambda_f2_to_x2);
 
-    // Step 2
     double lambda_x0_to_g0[N_LANES];
     copyLogMessage(lambda_f0_to_x0, N_LANES, lambda_x0_to_g0);
 
@@ -313,7 +267,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     double lambda_g1_to_x1[N_LANES];
     logSumProductForStates(N_LANES, gTheta[0], lambda_x2_to_g1, lambda_g1_to_x1);
 
-    // Step 3
     double lambda_x1_to_g0[N_LANES];
     sumLogMessages(lambda_f1_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_g0);
 
@@ -326,7 +279,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     double lambda_g1_to_x2[N_LANES];
     logSumProductForStates(N_LANES, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
 
-    // Step 4
     double lambda_x0_to_f0[N_LANES];
     copyLogMessage(lambda_g0_to_x0, N_LANES, lambda_g0_to_x0);
 
@@ -336,7 +288,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     double lambda_x2_to_f2[N_LANES];
     copyLogMessage(lambda_g1_to_x1, N_LANES, lambda_x2_to_f2);
 
-    // Step 5: Calculate marginals
     double p_x0[3];
     marginalFactors(lambda_f0_to_x0,
                     lambda_g0_to_x0,
@@ -401,7 +352,8 @@ int main(void)
     printObservations(observations);
     printf("\n");
 
-    // Find the most likely vehicle path using a brute force approach
+    // Find the most likely vehicle path using a brute force approach, trying
+    // all permutations of the lanes
     int mostLikelyStates[N_TIME_STEPS];
     findMostLikelyStates(observations, gTheta, mostLikelyStates);
     printf("Most likely states:\n");

@@ -362,6 +362,93 @@ void testSetMatrixColumn()
     assert(matricesEqualDouble(matrix[0], expected[0], 3, 4) == true);
 }
 
+bool inDelta(double expected,
+             double actual,
+             double tol)
+{
+    double diff = fabs(expected - actual);
+    if (diff > tol)
+    {
+        printf("expected = %lf, actual = %lf, tol = %lf, diff = %lf\n",
+               expected, actual, tol, diff);
+        return false;
+    }
+    return true;
+}
+
+void testJointProbability()
+{
+    double observations[3][2] = {
+        {0.1, 0.4},
+        {0.6, 0.2},
+        {0.3, 0.4},
+    };
+    double gTheta[3][3] = {
+        {0.8, 0.2, 0.0},
+        {0.1, 0.8, 0.1},
+        {0.0, 0.2, 0.8}};
+    int state[2] = {1, 2};
+    double actual = jointProbability(observations[0],
+                                     gTheta[0],
+                                     state,
+                                     3,
+                                     2);
+
+    double expected = 0.6 * 0.4 * 0.1;
+    assert(inDelta(actual, expected, 1e-6) == true);
+}
+
+void testMarginal()
+{
+    double observations[3][2] = {
+        {0.1, 0.4},
+        {0.6, 0.2},
+        {0.3, 0.4},
+    };
+    double gTheta[3][3] = {
+        {0.8, 0.2, 0.0},
+        {0.1, 0.8, 0.1},
+        {0.0, 0.2, 0.8}};
+
+    // Allocate memory for the actual permutations and then calculate the
+    // permutations
+    int nPermutations = numberOfPermutations(2, 3);
+    int *allPermutations = (int *)malloc(nPermutations * 2 * sizeof(int));
+    assert(allPermutations != NULL);
+    permutations(2, 3, allPermutations);
+
+    double actual = marginal(observations[0],
+                             gTheta[0],
+                             0,
+                             1,
+                             allPermutations,
+                             nPermutations,
+                             3,
+                             2);
+
+    // p(x0=1) = p(x0=1, x1=0) + p(x0=1, x1=1) + p(x0=1, x1=2)
+    int state1[2] = {1, 0};
+    int state2[2] = {1, 1};
+    int state3[2] = {1, 2};
+    double m1 = jointProbability(observations[0],
+                                 gTheta[0],
+                                 state1,
+                                 3,
+                                 2);
+    double m2 = jointProbability(observations[0],
+                                 gTheta[0],
+                                 state2,
+                                 3,
+                                 2);
+    double m3 = jointProbability(observations[0],
+                                 gTheta[0],
+                                 state3,
+                                 3,
+                                 2);
+    double expected = m1 + m2 + m3;
+    assert(inDelta(expected, actual, 1e-6) == true);
+}
+
 int main(void)
 {
     printf("Running tests ...\n");
@@ -388,6 +475,8 @@ int main(void)
     testMatrixRow();
     testMatrixColumn();
     testSetMatrixColumn();
+    testJointProbability();
+    testMarginal();
 
     printf("Tests pass\n");
 }

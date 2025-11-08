@@ -66,7 +66,7 @@ double logSumProduct(int factorState,
     for (int i = 0; i < numStates; i++)
     {
         int idx = matrixIndex(factorState, i, numStates);
-        total += g[idx] * exp(logVariableToFactorMessage[i]);
+        total += g[i] * exp(logVariableToFactorMessage[i]);
     }
 
     return log(total);
@@ -157,4 +157,74 @@ void marginalFactors(double *logMessage1,
 
     free(lambda_x);
     free(mu_x);
+}
+
+// Returns the unnormalised joint probability.
+// p(x) = (1/Z) \prod_{i=0}^{N-1} f_i(x_i) \prod_{i=0}^{N-2} g_i(x_i, x_{i+1})
+double jointProbability(double *observations, // nLanes x nTimesteps
+                        double *gTheta,       // nLanes x nLanes
+                        int *state,           // nLanes
+                        int nLanes,
+                        int nTimesteps)
+{
+    double total = 0.0;
+
+    for (int xi = 0; xi < nTimesteps; xi++)
+    {
+        // Lane at the i(th) timestep
+        int lane = state[xi];
+
+        int idx = matrixIndex(lane, xi, nTimesteps);
+        total += log(observations[idx]);
+    }
+
+    // Pairs
+    for (int xi = 0; xi < nTimesteps - 1; xi++)
+    {
+        // Lane transition between timesteps
+        int lane1 = state[xi];
+        int lane2 = state[xi + 1];
+        int idx = matrixIndex(lane1, lane2, nLanes);
+        total += log(gTheta[idx]);
+    }
+
+    return exp(total);
+}
+
+void printIntVector(int *vector,
+                    int nElements)
+{
+
+    printf("[ ");
+    for (int i = 0; i < nElements; i++)
+    {
+        printf("%d ", vector[i]);
+    }
+    printf("]\n");
+}
+
+double marginal(double *observations, // nLanes x nTimesteps
+                double *gTheta,       // nLanes x nLanes
+                int xi,
+                int lane,
+                int *permutations,
+                int nPermutations,
+                int nLanes,
+                int nTimesteps)
+{
+    double total = 0.0;
+
+    // Walk through each permutation
+    for (int i = 0; i < nPermutations; i++)
+    {
+        if (permutations[matrixIndex(i, xi, nTimesteps)] == lane)
+        {
+            total += jointProbability(observations,
+                                      gTheta,
+                                      permutations + i * nTimesteps,
+                                      nLanes,
+                                      nTimesteps);
+        }
+    }
+    return total;
 }

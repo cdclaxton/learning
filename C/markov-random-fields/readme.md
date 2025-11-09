@@ -357,9 +357,25 @@ The sum-product algorithm is also called belief propagation. The graph must be a
 
 ![Sum product algorithm](./images/sum_product_algorithm.png)
 
-The sum product algorithm is used to determine the marginal probability that a vehicle is in a given lane at each time step.
+### Vehicle localisation problem
 
-![Vehicle localisation](./images/vehicle_localisation.png)
+A vehicle can be in one of three lanes on a motorway. At each timestep, the vehicle is observed imprecisely by a camera, resulting in a distribution over the three lanes. 
+
+The probability that the vehicle starts in a given lane is determined by a uniform distribution.
+
+Between timesteps the vehicle changes lanes with a given probability, which is represented as $g_{\theta}$.
+
+The problem is to determine the marginal probability that the vehicle is in a given lane at each timestep using the observation distributions and knowledge of the lane transitions.
+
+The sum product algorithm is used to determine the marginal probability that a vehicle is in a given lane at each time step. As the MRF doesn't contain loops, it is sufficient for a single pass over the graph, as shown below.
+
+The unary factors $f_i$ come from the perception model for the observations. The states $x_i$ are the lane positions of the vehicle at timestep $i$. The factors $g_i$ represent the potential lane transitions.
+
+![Vehicle localisation using sum-product algorithm](./images/vehicle_localisation.png)
+
+The max-product algorithm can be used to find the most likely state.
+
+![Vehicle localisation using the max-product algorithm](./images/vehicle_localisation_max_product.png)
 
 To run the example:
 

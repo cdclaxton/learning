@@ -244,3 +244,97 @@ double marginal(double *observations, // nLanes x nTimesteps
     }
     return total;
 }
+
+int argMaxSumMessages(double *logMessage1,
+                      double *logMessage2,
+                      double *logMessage3,
+                      int length,
+                      int nMessages)
+{
+    double *sumMessage = (double *)malloc(length * sizeof(double));
+    if (sumMessage == NULL)
+    {
+        perror("Failed to allocate memory for sumMessage");
+        exit(1);
+    }
+
+    if (nMessages == 2)
+    {
+
+        sumLogMessages(logMessage1, logMessage2, length, sumMessage);
+    }
+    else if (nMessages == 3)
+    {
+        sumThreeLogMessages(logMessage1, logMessage2, logMessage3, length, sumMessage);
+    }
+    else
+    {
+        perror("Invalid number of messages");
+        exit(1);
+    }
+
+    int argMaxX = 0;
+    int maxValue = sumMessage[0];
+
+    for (int i = 1; i < length; i++)
+    {
+        if (sumMessage[i] > maxValue)
+        {
+            argMaxX = i;
+            maxValue = sumMessage[i];
+        }
+    }
+
+    free(sumMessage);
+
+    return argMaxX;
+}
+
+double maxLogPlusLogMessageForState(int factorState,
+                                    int numStates,
+                                    bool knownFactorIsRow,
+                                    double *g,                          // N_LANES x N_LANES matrix
+                                    double *logVariableToFactorMessage) // vector of length nLanes
+{
+    int maxIndex = -1;
+    int maxValue = 0;
+
+    for (int i = 0; i < numStates; i++)
+    {
+        int idx;
+        if (knownFactorIsRow == true)
+        {
+            idx = matrixIndex(factorState, i, numStates);
+        }
+        else
+        {
+            idx = matrixIndex(i, factorState, numStates);
+        }
+
+        double v = log(g[idx]) + logVariableToFactorMessage[i];
+
+        if ((maxIndex == -1) || (v > maxValue))
+        {
+            maxIndex = i;
+            maxValue = v;
+        }
+    }
+
+    return maxValue;
+}
+
+void maxLogPlusLogMessage(int numStates,
+                          bool knownFactorIsRow,
+                          double *g,                          // N_LANES x N_LANES matrix
+                          double *logVariableToFactorMessage, // vector of length nLanes
+                          double *result)
+{
+    for (int i = 0; i < numStates; i++)
+    {
+        result[i] = maxLogPlusLogMessageForState(i,
+                                                 numStates,
+                                                 knownFactorIsRow,
+                                                 g,
+                                                 logVariableToFactorMessage);
+    }
+}

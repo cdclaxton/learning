@@ -468,6 +468,18 @@ void testLogSumProduct()
     assert(inDelta(expected, actual, 1e-6) == true);
 }
 
+void testArgMaxSumMessages()
+{
+    double logMessage1[2] = {log(0.2), log(0.1)};
+    double logMessage2[2] = {log(0.1), log(0.7)};
+    int actual = argMaxSumMessages(logMessage1,
+                                   logMessage2,
+                                   NULL,
+                                   2,
+                                   2);
+    assert(actual == 1);
+}
+
 int main(void)
 {
     printf("Running tests ...\n");
@@ -497,6 +509,7 @@ int main(void)
     testJointProbability();
     testMarginal();
     testLogSumProduct();
+    testArgMaxSumMessages();
 
     printf("Tests pass\n");
 }

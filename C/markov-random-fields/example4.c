@@ -295,18 +295,6 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     double lambda_g1_to_x2[N_LANES];
     logSumProductForStates(N_LANES, false, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
 
-    // // x0 -> f0
-    // double lambda_x0_to_f0[N_LANES];
-    // copyLogMessage(lambda_g0_to_x0, N_LANES, lambda_x0_to_f0);
-
-    // // x1 -> f1
-    // double lambda_x1_to_f1[N_LANES];
-    // sumLogMessages(lambda_g0_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_f1);
-
-    // // x2 -> f2
-    // double lambda_x2_to_f2[N_LANES];
-    // copyLogMessage(lambda_g1_to_x2, N_LANES, lambda_x2_to_f2);
-
     // Marginal for x0
     double p_x0[3];
     marginalFactors(lambda_f0_to_x0,
@@ -338,6 +326,91 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
     setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x0, 0);
     setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x1, 1);
     setMatrixColumn(result[0], N_LANES, N_TIME_STEPS, p_x2, 2);
+}
+
+void maxProduct(double observations[N_LANES][N_TIME_STEPS],
+                double gTheta[N_LANES][N_LANES],
+                int mostLikelyStatesMaxProduct[N_TIME_STEPS])
+{
+    if (N_TIME_STEPS != 3)
+    {
+        printf("Sum-product algorithm only works for 3 time steps");
+        exit(1);
+    }
+
+    // Step 1
+    // f0 -> x0
+    double mu_f0_to_x0[N_LANES];
+    double lambda_f0_to_x0[N_LANES];
+    matrixColumn(observations[0], 0, N_LANES, N_TIME_STEPS, mu_f0_to_x0);
+    calcLogMessage(mu_f0_to_x0, N_LANES, lambda_f0_to_x0);
+
+    // f1 -> x1
+    double mu_f1_to_x1[N_LANES];
+    double lambda_f1_to_x1[N_LANES];
+    matrixColumn(observations[0], 1, N_LANES, N_TIME_STEPS, mu_f1_to_x1);
+    calcLogMessage(mu_f1_to_x1, N_LANES, lambda_f1_to_x1);
+
+    // f2 -> x2
+    double mu_f2_to_x2[N_LANES];
+    double lambda_f2_to_x2[N_LANES];
+    matrixColumn(observations[0], 2, N_LANES, N_TIME_STEPS, mu_f2_to_x2);
+    calcLogMessage(mu_f2_to_x2, N_LANES, lambda_f2_to_x2);
+
+    // Step 2
+    // x0 -> g0
+    double lambda_x0_to_g0[N_LANES];
+    copyLogMessage(lambda_f0_to_x0, N_LANES, lambda_x0_to_g0);
+
+    // x2 -> g1
+    double lambda_x2_to_g1[N_LANES];
+    copyLogMessage(lambda_f2_to_x2, N_LANES, lambda_x2_to_g1);
+
+    // Step 3
+    // g0 -> x1
+    double lambda_g0_to_x1[N_LANES];
+    maxLogPlusLogMessage(N_LANES, false, gTheta[0], lambda_x0_to_g0, lambda_g0_to_x1);
+
+    // g1 -> x1
+    double lambda_g1_to_x1[N_LANES];
+    maxLogPlusLogMessage(N_LANES, true, gTheta[0], lambda_x2_to_g1, lambda_g1_to_x1);
+
+    // Step 4
+    // x1 -> g0
+    double lambda_x1_to_g0[N_LANES];
+    sumLogMessages(lambda_f1_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_g0);
+
+    // x1 -> g1
+    double lambda_x1_to_g1[N_LANES];
+    sumLogMessages(lambda_f1_to_x1, lambda_g0_to_x1, N_LANES, lambda_x1_to_g1);
+
+    // Step 5
+    // g0 -> x0
+    double lambda_g0_to_x0[N_LANES];
+    maxLogPlusLogMessage(N_LANES, true, gTheta[0], lambda_x1_to_g0, lambda_g0_to_x0);
+
+    // g1 -> x2
+    double lambda_g1_to_x2[N_LANES];
+    maxLogPlusLogMessage(N_LANES, false, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
+
+    // MAP solution
+    mostLikelyStatesMaxProduct[0] = argMaxSumMessages(lambda_f0_to_x0,
+                                                      lambda_g0_to_x0,
+                                                      NULL,
+                                                      N_LANES,
+                                                      2);
+
+    mostLikelyStatesMaxProduct[1] = argMaxSumMessages(lambda_g0_to_x1,
+                                                      lambda_f1_to_x1,
+                                                      lambda_g1_to_x1,
+                                                      N_LANES,
+                                                      3);
+
+    mostLikelyStatesMaxProduct[2] = argMaxSumMessages(lambda_f2_to_x2,
+                                                      lambda_g1_to_x2,
+                                                      NULL,
+                                                      N_LANES,
+                                                      2);
 }
 
 int main(void)
@@ -394,6 +467,13 @@ int main(void)
     sumProduct(observations, gTheta, predictedSumProduct);
     printf("Marginal using the sum-product algorithm:\n");
     printObservations(predictedSumProduct);
+    printf("\n");
+
+    // Calculate the most likely state using the max-product algorithm
+    int mostLikelyStatesMaxProduct[N_TIME_STEPS];
+    printf("Most likely states using the max-product algorithm:\n");
+    maxProduct(observations, gTheta, mostLikelyStatesMaxProduct);
+    printVehiclePosition(mostLikelyStatesMaxProduct);
     printf("\n");
 
     return 0;

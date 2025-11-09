@@ -59,3 +59,15 @@ double marginal(double *observations, // nLanes x nTimesteps
                 int nPermutations,
                 int nLanes,
                 int nTimesteps);
+
+int argMaxSumMessages(double *logMessage1,
+                      double *logMessage2,
+                      double *logMessage3,
+                      int length,
+                      int nMessages);
+
+void maxLogPlusLogMessage(int numStates,
+                          bool knownFactorIsRow,
+                          double *g,                          // N_LANES x N_LANES matrix
+                          double *logVariableToFactorMessage, // vector of length nLanes
+                          double *result);

@@ -57,7 +57,6 @@ void copyLogMessage(double *logMessage,
     }
 }
 
-// Note that it is assumed that matrix g is symmetric.
 double logSumProduct(int factorState,
                      bool knownFactorIsRow,
                      double *g, // N_LANES x N_LANES matrix

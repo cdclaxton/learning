@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 // Calculate the log message from a message with a given length.
 void calcLogMessage(double *message,
                     int length,
@@ -16,11 +18,13 @@ void sumThreeLogMessages(double *logMessage1,
                          double *result);
 
 double logSumProduct(int factorState,
-                     double *g,
+                     bool knownFactorIsRow,
+                     double *g, // N_LANES x N_LANES matrix
                      int numStates,
                      double *logVariableToFactorMessage);
 
 void logSumProductForStates(int numStates,
+                            bool knownFactorIsRow,
                             double *g,
                             double *logVariableToFactorMessage,
                             double *result);

@@ -240,54 +240,74 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
         exit(1);
     }
 
+    // Step 1
+    // f0 -> x0
     double mu_f0_to_x0[N_LANES];
     double lambda_f0_to_x0[N_LANES];
     matrixColumn(observations[0], 0, N_LANES, N_TIME_STEPS, mu_f0_to_x0);
     calcLogMessage(mu_f0_to_x0, N_LANES, lambda_f0_to_x0);
 
+    // f1 -> x1
     double mu_f1_to_x1[N_LANES];
     double lambda_f1_to_x1[N_LANES];
     matrixColumn(observations[0], 1, N_LANES, N_TIME_STEPS, mu_f1_to_x1);
     calcLogMessage(mu_f1_to_x1, N_LANES, lambda_f1_to_x1);
 
+    // f2 -> x2
     double mu_f2_to_x2[N_LANES];
     double lambda_f2_to_x2[N_LANES];
     matrixColumn(observations[0], 2, N_LANES, N_TIME_STEPS, mu_f2_to_x2);
     calcLogMessage(mu_f2_to_x2, N_LANES, lambda_f2_to_x2);
 
+    // Step 2
+    // x0 -> g0
     double lambda_x0_to_g0[N_LANES];
     copyLogMessage(lambda_f0_to_x0, N_LANES, lambda_x0_to_g0);
 
+    // x2 -> g1
     double lambda_x2_to_g1[N_LANES];
     copyLogMessage(lambda_f2_to_x2, N_LANES, lambda_x2_to_g1);
 
+    // Step 3
+    // g0 -> x1
     double lambda_g0_to_x1[N_LANES];
-    logSumProductForStates(N_LANES, gTheta[0], lambda_x0_to_g0, lambda_g0_to_x1);
+    logSumProductForStates(N_LANES, false, gTheta[0], lambda_x0_to_g0, lambda_g0_to_x1);
 
+    // g1 -> x1
     double lambda_g1_to_x1[N_LANES];
-    logSumProductForStates(N_LANES, gTheta[0], lambda_x2_to_g1, lambda_g1_to_x1);
+    logSumProductForStates(N_LANES, true, gTheta[0], lambda_x2_to_g1, lambda_g1_to_x1);
 
+    // Step 4
+    // x1 -> g0
     double lambda_x1_to_g0[N_LANES];
     sumLogMessages(lambda_f1_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_g0);
 
+    // x1 -> g1
     double lambda_x1_to_g1[N_LANES];
     sumLogMessages(lambda_f1_to_x1, lambda_g0_to_x1, N_LANES, lambda_x1_to_g1);
 
+    // Step 5
+    // g0 -> x0
     double lambda_g0_to_x0[N_LANES];
-    logSumProductForStates(N_LANES, gTheta[0], lambda_x1_to_g0, lambda_g0_to_x0);
+    logSumProductForStates(N_LANES, true, gTheta[0], lambda_x1_to_g0, lambda_g0_to_x0);
 
+    // g1 -> x2
     double lambda_g1_to_x2[N_LANES];
-    logSumProductForStates(N_LANES, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
+    logSumProductForStates(N_LANES, false, gTheta[0], lambda_x1_to_g1, lambda_g1_to_x2);
 
-    double lambda_x0_to_f0[N_LANES];
-    copyLogMessage(lambda_g0_to_x0, N_LANES, lambda_g0_to_x0);
+    // // x0 -> f0
+    // double lambda_x0_to_f0[N_LANES];
+    // copyLogMessage(lambda_g0_to_x0, N_LANES, lambda_x0_to_f0);
 
-    double lambda_x1_to_f1[N_LANES];
-    sumLogMessages(lambda_g0_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_f1);
+    // // x1 -> f1
+    // double lambda_x1_to_f1[N_LANES];
+    // sumLogMessages(lambda_g0_to_x1, lambda_g1_to_x1, N_LANES, lambda_x1_to_f1);
 
-    double lambda_x2_to_f2[N_LANES];
-    copyLogMessage(lambda_g1_to_x1, N_LANES, lambda_x2_to_f2);
+    // // x2 -> f2
+    // double lambda_x2_to_f2[N_LANES];
+    // copyLogMessage(lambda_g1_to_x2, N_LANES, lambda_x2_to_f2);
 
+    // Marginal for x0
     double p_x0[3];
     marginalFactors(lambda_f0_to_x0,
                     lambda_g0_to_x0,
@@ -296,6 +316,7 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
                     2,
                     p_x0);
 
+    // Marginal for x1
     double p_x1[3];
     marginalFactors(lambda_g0_to_x1,
                     lambda_f1_to_x1,
@@ -304,6 +325,7 @@ void sumProduct(double observations[N_LANES][N_TIME_STEPS],
                     3,
                     p_x1);
 
+    // Marginal for x2
     double p_x2[3];
     marginalFactors(lambda_f2_to_x2,
                     lambda_g1_to_x2,
@@ -324,9 +346,9 @@ int main(void)
     srand(time(0));
 
     // Probability of changing lane
-    double gTheta[N_LANES][N_LANES] = {{0.6, 0.4, 0.0},
-                                       {0.2, 0.6, 0.2},
-                                       {0, 0.4, 0.6}};
+    double gTheta[N_LANES][N_LANES] = {{0.8, 0.2, 0.0},
+                                       {0.1, 0.8, 0.1},
+                                       {0.0, 0.2, 0.8}};
 
     // Probability of starting in a given lane
     double initialLane[N_LANES] = {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0};
@@ -342,7 +364,7 @@ int main(void)
     double observations[N_LANES][N_TIME_STEPS];
     double pMinVehicleInLane = 0.8;
     double pMaxVehicleInLane = 1.0;
-    double pMinVehicleNotInLane = 0.05;
+    double pMinVehicleNotInLane = 0.01;
     double pMaxVehicleNotInLane = 0.1;
     generateObservations(vehiclePositions,
                          pMinVehicleInLane, pMaxVehicleInLane,

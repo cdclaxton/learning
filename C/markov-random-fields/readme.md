@@ -357,6 +357,10 @@ The sum-product algorithm is also called belief propagation. The graph must be a
 
 ![Sum product algorithm](./images/sum_product_algorithm.png)
 
+The sum product algorithm is used to determine the marginal probability that a vehicle is in a given lane at each time step.
+
+![Vehicle localisation](./images/vehicle_localisation.png)
+
 To run the example:
 
 ```bash

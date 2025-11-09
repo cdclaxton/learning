@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrix.h"
@@ -56,7 +57,9 @@ void copyLogMessage(double *logMessage,
     }
 }
 
+// Note that it is assumed that matrix g is symmetric.
 double logSumProduct(int factorState,
+                     bool knownFactorIsRow,
                      double *g, // N_LANES x N_LANES matrix
                      int numStates,
                      double *logVariableToFactorMessage)
@@ -65,21 +68,35 @@ double logSumProduct(int factorState,
 
     for (int i = 0; i < numStates; i++)
     {
-        int idx = matrixIndex(factorState, i, numStates);
-        total += g[i] * exp(logVariableToFactorMessage[i]);
+        int idx;
+        if (knownFactorIsRow == true)
+        {
+            idx = matrixIndex(factorState, i, numStates);
+        }
+        else
+        {
+            idx = matrixIndex(i, factorState, numStates);
+        }
+
+        total += g[idx] * exp(logVariableToFactorMessage[i]);
     }
 
     return log(total);
 }
 
 void logSumProductForStates(int numStates,
+                            bool knownFactorIsRow,
                             double *g, // N_LANES x N_LANES matrix
                             double *logVariableToFactorMessage,
                             double *result)
 {
     for (int i = 0; i < numStates; i++)
     {
-        result[i] = logSumProduct(i, g, numStates, logVariableToFactorMessage);
+        result[i] = logSumProduct(i,
+                                  knownFactorIsRow,
+                                  g,
+                                  numStates,
+                                  logVariableToFactorMessage);
     }
 }
 

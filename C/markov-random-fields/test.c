@@ -449,6 +449,25 @@ void testMarginal()
     assert(inDelta(expected, actual, 1e-6) == true);
 }
 
+void testLogSumProduct()
+{
+    int factorState = 1;
+    double gTheta[3][3] = {
+        {0.8, 0.2, 0.0},
+        {0.1, 0.8, 0.1},
+        {0.0, 0.2, 0.8}};
+    double logVariableToFactorMessage[3] = {
+        log(0.3), log(0.4), log(0.1)};
+    double actual = logSumProduct(1,
+                                  true,
+                                  gTheta[0],
+                                  3,
+                                  logVariableToFactorMessage);
+
+    double expected = log(0.1 * 0.3 + 0.8 * 0.4 + 0.1 * 0.1);
+    assert(inDelta(expected, actual, 1e-6) == true);
+}
+
 int main(void)
 {
     printf("Running tests ...\n");
@@ -477,6 +496,7 @@ int main(void)
     testSetMatrixColumn();
     testJointProbability();
     testMarginal();
+    testLogSumProduct();
 
     printf("Tests pass\n");
 }

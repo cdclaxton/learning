@@ -208,3 +208,37 @@
 | Technology     |                   |           |                  |
                                   A S P E C T S
 ```
+
+### Metamodel
+
+#### Relationships
+
+![Relationships](./metamodel/01_Relationships.png)
+
+#### Motivation layer
+
+![Motivation layer](./metamodel/02_Motivation_layer.png)
+
+#### Strategy layer
+
+![Strategy layer](./metamodel/03_Strategy.png)
+
+#### Business layer
+
+![Business layer](./metamodel/04_Business_layer.png)
+
+#### Application layer
+
+![Application layer](./metamodel/05_Application_layer.png)
+
+#### Technology layer
+
+![Technology layer](./metamodel/06_Technology_layer.png)
+
+#### Physical layer
+
+![Physical layer](./metamodel/07_Physical_layer.png)
+
+#### Implementation and migration layer
+
+![Implementation and migration layer](./metamodel/08_Implementation_and_migration.png)

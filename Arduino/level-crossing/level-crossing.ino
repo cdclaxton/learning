@@ -37,16 +37,13 @@ bool blackState = LOW;
 // Minimum time between button presses to debounce
 #define debounceButtonTime 1000
 
-// On and off times for the yellow light
-#define YELLOW_OFF_TIME 500
-#define YELLOW_ON_TIME 500
-unsigned long lastYellowStateChange = millis();
-bool yellowFlashState = HIGH;
-
 // On and off times for the red light
+#define RED_ON_CONSTANT_TIME 1000
 #define RED_ON_TIME 500
 unsigned long lastRedStateChange = millis();
-bool redFlashLeftState = HIGH;
+bool redIsOnConstant = LOW;
+bool redLeftState = HIGH;
+bool redRightState = HIGH;
 
 // Buzzer
 #define BUZZER_TIME 500
@@ -125,25 +122,13 @@ void loop() {
   // ----------------------------------------------------------------------------------------------
 
   if ((digitalRead(YELLOW_BUTTON) == HIGH) && (currentTime > (lastYellowPress + debounceButtonTime))) {
-    yellowLightFlashing = !yellowLightFlashing;
+    yellowLightLit = !yellowLightLit;
     lastYellowPress = currentTime;
 
-    if (yellowLightFlashing == HIGH) {
+    if (yellowLightLit == HIGH) {
       redLightsFlashing = LOW;
     }
   }  
-
-  if (yellowLightFlashing == HIGH) {
-    if (((yellowFlashState == HIGH) && (currentTime > (lastYellowStateChange + YELLOW_ON_TIME))) ||
-      ((yellowFlashState == LOW) && (currentTime > (lastYellowStateChange + YELLOW_OFF_TIME)))) {
-
-      yellowLightLit = !yellowLightLit;
-      yellowFlashState = !yellowFlashState;
-      lastYellowStateChange = currentTime;
-    }
-  } else {
-    yellowLightLit = LOW;
-  }
 
   // ----------------------------------------------------------------------------------------------
   // Red lights
@@ -154,14 +139,23 @@ void loop() {
     lastRedPress = currentTime;
 
     if (redLightsFlashing == HIGH) {
-      yellowLightFlashing = LOW;
-      redFlashLeftState = LOW;
+      yellowLightLit = LOW;
+      redIsOnConstant = HIGH;
+      redLeftState = HIGH;
+      redRightState = HIGH;
+      lastRedStateChange = currentTime;
     }
   }
 
-  if ((redLightsFlashing == HIGH) && (currentTime > lastRedStateChange + RED_ON_TIME)) {
-      redFlashLeftState = !redFlashLeftState;
-      lastRedStateChange = currentTime;
+  if ((redIsOnConstant == LOW) && (redLightsFlashing == HIGH) && (currentTime > lastRedStateChange + RED_ON_TIME)) {
+    redLeftState  = !redLeftState;
+    redRightState = !redRightState;
+    lastRedStateChange = currentTime;
+  } else if ((redIsOnConstant == HIGH) && (redLightsFlashing == HIGH) && (currentTime > lastRedStateChange + RED_ON_CONSTANT_TIME)) {
+    redIsOnConstant = LOW;
+    redLeftState = HIGH;
+    redRightState = LOW;
+    lastRedStateChange = currentTime;
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -192,8 +186,8 @@ void loop() {
   // ---------------------------------------------------------------------------------------------- 
 
   digitalWrite(YELLOW_LED, yellowLightLit);
-  digitalWrite(RED_LED_1, (redLightsFlashing == HIGH) && (redFlashLeftState == HIGH));
-  digitalWrite(RED_LED_2, (redLightsFlashing == HIGH) && (redFlashLeftState == LOW));
+  digitalWrite(RED_LED_1, (redLightsFlashing == HIGH) && (redLeftState == HIGH));
+  digitalWrite(RED_LED_2, (redLightsFlashing == HIGH) && (redRightState == HIGH));
 
   // ----------------------------------------------------------------------------------------------
   // Motor 1 for the left barrier

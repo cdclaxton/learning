@@ -15,7 +15,8 @@ News_Category_Dataset_v3.json
 Python/DataScience/entity-extraction/data/*.db
 Python/DataScience/entity-extraction/data/*.pickle
 Python/DataScience/entity-extraction/data/lmdb/
-/Python/DesignPatterns/lmdb_store/db
+Python/DesignPatterns/lmdb_store/db
+Python/DataScience/pytorch_experiments/data
 
 Rplots.pdf
 .RData
@@ -25,3 +26,5 @@ node_modules/
 
 *.wasm
 wasm_exec.js
+
+.venv

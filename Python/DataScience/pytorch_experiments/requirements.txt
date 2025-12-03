@@ -1,0 +1,6 @@
+matplotlib
+mlxtend
+pandas
+requests
+scikit-learn
+torchmetrics

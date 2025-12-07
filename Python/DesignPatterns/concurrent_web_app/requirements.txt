@@ -1,0 +1,6 @@
+aiohttp
+fastapi[standard]
+matplotlib
+numpy
+pandas
+requests

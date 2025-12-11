@@ -58,8 +58,8 @@ unsigned long lastYellowPress = millis();
 unsigned long lastBlackPress = millis();
 
 // Barrier on and off cycles
-#define BARRIER_ON_CYCLES 3
-#define BARRIER_OFF_CYCLES 5
+#define BARRIER_ON_CYCLES 4
+#define BARRIER_OFF_CYCLES 15
 int numCyclesSinceLastMotor1Move = 0;
 int numCyclesSinceLastMotor2Move = 0;
 

@@ -2,3 +2,5 @@ ipykernel
 matplotlib
 numpy
 scipy
+scikit-learn
+tqdm

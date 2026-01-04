@@ -98,3 +98,39 @@ ls -la ./dist
 cd ..
 uv run --with hello_world --no-project -- python -c "import hello_world"
 ```
+
+## Ruff
+
+```bash
+cd hello_world/
+
+# Install Ruff with uv for the project
+uv add --dev ruff
+
+# Lint all files in directory and any subdirectories
+ruff check
+
+# Format all files
+ruff format
+```
+
+To add Ruff to VS Code:
+1. Add the Ruff extension by Astral.sh
+2. Enable format-on-save: Ctrl+Shift+P -> settings.json -> Open user settings -> Add the following:
+
+```json
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+```
+
+## ty type checking
+
+```
+uvx ty check
+```

@@ -131,6 +131,18 @@ To add Ruff to VS Code:
 
 ## ty type checking
 
-```
+```bash
 uvx ty check
+```
+
+### Working with an existing project
+
+```bash
+# Install dependencies
+uv sync
+
+# Activate the virtual environment
+source .venv/bin/activate
+
+# Mac: Cmd+Shift+P -> Python: Select Interpreter -> use the .venv interpreter
 ```

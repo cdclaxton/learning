@@ -37,4 +37,7 @@ SELECT * FROM vessels WHERE name='vessel-2' LIMIT 10;
 
 -- Number of vessels with name 'vessel-2'
 SELECT count(*) FROM vessels WHERE name='vessel-2';
+
+-- Check if there are observations for a given date
+select count(*) from vessels where date(timestamp)="2026-03-20";
 ```

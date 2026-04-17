@@ -1,6 +1,8 @@
 # RFID-based access control
 
-When the circuit is turned on, the red LED will light up. When the user presents a RFID tag with one of the required unique IDs, the green LED lights up and the buzzer makes a brief sound before the red LED lights back up.
+When the circuit is turned on, the red LED will light up. When the user presents a RFID tag with one of the required unique IDs, the green LED lights up and the buzzer makes a brief sound before the red LED light returns.
+
+![Photo](./images/circuit-boards.jpg)
 
 ## Install the RFID library
 
@@ -11,14 +13,6 @@ Install the `MFRC522` library (from the GithubCommunity) in the Arduino IDE.
 The circuit consists of an Ardunio Uno, an RFID-RC522 board and a custom board containing two LEDs and a buzzer.
 
 ![Circuit diagram](./images/circuit.png)
-
-The RFID board looks like this:
-
-![RFID board](./images/rfid-board.jpg)
-
-The full circuit looks like this:
-
-![Arduino and extension board](./images/arduino-and-rfid-board.jpg)
 
 ## Getting the ID of an RFID tag
 

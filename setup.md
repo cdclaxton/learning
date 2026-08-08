@@ -7,6 +7,8 @@ sudo apt-get upgrade
 
 # Setup VS Code
 # Download the .deb amd64 file from https://code.visualstudio.com/download
+# Open Files -> Move the .deb file to Linux Files
+sudo dpkg -i <.deb file>
 ```
 
 ## R

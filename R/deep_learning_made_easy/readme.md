@@ -3,6 +3,8 @@
 ## Setup
 
 ```R
+install.packages('deepnet')
+install.packages('ggplot2')
 install.packages('neuralnet')
 install.packages('Metrics')
 ```

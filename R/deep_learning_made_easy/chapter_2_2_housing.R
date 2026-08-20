@@ -11,6 +11,9 @@ keeps <- c("crim", "indus", "nox", "rm" ,
     "age" , "dis" , "tax" ,"ptratio" , "lstat", "medv")
 data <- data[keeps]
 
+# Scale the data to a z-score
+data <- as.data.frame(scale(data))
+
 # Check if there are any missing values
 apply(data, 2, function(x) sum(is.na(x)))
 
@@ -23,11 +26,9 @@ n = nrow(data)
 # Determine the training rows
 train <- sample(1:n, 400, replace=FALSE)
 
-# Fit the neural network with three hidden layers and using the
-# resilient backpropagation with backtracking learning algorithm
-fit <- neuralnet(f, data=data[train,], hidden=c(10, 20, 10),
-    algorithm="rprop+", err.fct="sse", act.fct="logistic", 
-    threshold=0.1, linear.output=TRUE)
+# Fit the neural network with two hidden layers
+fit <- neuralnet(f, data=data[train,], hidden=c(5, 10),
+     linear.output=TRUE)
 
 # Perform prediction on the test set
 pred <- compute(fit, data[-train, 1:9])

@@ -7,7 +7,7 @@
 		- Meaningful parameters
 		- Descriptively adequate -- form should look like the data
 	- Define prior distributions
-	- Use Bayesian inference to reallocate credability
+	- Use Bayesian inference to reallocate credability (use [[Bayes theorem]])
 	- Perform a posterior predictive check
 		- e.g. plot the model against the actual data
 - The larger the sample size, the greater the precision (the smaller the variance) of the parameter estimates

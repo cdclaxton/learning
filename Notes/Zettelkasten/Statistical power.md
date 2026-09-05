@@ -1,0 +1,25 @@
+#Bayesian #Statistics 
+
+- Power is the probability of achieving the goal of a planned empirical study for a given set of believed conditions
+- Goals (in a Bayesian setting) could be:
+	- Reject a null value of a parameter (ROPE excludes posterior HDI)
+	- Affirm a predicted value (ROPE includes HDI)
+	- Achieve a precision in the estimate of a parameter (HDI width < specified maximum, e.g. HDI < 80% of ROPE)
+		- Useful when the prior is broad
+- In [[Null hypothesis significance testing]]:
+	- Goal is to reject the null hypothesis
+- Problem: Determine the minimum number of samples or minimum sampling duration to achieve a desired power
+- Approach (run many times):
+	- Randomly generate representative values from a hypothetical distribution
+	- Generate a random sample of data using the planned sampling method
+	- Compute the posterior estimate with audience-appropriate priors
+	- Determine whether the goal was attained
+- Different types of power analysis:
+	- Prospective -- for planning research before data is collected
+	- Retrospective -- data has already been collected
+		- Use the posterior distribution for generating new simulated data
+		- Tantamount to a posterior predictive check
+		- Simulated data is analysed with the same Bayesian model as the data
+		- Posterior from the simulated data is used to check goals
+	- Replication -- find the probability that the goals would be achieved if the experiment is replicated exactly
+		- Difficult / impossible with traditional NHST, but possible with a Bayesian approach

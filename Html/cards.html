@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Groups</title>
+        <style>
+            * {
+                padding: 0;
+                margin: 0; 
+                font-family: "Montserrat", sans-serif;          
+            }
+
+            body {
+                background-color: #F3F9ED;
+                padding: 2px 4px;
+            }
+
+            select {
+                margin-left: 5px;
+            }
+
+            .banner {
+                background-color: #D81159;
+                color: #F3F9ED;
+                font-size: small;
+                font-weight: 600;
+                text-align: center;
+                padding: 5px;
+                margin: 5px 0px;
+            }
+
+            .title-bar {
+                background-color: #212121;
+                padding: 5px;
+            }
+
+            .title-top-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+
+            .title-top-container-left {
+                padding: 5px;
+            }
+
+            .title-top-container-right {
+                padding: 10px;
+                font-size: 1em;
+            }
+            
+            .title-bottom-container {
+                width: 100%;
+                font-size: 1em;
+                color: #F3F9ED;     
+                padding: 5px;           
+            }
+
+            .title-text {
+                color: #F3F9ED;
+                font-size: 3em;
+            }
+
+            .sort {
+                margin: 10px;
+                font-size: 1em;
+                display: flex;
+            }
+
+            .single-group {
+                background-color: white;
+                border: 1px solid gray;
+                border-radius: 3px;
+                display: flex;
+                flex-direction: row;
+                margin-top: 10px;
+                padding: 5px;
+                line-height: 130%;            
+            }
+
+            .single-group-image-div {
+                width: 60px;
+                padding: 4px;
+                margin-right: 10px;
+            }
+
+            .single-group-image {
+                width: 50px;
+                height: 50px;
+                object-fit: cover;
+                border-radius: 5px;
+            }
+            
+            .group-details {
+                margin-right: 20px;
+            }
+
+            .group-message-details {
+                margin-right: 20px;
+            }
+
+            .bold-text {
+                font-weight: 700;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="banner">
+            Warning: Beta system
+        </div>
+
+        <div class="title-bar">
+            <div class="title-top-container">
+                <div class="title-top-container-left">
+                    <div class="title-text">
+                        <p>All available groups</p>
+                    </div>
+                </div>
+                <div class="title-top-container-right">
+                </div>                
+            </div>
+            <div class="title-bottom-container">
+                <p>Number of groups: 3 // Last data refresh: 2026-10-16</p>
+            </div>
+        </div>
+
+        <div class="sort">
+            <label for="sort-by">Sort by:</label>
+            <select name="sort-by" id="sort-by">
+                <option>Group name</option>
+                <option>Group ID</option>
+            </select>
+        </div>
+
+        <div class="groups">
+
+            <!-- Example group 1 -->
+            <div class="single-group">
+                <div class="single-group-image-div">
+                    <img class="single-group-image" src="assets/cat.jpg">
+                </div>
+
+                <div class="group-details">
+                    <p><span class="bold-text">Adorable cats</span></p>
+                    <p>ID: 1234</p>
+                </div>
+
+                <div class="group-message-details">
+                    <p>20 members</p>
+                    <p>251 Messages from 2026-02-01 to 2026-08-10</p>
+                </div>
+
+                <div class="group-message-chart">
+                    Chart
+                </div>
+            </div>
+
+            <!-- Example group 2 -->
+        </div>
+
+    </body>
+</html>

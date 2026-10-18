@@ -96,6 +96,47 @@ async function drawScatterplot() {
         .text("Relative humidity")
         .style("transform", "rotate(-90deg)")
         .style("text-anchor", "middle")
+
+    // Add a legend
+    const legendGroup = wrapper.append("g")
+        .attr("transform", `translate(${dimensions.margin.left + 100}, 50)`)
+    const legendTitle = legendGroup.append("text")
+        .attr("y", -10)
+        .text("Cloud cover")
+        .attr("class", "legend-title")
+
+    const defs = wrapper.append("defs");
+    const legendGradientId = "legend-gradient";
+    const gradient = defs.append("linearGradient")
+        .attr("id", legendGradientId)
+        .selectAll("stop")
+            .data(colourScale.range())
+            .enter().append("stop")
+                .attr("stop-color", d => d)
+                .attr("offset", (d,i) => `${i * 100}%`);
+
+    const legendWidth = 120;
+    const legendHeight = 16;
+    const legendGradient = legendGroup.append("rect")
+        .attr("x", -legendWidth/2)
+        .attr("height", legendHeight)
+        .attr("width", legendWidth)
+        .style("fill", `url(#${legendGradientId})`);
+
+    const legendValueRight = legendGroup.append("text")
+        .attr("class", "legend-value")
+        .attr("x", legendWidth/2 + 10)
+        .attr("y", legendHeight/2)
+        .attr("class", "legend-value")
+        .text(colourScale.domain()[1])
+
+    const legendValueLeft = legendGroup.append("text")
+        .attr("class", "legend-value")
+        .attr("x", -legendWidth/2 - 10)
+        .attr("y", legendHeight/2)
+        .attr("class", "legend-value")
+        .text(colourScale.domain()[0])        
+        .style("text-anchor", "end");
 }
 
 drawScatterplot();

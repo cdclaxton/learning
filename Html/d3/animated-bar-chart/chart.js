@@ -29,7 +29,7 @@ const dimensions = {
     width: width,
     height: width * 0.6,
     margin: {
-        top: 30,
+        top: 100,
         right: 10,
         bottom: 50,
         left: 50,
@@ -83,35 +83,37 @@ const drawBarChart = (dataset) => {
         .range([dimensions.boundedHeight, 0])
         .nice();
     
-    // Add the bars
+    // Set the bars
     const barGroups = bounds.select(".bars")
         .selectAll(".bar")
         .data(dataset, d => d.id);
 
     // Remove the old bars
-    const oldBarGroups = barGroups.exit();
+    const oldBarGroups = barGroups.exit()
+        .attr("class", "bar-leaving")
+
     oldBarGroups.selectAll("rect")
-        .style("fill", "red")
         .transition(exitTransition)
             .attr("y", dimensions.boundedHeight)
             .attr("height", 0)
+
     oldBarGroups.selectAll("text")
         .transition(exitTransition)
             .attr("y", dimensions.boundedHeight)
+
     oldBarGroups
         .transition(exitTransition)
         .remove();
 
     // Add the new bars
     const newBarGroups = barGroups.enter().append("g")
-        .attr("class", "bar");
+        .attr("class", "bar-entering");
 
     newBarGroups.append("rect")
         .attr("x", d => xScale(xAccessor(d) - barWidth/2))
-        .attr("y", d => dimensions.boundedHeight)
+        .attr("y", dimensions.boundedHeight)
         .attr("height", 0)
-        .attr("width", xScale(barWidth/2))
-        .style("fill", "yellowgreen");
+        .attr("width", xScale(barWidth/2));
 
     newBarGroups.append("text")
         .attr("x", d => xScale(xAccessor(d) - barWidth/2))
@@ -119,29 +121,69 @@ const drawBarChart = (dataset) => {
         .style("text-anchor", "middle")
         .style("font-family", "sans-serif");
 
+    newBarGroups.select("rect")
+        .transition(updateTransition)
+            .attr("x", d => xScale(xAccessor(d) - barWidth/2))
+            .attr("y", d => yScale(yAccessor(d)))
+            .attr("height", d => dimensions.boundedHeight - yScale(yAccessor(d)))
+            .on("end", function() {
+                d3.select(this.parentNode)
+                    .attr("class", "bar")
+            })
+
+    newBarGroups.select("text")
+        .transition(updateTransition)
+            .attr("x", d => xScale(xAccessor(d)))
+            .attr("y", d => yScale(yAccessor(d)) - 5)
+            .text(d => yAccessor(d).toFixed(2));
+
     // Set the new and updated bars
-    const newAndUpdatedBarGroups = newBarGroups.merge(barGroups);
+    const newAndUpdatedBarGroups = barGroups
+        .attr("class", "bar")
 
     const barRects = newAndUpdatedBarGroups.select("rect")
         .transition(updateTransition)
-        .attr("x", d => xScale(xAccessor(d) - barWidth/2))
-        .attr("y", d => yScale(yAccessor(d)))
-        .attr("height", d => dimensions.boundedHeight - yScale(yAccessor(d)))
-        .attr("width", xScale(barWidth/2))
-        .style("fill", "cornflowerblue");        
+            .attr("x", d => xScale(xAccessor(d) - barWidth/2))
+            .attr("y", d => yScale(yAccessor(d)))
+            .attr("height", d => dimensions.boundedHeight - yScale(yAccessor(d)))
+            .attr("width", xScale(barWidth/2));
     
     const barText = newAndUpdatedBarGroups.select("text")
         .transition(updateTransition)
             .attr("x", d => xScale(xAccessor(d)))
             .attr("y", d => yScale(yAccessor(d)) - 5)
-            .text(d => yAccessor(d).toFixed(2))
+            .text(d => yAccessor(d).toFixed(2));
 
     // Add the x-axis label
     const xAxisGenerator = d3.axisBottom()
         .scale(xScale);
     const xAxis = bounds.select(".x-axis")
         .transition(updateTransition)
-        .call(xAxisGenerator)            
+        .call(xAxisGenerator)
+
+    // Add interactions
+    const tooltip = d3.select("#tooltip");
+    function onMouseEnter(event) {
+        const datum = d3.select(this).datum();
+
+        tooltip.select("#tooltip-x-value").text(datum.x);
+        tooltip.select("#tooltip-y-value").text(datum.y.toFixed(2))
+
+        const x = xScale(datum.x) + dimensions.margin.left;
+        const y = yScale(datum.y) + dimensions.margin.top - 20;
+        tooltip.style("transform", `translate(calc(-50% + ${x}px), calc(-100% + ${y}px))`)
+
+        tooltip.style("opacity", 1)
+    }
+
+    function onMouseLeave(event) {
+        tooltip.style("opacity", 0);
+    }
+
+    bounds.select(".bars").selectAll(".bar")
+        .on("mouseenter", onMouseEnter)
+        .on("mouseleave", onMouseLeave);
+
 }
 
 // Generate a synthetic dataset and draw an initial bar chart

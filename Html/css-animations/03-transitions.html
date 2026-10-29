@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Transitions</title>
+    <style>
+        .btn {
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.3s ease-in, color 0.5s ease-in;
+        }
+
+        .btn:hover {
+            background-color: #2ecc71;
+            color: black;
+        }
+
+        .card {
+            margin-top: 10px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-link {
+            color: #333;
+            position: relative;
+            display: inline;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: blue;
+            transition: width 0.3s ease 0.1s;
+        }
+
+        .nav-link:hover {
+            color: blue;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .push-btn {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 6px #d35400;
+            transition: transform 0.1s ease, box-shadwow 0.1s ease;
+        }
+
+        .push-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px #d35400;
+        }
+
+        .push-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px #d35400;
+        }
+
+        img {
+            width: 200px;
+            filter: grayscale(100%);
+            transition: filter 0.5s ease;
+        }
+
+        img:hover {
+            filter: none;
+        }
+
+        input[type=text] {
+            width: 150px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        input[type=text]:focus {
+            width: 300px;
+        }
+
+        .settings {
+            font-size: 50px;
+            transition: transform 0.5s ease;
+            /* border: 1px solid green; */
+            display: inline-block;
+            align-items: center;
+        }
+
+        .settings:hover {
+            transform: rotate(90deg);
+        }
+
+        /* From https://css-tricks.com/css-link-hover-effects/ */
+        .ref-link {
+            position: relative;
+            text-decoration: none;
+        }
+
+        .ref-link::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            border-radius: 4px;
+            background-color: lightgray;
+            bottom: 0;
+            left: 0;
+            transform-origin: right;
+            transform: scaleX(0);
+            transition: transform .3s ease-in-out;
+        }
+
+        .ref-link:hover::before {
+            transform-origin: left;
+            transform: scaleX(1);
+        }
+
+        /* Ref link 2 */
+        .ref-link-2 {
+            color: #333;
+            position: relative;
+            display: inline;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .ref-link-2:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: blue;
+            transition: width 0.3s ease 0.1s;
+        }
+
+        .ref-link-2:hover {
+            color: blue;
+        }
+
+        .ref-link-2:hover::after {
+            width: 100%;
+        }        
+    </style>
+</head>
+
+<body>
+    <button class="btn">Press me</button>
+
+    <div class="card">Card</div>
+
+    <div class="nav-link">Nav</div>
+
+    <button class="push-btn">Click me</button>
+
+    <img src="../assets/cat.jpg" />
+
+    <input type="text" id="search" name="search" />
+
+    <div class="settings">⚙️</div>
+
+    <a href="_blank" class="ref-link">Link</a>
+    <a href="_blank" class="ref-link-2">Link 2</a>
+</body>

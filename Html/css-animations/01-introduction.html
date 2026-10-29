@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<head>
+    <title>CSS animation</title>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 2s;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .signup-button {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .article-text {
+            animation: slideUp 0.8s ease-out forwards;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            80% {
+                transform: scale(1.2);  /* Overshoot slightly for a bouncy feel */
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-badge {
+            width: 50px;
+            height: 50px;
+            background-color: #2ecc71;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+
+            animation: popIn 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.8);
+        }
+
+        @keyframes ghost-effect {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .ghost {
+            width: 100px;
+            height: 100px;
+            background-color: lightgray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: ghost-effect 2s infinite;            
+        }
+
+        @keyframes colour-cycle-effect {
+            0% {
+                background-color: #2ecc71;
+            }
+            50% {
+                background-color: #3498db;
+            }
+            100% {
+                background-color: #e74c3c;
+            }
+        }
+
+        .colour-cycle {
+            width: 100px;
+            height: 100px;
+            background-color: #e74c3c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: colour-cycle-effect 2s;              
+        }        
+
+        @keyframes elevator-effect {
+            0% {
+                transform: translateY(0);
+            }
+            10% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(100px);
+            }
+            60% {
+                transform: translateY(100px);
+            }
+            90% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .elevator {
+            width: 100px;
+            height: 100px;
+            background-color: steelblue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: elevator-effect 2s infinite;              
+        }
+    </style>
+</head>
+<body>
+    <div class="box">Hello</div>
+
+    <button class="signup-button">Sign-up</button>
+
+    <div class="article-text">This is an example</div>
+
+    <div class="success-badge">✓</div>
+
+    <div class="ghost">Ghost</div>
+
+    <div class="colour-cycle">Colour cycle</div>
+
+    <div class="elevator">Elevator</div>
+
+</body>

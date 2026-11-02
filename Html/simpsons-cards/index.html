@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simpson's Cards</title>
+    <style>
+        @font-face {
+            font-family: 'Playpen';
+            src: url("fonts/PlaypenSans-VariableFont_wght.ttf");
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Playpen', Arial, Helvetica, sans-serif;
+        }
+        body {
+            background-image: linear-gradient(to bottom,  #197EC0, #709AE1);
+        }
+        .title {
+            position: relative;
+            width: 50%;
+            margin: auto;
+        }
+        .title img {
+            margin: auto;
+            display: block;
+            width: 100%;
+        }
+        .subtitle {
+            position: absolute;
+            display: block;
+            font-size: 80px;
+            color: #DEE4A2;
+            right: 0;
+            bottom: -70px;
+            text-shadow: -6px 5px 2px black;  
+        }
+        .cards {
+            margin: 80px auto 30px auto;
+            display: flex;
+            width: 90%;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1500px;
+        }
+        .card {
+            width: calc(50% - 20px);
+            box-sizing: border-box;
+            background-image: linear-gradient(to right, #DEE4A2, #dce486);
+            box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            margin: 10px;
+            border-radius: 20px;
+            border: 3px solid white;
+            padding: 5px;
+            display: flex;
+            transition: box-shadow 0.3s ease;
+            align-items: center;
+        }
+        .card:hover {
+            box-shadow: 0 8px 8px 0 #FED439AA, 0 6px 20px 10px #FD8CC1;
+        }
+        .card img {
+            object-fit: contain;
+            width: 40%;
+            margin: 10px;
+            padding: 0;
+            border-radius: 10px;
+        }
+        .card p {
+            font-size: 30px;
+            background-color: transparent;
+            margin: 10px;
+        }
+        .card-text {
+            margin: 10px;
+        }
+        .card-text p {
+            margin: 0;
+            padding-bottom: 10px;
+        }
+        p.label {
+            font-size: 20px;
+            color: #075149;
+            margin: 0;
+            font-weight: 400;
+            padding: 0;
+        }
+        p.value {
+            font-size: 30px;
+            color: #197EC0;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px white;      
+        }
+        p.value:last-child {
+            margin-bottom: 0;
+        }
+        p.value-name {
+            font-size: 30px;
+            color: #FD8CC1;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px white;            
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <img src="./images/The_Simpsons_yellow_logo.svg">
+        <div class="subtitle">
+            <p>☕ + 🧁 + 💻</p>
+        </div>
+    </div>
+    <div class="cards">
+        <div class="card">
+            <img src="./images/Homer_Simpson.webp" />
+            <div class="card-text">
+                <p class="label">Name</p>
+                <p class="value-name">Homer Simpson</p>
+                <p class="label">Favourite coffee</p>
+                <p class="value">Cappuccino</p>
+                <p class="label">Favourite cake</p>
+                <p class="value">Doughnuts 🍩</p>
+                <p class="label">Programming languages</p>
+                <p class="value">Ada</p>                
+            </div>
+        </div>
+        <div class="card">
+            <img src="./images/Marge_Simpson.webp" />
+            <div class="card-text">
+                <p class="label">Name</p>
+                <p class="value-name">Marge Simpson</p>
+                <p class="label">Favourite coffee</p>
+                <p class="value">Latte</p>
+                <p class="label">Favourite cake</p>
+                <p class="value">Victoria spongecake 🍰</p>
+                <p class="label">Programming languages</p>
+                <p class="value">Ruby, Perl</p>                
+            </div>
+        </div>
+        <div class="card">
+            <img src="./images/Bart_Simpson.webp" />
+            <div class="card-text">
+                <p class="label">Name</p>
+                <p class="value-name">Bart Simpson</p>
+                <p class="label">Favourite coffee</p>
+                <p class="value">Babyccino </p>
+                <p class="label">Favourite cake</p>
+                <p class="value">Pancakes 🥞</p>
+                <p class="label">Programming languages</p>
+                <p class="value">Python</p>                
+            </div>
+        </div>
+        <div class="card">
+            <img src="./images/Lisa_Simpson.webp" />
+            <div class="card-text">
+                <p class="label">Name</p>
+                <p class="value-name">Lisa Simpson</p>
+                <p class="label">Favourite coffee</p>
+                <p class="value">Cortado </p>
+                <p class="label">Favourite cake</p>
+                <p class="value">Cupcakes 🧁</p>
+                <p class="label">Programming languages</p>
+                <p class="value">C++, C#, Java</p>                
+            </div>
+        </div> 
+        <div class="card">
+            <img src="./images/Maggie_Simpson.png" />
+            <div class="card-text">
+                <p class="label">Name</p>
+                <p class="value-name">Maggie Simpson</p>
+                <p class="label">Favourite coffee</p>
+                <p class="value">Espresso</p>
+                <p class="label">Favourite cake</p>
+                <p class="value">Cookies 🍪</p>
+                <p class="label">Programming languages</p>
+                <p class="value">Rust</p>                
+            </div>
+        </div>         
+    </div>
+</body>
+</html>

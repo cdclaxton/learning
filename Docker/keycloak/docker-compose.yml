@@ -1,0 +1,57 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3
+    container_name: keycloak-sso
+    environment:
+      KC_HOSTNAME: http://keycloak.local:8080
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin      
+    command: start-dev
+    ports:
+      - "8080:8080"
+    networks:
+      - sso-network
+
+  app1:
+    image: node:24-alpine
+    container_name: app1-sso
+    working_dir: /app
+    command: sh -c "npm install && node app1.js"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app1.js:/app/app1.js
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+    environment:
+      KEYCLOAK_URL: http://keycloak.local:8080
+    depends_on:
+      - keycloak
+    networks:
+      - sso-network
+    extra_hosts:
+      - "keycloak.local:host-gateway" # Maps to Docker host IP  
+  
+  app2:
+    image: node:24-alpine
+    container_name: app2-sso
+    working_dir: /app
+    command: sh -c "npm install && node app2.js"
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./app2.js:/app/app2.js
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+    environment:
+      KEYCLOAK_URL: http://keycloak.local:8080
+    depends_on:
+      - keycloak
+    networks:
+      - sso-network
+    extra_hosts:
+      - "keycloak.local:host-gateway" # Maps to Docker host IP
+
+networks:
+  sso-network:
+    driver: bridge
